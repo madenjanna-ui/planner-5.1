@@ -1825,3 +1825,50 @@ body.dark .day:not(.weekend){background:var(--weekday);color:var(--text)}
 body.dark .day.weekend{background:var(--weekend);color:var(--text)}
 body.dark .day:not(.weekend) .day-weekday{color:#9ebcff}
 body.dark .day.weekend .day-weekday{color:#ff9faf}
+
+/* =====================================================
+   MaDenFlow 5.3 — исправление отчёта часов
+   Контраст итоговых строк в окне «Служение»
+===================================================== */
+.service-total{
+    color:#24364d !important;
+    background:#edf5ff !important;
+}
+
+.service-total > div:first-child{
+    color:#24364d !important;
+    font-weight:800;
+}
+
+.service-total > div:last-child{
+    color:#5b3db5 !important;
+    font-weight:900;
+}
+
+.service-grand-total{
+    background:#f2ebff !important;
+}
+
+.service-grand-total > div:first-child{
+    color:#3d3158 !important;
+}
+
+.service-grand-total > div:last-child{
+    color:#7046c6 !important;
+}
+
+/* В тёмной теме карточки остаются светлыми, поэтому текст должен быть тёмным */
+body.dark .service-total,
+body.dark .service-grand-total{
+    color:#24364d !important;
+}
+
+body.dark .service-total > div:first-child,
+body.dark .service-grand-total > div:first-child{
+    color:#24364d !important;
+}
+
+body.dark .service-total > div:last-child,
+body.dark .service-grand-total > div:last-child{
+    color:#5b3db5 !important;
+}
