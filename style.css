@@ -1663,3 +1663,128 @@ body.ui-hidden .bottom-bar{
 .day-weekday{
     font-weight:800;
 }
+
+/* =====================================================
+   MaDenFlow 5.3 — настройки шрифта и цветовые темы
+===================================================== */
+
+/* Стандартная тема: будни — синий, выходные — розовый */
+body[data-theme="standard"]{
+    --weekday:#eef6ff;
+    --weekend:#ffe8ee;
+    --day-weekday-text:#4f7fc9;
+    --day-weekend-text:#d96b7c;
+}
+
+/* Чёрная — белая */
+body[data-theme="blackwhite"]{
+    --weekday:#171717;
+    --weekend:#f7f7f7;
+    --day-weekday-text:#111;
+    --day-weekend-text:#555;
+    --primary:#444;
+    --primary-dark:#222;
+    --text:#202020;
+    --text2:#666;
+}
+body[data-theme="blackwhite"] .day:not(.weekend){
+    color:#fff;
+}
+body[data-theme="blackwhite"] .day:not(.weekend) .day-date,
+body[data-theme="blackwhite"] .day:not(.weekend) .day-month,
+body[data-theme="blackwhite"] .day:not(.weekend) .day-status{
+    color:#d8d8d8;
+}
+body[data-theme="blackwhite"] .day:not(.weekend) .day-weekday{color:#fff}
+body[data-theme="blackwhite"] .day.weekend .day-weekday{color:#333}
+
+/* Жёлтая — зелёная */
+body[data-theme="yellowgreen"]{
+    --weekday:#fff5b8;
+    --weekend:#dff2c2;
+    --day-weekday-text:#8a7200;
+    --day-weekend-text:#4d7b32;
+    --primary:#6b9e3d;
+    --primary-dark:#557f2f;
+}
+
+/* Голубая — синяя */
+body[data-theme="skyblue"]{
+    --weekday:#dff5ff;
+    --weekend:#c9d9ff;
+    --day-weekday-text:#2f89ad;
+    --day-weekend-text:#496ac0;
+    --primary:#4f7fe8;
+    --primary-dark:#385fc0;
+}
+
+/* Мятная — фисташковая */
+body[data-theme="mintpistachio"]{
+    --weekday:#d9f5eb;
+    --weekend:#e3f2c8;
+    --day-weekday-text:#398a72;
+    --day-weekend-text:#6f913c;
+    --primary:#52a989;
+    --primary-dark:#418a6e;
+}
+
+.day:not(.weekend){background:var(--weekday)}
+.day.weekend{background:var(--weekend)}
+.day:not(.weekend) .day-weekday{color:var(--day-weekday-text)}
+.day.weekend .day-weekday{color:var(--day-weekend-text)}
+
+/* Размер шрифта — только типографика, без изменения размеров карточек */
+body[data-font-size="small"] .logo{font-size:22px}
+body[data-font-size="small"] #weekTitle{font-size:13px}
+body[data-font-size="small"] .day-name{font-size:13px}
+body[data-font-size="small"] .task-text{font-size:13px}
+body[data-font-size="small"] .task-time{font-size:9px}
+body[data-font-size="small"] .task-menu button{font-size:13px}
+body[data-font-size="small"] .task-preview{font-size:14px}
+
+body[data-font-size="large"] .logo{font-size:30px}
+body[data-font-size="large"] #weekTitle{font-size:18px}
+body[data-font-size="large"] .day-name{font-size:16px}
+body[data-font-size="large"] .task-text{font-size:16px}
+body[data-font-size="large"] .task-time{font-size:13px}
+body[data-font-size="large"] .task-menu button{font-size:16px}
+body[data-font-size="large"] .task-preview{font-size:18px}
+
+body[data-font-size="xlarge"] .logo{font-size:33px}
+body[data-font-size="xlarge"] #weekTitle{font-size:20px}
+body[data-font-size="xlarge"] .day-name{font-size:18px}
+body[data-font-size="xlarge"] .task-text{font-size:18px}
+body[data-font-size="xlarge"] .task-time{font-size:14px}
+body[data-font-size="xlarge"] .task-menu button{font-size:17px}
+body[data-font-size="xlarge"] .task-preview{font-size:20px}
+
+.settings-select{
+    width:100%;
+    height:46px;
+    margin-top:10px;
+    padding:0 12px;
+    border:0;
+    border-radius:13px;
+    background:#fff;
+    color:var(--text);
+    font-family:inherit;
+    font-size:15px;
+    font-weight:700;
+}
+.settings-row-inner{padding:0 0 6px}
+body.dark .settings-select{background:#161d2c;color:var(--text)}
+body.dark[data-theme="blackwhite"]{--primary:#bdbdbd;--primary-dark:#999}
+
+/* Тёмный стиль всегда имеет приоритет над светлыми цветовыми темами */
+body.dark{
+    --weekday:#1d2435;
+    --weekend:#342331;
+    --text:#edf2ff;
+    --text2:#aeb9d0;
+    --primary:#8b5cf6;
+    --primary-dark:#7044d4;
+}
+body.dark .day:not(.weekend){background:var(--weekday);color:var(--text)}
+body.dark .day.weekend{background:var(--weekend);color:var(--text)}
+body.dark .day:not(.weekend) .day-weekday{color:#9ebcff}
+body.dark .day.weekend .day-weekday{color:#ff9faf}

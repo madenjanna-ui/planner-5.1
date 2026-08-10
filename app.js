@@ -23,12 +23,68 @@ document.getElementById("calendarBtn").onclick=openCalendar;document.getElementB
 // Служение
  document.getElementById("serviceBtn").onclick=()=>openService(localKey(currentDate).slice(0,7));
 // Настройки
-const settingsModal=document.getElementById("settingsModal");function openSettings(){document.getElementById("darkModeToggle").checked=!!appData.settings.darkMode;document.getElementById("accountEmail").value=appData.settings.email||"";document.getElementById("accountStatus").textContent=appData.settings.email?`Email сохранён: ${appData.settings.email}`:"Email не подключён";settingsModal.classList.remove("hidden")}
-document.getElementById("settingsBtn").onclick=openSettings;document.getElementById("settingsClose").onclick=()=>settingsModal.classList.add("hidden");document.getElementById("darkModeToggle").onchange=e=>{appData.settings.darkMode=e.target.checked;document.body.classList.toggle("dark",e.target.checked);saveStorage()};document.getElementById("saveEmailBtn").onclick=()=>{const email=document.getElementById("accountEmail").value.trim();if(email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){alert("Введите корректный email");return}appData.settings.email=email;saveStorage();document.getElementById("accountStatus").textContent=email?`Email сохранён: ${email}`:"Email не подключён"};
-document.getElementById("exportDataBtn").onclick=()=>{const blob=new Blob([JSON.stringify(appData,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`MaDenFlow_backup_${localKey(new Date())}.json`;a.click();URL.revokeObjectURL(a.href)};document.getElementById("importDataBtn").onclick=()=>document.getElementById("importDataFile").click();document.getElementById("importDataFile").onchange=e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!data||typeof data!=="object"||!data.tasks||!data.service)throw new Error();localStorage.setItem("MaDenFlow_data",JSON.stringify(data));location.reload()}catch(err){alert("Не удалось восстановить резервную копию.")}};reader.readAsText(file)};
+const settingsModal=document.getElementById("settingsModal");
+function applySettings(){
+  const settings=appData.settings||{};
+  document.body.classList.toggle("dark",!!settings.darkMode);
+  document.body.dataset.theme=settings.theme||"standard";
+  document.body.dataset.fontSize=settings.fontSize||"medium";
+}
+function updateNotificationStatus(){
+  const el=document.getElementById("notificationStatus");
+  if(!el)return;
+  if(!("Notification" in window)){el.textContent="Этот браузер не поддерживает уведомления.";return}
+  if(Notification.permission==="denied"){el.textContent="Уведомления запрещены в настройках браузера.";return}
+  el.textContent=appData.settings.notifications?(Notification.permission==="granted"?"Уведомления включены.":"Нужно разрешить уведомления браузеру."):"Уведомления выключены.";
+}
+function openSettings(){
+  document.getElementById("darkModeToggle").checked=!!appData.settings.darkMode;
+  document.getElementById("fontSizeSelect").value=appData.settings.fontSize||"medium";
+  document.getElementById("themeSelect").value=appData.settings.theme||"standard";
+  document.getElementById("notificationsToggle").checked=!!appData.settings.notifications;
+  document.getElementById("accountEmail").value=appData.settings.email||"";
+  document.getElementById("accountStatus").textContent=appData.settings.email?`Email сохранён: ${appData.settings.email}`:"Email не подключён";
+  updateNotificationStatus();
+  settingsModal.classList.remove("hidden");
+}
+document.getElementById("settingsBtn").onclick=openSettings;
+document.getElementById("settingsClose").onclick=()=>settingsModal.classList.add("hidden");
+document.getElementById("darkModeToggle").onchange=e=>{appData.settings.darkMode=e.target.checked;applySettings();saveStorage()};
+document.getElementById("fontSizeSelect").onchange=e=>{appData.settings.fontSize=e.target.value;applySettings();saveStorage()};
+document.getElementById("themeSelect").onchange=e=>{appData.settings.theme=e.target.value;applySettings();saveStorage()};
+document.getElementById("notificationsToggle").onchange=async e=>{
+  if(!e.target.checked){appData.settings.notifications=false;saveStorage();updateNotificationStatus();return}
+  if(!("Notification" in window)){e.target.checked=false;alert("Этот браузер не поддерживает уведомления.");return}
+  const permission=Notification.permission==="granted"?"granted":await Notification.requestPermission();
+  if(permission!=="granted"){e.target.checked=false;appData.settings.notifications=false;saveStorage();updateNotificationStatus();return}
+  appData.settings.notifications=true;saveStorage();updateNotificationStatus();checkTaskNotifications(true);
+};
+document.getElementById("saveEmailBtn").onclick=()=>{const email=document.getElementById("accountEmail").value.trim();if(email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){alert("Введите корректный email");return}appData.settings.email=email;saveStorage();document.getElementById("accountStatus").textContent=email?`Email сохранён: ${email}`:"Email не подключён"};
+document.getElementById("exportDataBtn").onclick=()=>{const blob=new Blob([JSON.stringify(appData,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`MaDenFlow_backup_${localKey(new Date())}.json`;a.click();URL.revokeObjectURL(a.href)};
+document.getElementById("importDataBtn").onclick=()=>document.getElementById("importDataFile").click();
+document.getElementById("importDataFile").onchange=e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!data||typeof data!=="object"||!data.tasks||!data.service)throw new Error();localStorage.setItem("MaDenFlow_data",JSON.stringify(data));location.reload()}catch(err){alert("Не удалось восстановить резервную копию.")}};reader.readAsText(file)};
+
+// Уведомления задач
+const notifiedTaskKeys=new Set();
+function checkTaskNotifications(force=false){
+  if(!appData.settings.notifications||!("Notification" in window)||Notification.permission!=="granted")return;
+  const now=new Date();
+  const today=localKey(now);
+  const hhmm=String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+  const list=getTasks(today)||[];
+  list.forEach((task,index)=>{
+    if(!task.time||task.done)return;
+    const key=today+"|"+index+"|"+task.time+"|"+task.text;
+    if(task.time===hhmm&&!notifiedTaskKeys.has(key)){
+      notifiedTaskKeys.add(key);
+      new Notification("MaDenFlow",{body:`${task.time} — ${task.text}`,icon:"icons/icon-192.png",tag:key});
+    }
+  });
+}
+setInterval(()=>checkTaskNotifications(),20000);
+
 // Автоскрытие: тач/скролл не раскрывают шапку. Ручка снизу раскрывает.
 let uiTimer;const body=document.body,topHandle=document.getElementById("topHandle");function hideUI(){body.classList.add("ui-hidden")}function resetUITimer(){clearTimeout(uiTimer);uiTimer=setTimeout(hideUI,5000)}function showUI(){body.classList.remove("ui-hidden");clearTimeout(uiTimer);uiTimer=setTimeout(hideUI,5000)}topHandle.onclick=showUI;document.addEventListener("pointerdown",e=>{if(e.target.closest("button,input,.modal,.task-menu"))return;resetUITimer()},{passive:true});
 // старт
-document.body.classList.add("app-enter");setTimeout(()=>document.body.classList.add("app-ready"),650);
-if(appData.settings.darkMode)document.body.classList.add("dark");renderWeek();resetUITimer();
+applySettings();document.body.classList.add("app-enter");setTimeout(()=>document.body.classList.add("app-ready"),650);renderWeek();resetUITimer();checkTaskNotifications(true);
 window.renderWeek=renderWeek;window.updateDayStatus=updateDayStatus;window.changeWeek=changeWeek;

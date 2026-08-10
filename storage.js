@@ -1,6 +1,6 @@
 // MaDenFlow Storage 5.0
 const STORAGE_KEY="MaDenFlow_data";
-const defaultData={tasks:{},service:{},recurrences:[],settings:{darkMode:false,email:""}};
+const defaultData={tasks:{},service:{},recurrences:[],settings:{darkMode:false,email:"",fontSize:"medium",theme:"standard",notifications:false}};
 let appData=loadStorage();
 window.tasks=appData.tasks; window.service=appData.service;
 function loadStorage(){try{const raw=localStorage.getItem(STORAGE_KEY);const data=raw?JSON.parse(raw):structuredClone(defaultData);return {...structuredClone(defaultData),...data,tasks:data.tasks||{},service:data.service||{},recurrences:data.recurrences||[],settings:{...defaultData.settings,...(data.settings||{})}}}catch(e){return structuredClone(defaultData)}}

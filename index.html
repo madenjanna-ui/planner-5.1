@@ -67,6 +67,30 @@
 <div id="settingsModal" class="modal hidden"><div class="modal-content settings-window">
   <h3>⚙️ Настройки</h3>
   <label class="settings-row"><span>🌙 Тёмный стиль</span><input type="checkbox" id="darkModeToggle"></label>
+  <div class="settings-section settings-controls">
+    <strong>🔤 Размер шрифта</strong>
+    <select id="fontSizeSelect" class="settings-select">
+      <option value="small">Маленький</option>
+      <option value="medium">Стандартный</option>
+      <option value="large">Большой</option>
+      <option value="xlarge">Очень большой</option>
+    </select>
+  </div>
+  <div class="settings-section settings-controls">
+    <strong>🎨 Цветовая тема</strong>
+    <select id="themeSelect" class="settings-select">
+      <option value="standard">Синяя — розовая</option>
+      <option value="blackwhite">Чёрная — белая</option>
+      <option value="yellowgreen">Жёлтая — зелёная</option>
+      <option value="skyblue">Голубая — синяя</option>
+      <option value="mintpistachio">Мятная — фисташковая</option>
+    </select>
+  </div>
+  <div class="settings-section settings-controls">
+    <label class="settings-row settings-row-inner"><span>🔔 Уведомления по задачам</span><input type="checkbox" id="notificationsToggle"></label>
+    <p>Если у задачи указано время, MaDenFlow напомнит о ней в это время, пока приложение открыто.</p>
+    <div id="notificationStatus" class="account-status"></div>
+  </div>
   <div class="settings-section"><strong>💾 Резервная копия</strong><p>Сохраните все задачи и записи в файл или восстановите их позже.</p><div class="settings-buttons"><button id="exportDataBtn">Экспорт</button><button id="importDataBtn">Восстановить</button></div><input id="importDataFile" type="file" accept="application/json" class="hidden"></div>
   <div class="settings-section"><strong>☁️ Сохранение по email</strong><p>Профиль email можно сохранить в настройках. Для настоящей синхронизации между устройствами нужен подключённый облачный сервер.</p><input id="accountEmail" type="email" placeholder="your@email.com"><button id="saveEmailBtn" class="wide-btn">Сохранить email</button><div id="accountStatus" class="account-status"></div></div>
   <button id="settingsClose" class="secondary wide-btn">Закрыть</button>
