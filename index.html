@@ -32,6 +32,7 @@
   <h3 id="taskModalTitle">Новая задача</h3>
   <input id="newTaskInput" placeholder="Введите задачу...">
   <label class="task-time-label">🕒 Время <input id="newTaskTime" type="time"></label>
+  <div id="chainEditHint" class="chain-edit-hint hidden">🔁 Изменения будут применены ко всей цепочке повторяющихся задач.</div>
   <div id="recurrenceBox" class="recurrence-box">
     <label class="switch-row"><input type="checkbox" id="repeatTask"><span>Повторять</span></label>
     <div id="repeatOptions" class="repeat-options hidden">
@@ -74,6 +75,13 @@
       <option value="medium">Стандартный</option>
       <option value="large">Большой</option>
       <option value="xlarge">Очень большой</option>
+    </select>
+  </div>
+  <div class="settings-section settings-controls">
+    <strong>📋 Вид задач</strong>
+    <select id="taskViewSelect" class="settings-select">
+      <option value="cards">Карточки</option>
+      <option value="list">Список дел</option>
     </select>
   </div>
   <div class="settings-section settings-controls">

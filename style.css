@@ -1872,3 +1872,350 @@ body.dark .service-total > div:last-child,
 body.dark .service-grand-total > div:last-child{
     color:#5b3db5 !important;
 }
+
+/* =====================================================
+   MaDenFlow 5.4 — повторяющиеся цепочки / список задач
+===================================================== */
+.chain-edit-hint{
+    margin:10px 0 12px;
+    padding:10px 12px;
+    border-radius:12px;
+    background:#f2ebff;
+    color:#5b3db5;
+    font-size:13px;
+    font-weight:800;
+    line-height:1.35;
+}
+.task-menu-label{
+    padding:10px 20px 4px;
+    color:var(--text2);
+    font-size:12px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+.task-color-actions{display:grid;grid-template-columns:1fr;gap:2px}
+.task-color-actions button{padding:11px 20px;font-size:14px}
+
+/* =====================================================
+   Список дел — стабильная высота дней
+   1–2 задачи: одна колонка
+   3+ задач: две колонки
+   много задач: уменьшаем строки, но высота недели не меняется
+===================================================== */
+
+body[data-task-view="list"] .day.list-day{
+    flex:1 1 0 !important;
+    min-height:0;
+}
+
+body[data-task-view="list"] .day.list-day .day-content{
+    min-height:0;
+    overflow:hidden;
+}
+
+body[data-task-view="list"] .day.list-day .tasks{
+    min-height:0;
+    height:100%;
+    overflow:hidden;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:0 !important;
+}
+
+/* 3 и более — две колонки */
+body[data-task-view="list"] .day.list-day.list-two-columns .tasks{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    grid-auto-flow:row;
+    grid-auto-rows:minmax(0,1fr);
+    column-gap:8px;
+    row-gap:0;
+    align-content:stretch;
+}
+
+/* 5 и более задач — три колонки */
+body[data-task-view="list"] .day.list-day.list-three-columns .tasks{
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    grid-auto-flow:row;
+    grid-auto-rows:minmax(0,1fr);
+    column-gap:6px;
+    row-gap:0;
+    align-content:stretch;
+}
+
+/* Сама строка списка */
+body[data-task-view="list"] .task,
+body[data-task-view="list"] .task.grid-task{
+    width:100%;
+    min-width:0;
+    min-height:0;
+    height:100%;
+    padding:2px 5px 2px 7px;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+    border-bottom:1px solid rgba(120,140,170,.18);
+    transform:none;
+    overflow:hidden;
+}
+
+/* Убираем hover-прыжки в списке */
+body[data-task-view="list"] .task:hover{
+    transform:none;
+    box-shadow:none;
+}
+
+/* Цветная полоска остаётся */
+body[data-task-view="list"] .task::before{
+    width:3px;
+    border-radius:3px;
+}
+
+/* Содержимое строки */
+body[data-task-view="list"] .task-text-wrap{
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    overflow:hidden;
+}
+
+body[data-task-view="list"] .task-text{
+    min-width:0;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:13px;
+    line-height:1;
+    font-weight:800;
+}
+
+body[data-task-view="list"] .task-time{
+    flex:0 0 auto;
+    font-size:10px;
+    min-width:36px;
+    line-height:1;
+}
+
+body[data-task-view="list"] .task-check{
+    width:16px;
+    height:16px;
+    margin-right:5px;
+}
+
+body[data-task-view="list"] .checkmark{
+    width:16px;
+    height:16px;
+    border-radius:4px;
+}
+
+/* 5+ задач — компактнее */
+body[data-task-view="list"] .day.list-dense .task{
+    padding-top:1px;
+    padding-bottom:1px;
+}
+
+body[data-task-view="list"] .day.list-dense .task-text{
+    font-size:11px;
+}
+
+body[data-task-view="list"] .day.list-dense .task-time{
+    font-size:9px;
+    min-width:32px;
+}
+
+body[data-task-view="list"] .day.list-dense .task-check,
+body[data-task-view="list"] .day.list-dense .checkmark{
+    width:14px;
+    height:14px;
+}
+
+body[data-task-view="list"] .day.list-dense .task-check{
+    margin-right:4px;
+}
+
+/* 9+ задач — максимально компактный режим */
+body[data-task-view="list"] .day.list-ultra .task{
+    padding-left:5px;
+    padding-right:3px;
+}
+
+body[data-task-view="list"] .day.list-ultra .task-text{
+    font-size:9px;
+}
+
+body[data-task-view="list"] .day.list-ultra .task-time{
+    font-size:8px;
+    min-width:29px;
+}
+
+body[data-task-view="list"] .day.list-ultra .task-check,
+body[data-task-view="list"] .day.list-ultra .checkmark{
+    width:12px;
+    height:12px;
+}
+
+body[data-task-view="list"] .day.list-ultra .task-check{
+    margin-right:3px;
+}
+body[data-task-view="list"] .task.list-green{--list-color:#42a866}
+body[data-task-view="list"] .task.list-red{--list-color:#e34d66}
+body[data-task-view="list"] .task.list-black{--list-color:#222}
+body[data-task-view="list"] .task.list-green::before,
+body[data-task-view="list"] .task.list-red::before,
+body[data-task-view="list"] .task.list-black::before{background:var(--list-color)}
+body[data-task-view="list"] .task.list-green .task-text{color:#2f8f57}
+body[data-task-view="list"] .task.list-red .task-text{color:#d73f5a}
+body[data-task-view="list"] .task.list-black .task-text{color:#222}
+body.dark[data-task-view="list"] .task.list-green .task-text{color:#75d79a}
+body.dark[data-task-view="list"] .task.list-red .task-text{color:#ff8195}
+body.dark[data-task-view="list"] .task.list-black .task-text{color:#f0f0f0}
+body.dark[data-task-view="list"] .task{border-bottom-color:rgba(255,255,255,.12)}
+body.dark .chain-edit-hint{background:#30234b;color:#cdb8ff}
+
+/* Поля времени/даты в окне служения — строго внутри формы */
+.service-add-window{width:min(430px,100%);max-width:100%;overflow:hidden}
+.service-add-window label{width:100%;display:block}
+.service-add-window input[type="date"],
+.service-add-window input[type="number"],
+.service-add-window input[type="time"]{
+    display:block;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0;
+    height:46px;
+    margin:0 !important;
+    padding:0 12px !important;
+    border:0;
+    border-radius:13px;
+    background:#f5f8ff;
+    color:var(--text);
+    font:700 16px/46px inherit;
+    box-sizing:border-box;
+    -webkit-appearance:none;
+    appearance:none;
+}
+.service-add-window input[type="date"]::-webkit-date-and-time-value{text-align:left}
+.service-add-window input[type="number"]{-moz-appearance:textfield}
+.service-add-window input[type="number"]::-webkit-inner-spin-button,
+.service-add-window input[type="number"]::-webkit-outer-spin-button{margin:0}
+body.dark .service-add-window input{background:#161d2c;color:var(--text)}
+
+/* Время задачи — не выходит за границы модального окна */
+.task-time-label{width:100%;box-sizing:border-box}
+.task-time-label input[type="time"]{
+    display:block;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0;
+    height:46px;
+    margin:8px 0 0 !important;
+    padding:0 12px !important;
+    box-sizing:border-box;
+    border:0;
+    border-radius:13px;
+    background:#f4f8ff;
+    color:var(--text);
+    font:700 16px/46px inherit;
+    -webkit-appearance:none;
+    appearance:none;
+}
+body.dark .task-time-label input[type="time"]{background:#161d2c;color:var(--text)}
+
+/* Список дел: высота дня адаптируется к количеству задач.
+   Никакого внутреннего скролла и выхода строк за границы дня. */
+body[data-task-view="list"] #planner .day.list-day{
+    overflow:hidden;
+    min-height:0;
+}
+body[data-task-view="list"] #planner .day.list-day .day-content{
+    overflow:hidden;
+    min-height:0;
+}
+body[data-task-view="list"] #planner .day.list-day .tasks{
+    overflow:hidden;
+    min-height:0;
+    flex:1 1 auto;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:flex-start;
+}
+body[data-task-view="list"] #planner .day.list-day .task{
+    flex:0 1 auto;
+    min-height:0;
+    height:auto;
+    padding:3px 7px 3px 9px;
+    line-height:1.05;
+}
+body[data-task-view="list"] #planner .day.list-day .task-text-wrap{
+    min-width:0;
+    overflow:hidden;
+}
+body[data-task-view="list"] #planner .day.list-day .task-text{
+    min-width:0;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+body[data-task-view="list"] #planner .day.list-day .task-check,
+body[data-task-view="list"] #planner .day.list-day .checkmark{
+    width:16px;
+    height:16px;
+}
+body[data-task-view="list"] #planner .day.list-day .task-check{margin-right:6px}
+@media(max-width:640px){
+    body[data-task-view="list"] #planner .day.list-day .task{
+        padding-top:2px;
+        padding-bottom:2px;
+    }
+    body[data-task-view="list"] #planner .day.list-day .task-text{font-size:12px}
+    body[data-task-view="list"] #planner .day.list-day .task-time{font-size:10px;min-width:36px}
+}
+
+/* MaDenFlow 5.4.3 — список не меняет высоту дней */
+body[data-task-view="list"] #planner{
+    align-items:stretch;
+}
+
+/* MaDenFlow 5.4.4 — компактный режим трёх колонок */
+body[data-task-view="list"] .day.list-three-columns .task-text{font-size:12px;}
+body[data-task-view="list"] .day.list-three-columns .task-time{font-size:9px;min-width:31px;}
+body[data-task-view="list"] .day.list-three-columns .task-check,
+body[data-task-view="list"] .day.list-three-columns .checkmark{width:14px;height:14px;}
+body[data-task-view="list"] .day.list-three-columns .task-check{margin-right:4px;}
+
+/* MaDenFlow 5.4.5 — финальное правило списка: 5+ задач = 3 колонки.
+   Размещено в самом конце CSS, чтобы перекрыть базовый flex-режим списка. */
+body[data-task-view="list"] #planner .day.list-day.list-three-columns .tasks{
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    grid-template-rows:repeat(3,minmax(0,1fr)) !important;
+    grid-auto-flow:row !important;
+    grid-auto-rows:minmax(0,1fr) !important;
+    column-gap:6px !important;
+    row-gap:0 !important;
+    align-content:stretch !important;
+    justify-content:stretch !important;
+    height:100% !important;
+    overflow:hidden !important;
+}
+
+body[data-task-view="list"] #planner .day.list-day.list-three-columns .task{
+    min-width:0 !important;
+    width:100% !important;
+    height:100% !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+    padding:2px 4px !important;
+}
+
+body[data-task-view="list"] #planner .day.list-day.list-three-columns .task-text{
+    font-size:11px !important;
+}
+
+body[data-task-view="list"] #planner .day.list-day.list-three-columns .task-time{
+    font-size:8px !important;
+    min-width:29px !important;
+}

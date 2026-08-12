@@ -5,13 +5,29 @@ const weekDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 let currentDate=new Date(),selectedDate=null,calendarCursor=new Date();
 function getMonday(date){const d=new Date(date);let day=d.getDay()||7;d.setDate(d.getDate()-day+1);return d}
 function localKey(d){return localDateKey(d)}
-function renderWeek(){planner.innerHTML="";const monday=getMonday(currentDate),sunday=new Date(monday);sunday.setDate(monday.getDate()+6);weekTitle.textContent=`${monday.toLocaleDateString("ru-RU")} — ${sunday.toLocaleDateString("ru-RU")}`;let maxTasks=0;for(let i=0;i<7;i++){const date=new Date(monday);date.setDate(monday.getDate()+i);maxTasks=Math.max(maxTasks,getTasks(localKey(date)).length);const key=localKey(date);const section=document.createElement("section");section.className="day"+(date.getDay()===0||date.getDay()===6?" weekend":"");if(date.toDateString()===new Date().toDateString())section.classList.add("today");section.dataset.date=key;section.innerHTML=`<div class="day-title"><div class="day-name"><span class="day-weekday">${weekDays[i]}</span> ${date.getDate()} <span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span> <span class="day-status" data-date="${key}">⚪</span>${date.toDateString()===new Date().toDateString()?" ⭐":""}</div><button class="add-task-day" data-date="${key}">＋</button></div><div class="day-content"><div class="tasks"></div></div>`;planner.appendChild(section);loadTasks(key,section.querySelector(".tasks"))}planner.classList.remove("week-normal","week-compact","week-ultra");planner.classList.add(maxTasks>=7?"week-ultra":maxTasks>=4?"week-compact":"week-normal");updateDayStatus();activateDays();activateAddButtons()}
+function renderWeek(){planner.innerHTML="";const monday=getMonday(currentDate),sunday=new Date(monday);sunday.setDate(monday.getDate()+6);weekTitle.textContent=`${monday.toLocaleDateString("ru-RU")} — ${sunday.toLocaleDateString("ru-RU")}`;let maxTasks=0;const listMode=(appData.settings||{}).taskView==="list";const sections=[];for(let i=0;i<7;i++){const date=new Date(monday);date.setDate(monday.getDate()+i);const key=localKey(date);const count=getTasks(key).length;maxTasks=Math.max(maxTasks,count);const section=document.createElement("section");section.className="day"+(date.getDay()===0||date.getDay()===6?" weekend":"");if(date.toDateString()===new Date().toDateString())section.classList.add("today");section.dataset.date=key;section.dataset.taskCount=count;section.innerHTML=`<div class="day-title"><div class="day-name"><span class="day-weekday">${weekDays[i]}</span> ${date.getDate()} <span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span> <span class="day-status" data-date="${key}">⚪</span>${date.toDateString()===new Date().toDateString()?" ⭐":""}</div><button class="add-task-day" data-date="${key}">＋</button></div><div class="day-content"><div class="tasks"></div></div>`;planner.appendChild(section);loadTasks(key,section.querySelector(".tasks"));sections.push({section,count})}planner.classList.remove("week-normal","week-compact","week-ultra");planner.classList.add(maxTasks>=7?"week-ultra":maxTasks>=4?"week-compact":"week-normal");if(listMode){
+sections.forEach(({section,count})=>{
+  section.classList.add("list-day");
+  section.style.flex="1 1 0";
+  section.style.setProperty("--list-count",count);
+  section.classList.toggle("list-two-columns",count>=3 && count<=4);
+  section.classList.toggle("list-three-columns",count>=5);
+  section.classList.toggle("list-dense",count>=6);
+  section.classList.toggle("list-ultra",count>=9);
+})
+}else{
+sections.forEach(({section})=>{
+  section.classList.remove("list-day","list-two-columns","list-dense","list-ultra");
+  section.style.flex="";
+  section.style.removeProperty("--list-count");
+})
+}updateDayStatus();activateDays();activateAddButtons()}
 function activateDays(){document.querySelectorAll(".day-title").forEach(title=>title.onclick=e=>{if(e.target.closest(".add-task-day"))return;const day=title.closest(".day");selectedDate=day.dataset.date;document.querySelectorAll(".day").forEach(x=>x.classList.remove("selected-day"));day.classList.add("selected-day")})}
 function activateAddButtons(){document.querySelectorAll(".add-task-day").forEach(btn=>btn.onclick=e=>{e.stopPropagation();selectedDate=btn.dataset.date;openTaskModal()})}
 function openTaskModal(){const modal=document.getElementById("taskModal");modal.dataset.editDate="";modal.dataset.editIndex="";document.getElementById("taskModalTitle").textContent="Новая задача";document.getElementById("newTaskInput").value="";document.getElementById("newTaskTime").value="";document.getElementById("repeatTask").checked=false;document.getElementById("repeatOptions").classList.add("hidden");document.getElementById("recurrenceBox").classList.remove("hidden");const d=new Date(selectedDate+"T12:00:00");const until=new Date(d);until.setFullYear(until.getFullYear()+1);document.getElementById("repeatUntil").value=localKey(until);modal.classList.remove("hidden");document.getElementById("newTaskInput").focus()}
 document.getElementById("repeatTask").onchange=e=>document.getElementById("repeatOptions").classList.toggle("hidden",!e.target.checked);
-document.getElementById("saveTaskBtn").onclick=()=>{if(!selectedDate)return;const modal=document.getElementById("taskModal"),input=document.getElementById("newTaskInput"),time=document.getElementById("newTaskTime"),text=input.value.trim();if(!text)return;const editDate=modal.dataset.editDate,editIndex=modal.dataset.editIndex;if(editDate!==""&&editIndex!==""){editTask(editDate,Number(editIndex),text,time.value);modal.classList.add("hidden");renderWeek();return}if(document.getElementById("repeatTask").checked)addRecurringTask(selectedDate,text,document.getElementById("repeatType").value,document.getElementById("repeatUntil").value,time.value);else addTask(selectedDate,text,{time:time.value});modal.classList.add("hidden");renderWeek()};
-document.getElementById("cancelTaskBtn").onclick=()=>{const m=document.getElementById("taskModal");m.classList.add("hidden");m.dataset.editDate="";m.dataset.editIndex=""};
+document.getElementById("saveTaskBtn").onclick=()=>{if(!selectedDate)return;const modal=document.getElementById("taskModal"),input=document.getElementById("newTaskInput"),time=document.getElementById("newTaskTime"),text=input.value.trim();if(!text)return;const editDate=modal.dataset.editDate,editIndex=modal.dataset.editIndex,editChain=modal.dataset.editChain==="1";if(editDate!==""&&editIndex!==""){const task=getTasks(editDate)[Number(editIndex)];if(editChain&&task&&task.recurrenceId)editRecurringChain(task.recurrenceId,text,time.value);else editTask(editDate,Number(editIndex),text,time.value);modal.classList.add("hidden");modal.dataset.editDate="";modal.dataset.editIndex="";modal.dataset.editChain="0";renderWeek();return}if(document.getElementById("repeatTask").checked)addRecurringTask(selectedDate,text,document.getElementById("repeatType").value,document.getElementById("repeatUntil").value,time.value);else addTask(selectedDate,text,{time:time.value});modal.classList.add("hidden");renderWeek()};
+document.getElementById("cancelTaskBtn").onclick=()=>{const m=document.getElementById("taskModal");m.classList.add("hidden");m.dataset.editDate="";m.dataset.editIndex="";m.dataset.editChain="0"};
 document.getElementById("prevWeek").onclick=()=>changeWeek(-1);document.getElementById("nextWeek").onclick=()=>changeWeek(1);document.getElementById("todayBtn").onclick=()=>{currentDate=new Date();renderWeek()};
 function changeWeek(n){currentDate.setDate(currentDate.getDate()+n*7);renderWeek()}
 let touchStartX=0,touchStartY=0;planner.addEventListener("touchstart",e=>{touchStartX=e.changedTouches[0].screenX;touchStartY=e.changedTouches[0].screenY},{passive:true});planner.addEventListener("touchend",e=>{const dx=e.changedTouches[0].screenX-touchStartX,dy=e.changedTouches[0].screenY-touchStartY;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.2)changeWeek(dx<0?1:-1);resetUITimer()},{passive:true});
@@ -29,6 +45,7 @@ function applySettings(){
   document.body.classList.toggle("dark",!!settings.darkMode);
   document.body.dataset.theme=settings.theme||"standard";
   document.body.dataset.fontSize=settings.fontSize||"medium";
+  document.body.dataset.taskView=settings.taskView||"cards";
 }
 function updateNotificationStatus(){
   const el=document.getElementById("notificationStatus");
@@ -41,6 +58,7 @@ function openSettings(){
   document.getElementById("darkModeToggle").checked=!!appData.settings.darkMode;
   document.getElementById("fontSizeSelect").value=appData.settings.fontSize||"medium";
   document.getElementById("themeSelect").value=appData.settings.theme||"standard";
+  document.getElementById("taskViewSelect").value=appData.settings.taskView||"cards";
   document.getElementById("notificationsToggle").checked=!!appData.settings.notifications;
   document.getElementById("accountEmail").value=appData.settings.email||"";
   document.getElementById("accountStatus").textContent=appData.settings.email?`Email сохранён: ${appData.settings.email}`:"Email не подключён";
@@ -52,6 +70,7 @@ document.getElementById("settingsClose").onclick=()=>settingsModal.classList.add
 document.getElementById("darkModeToggle").onchange=e=>{appData.settings.darkMode=e.target.checked;applySettings();saveStorage()};
 document.getElementById("fontSizeSelect").onchange=e=>{appData.settings.fontSize=e.target.value;applySettings();saveStorage()};
 document.getElementById("themeSelect").onchange=e=>{appData.settings.theme=e.target.value;applySettings();saveStorage()};
+document.getElementById("taskViewSelect").onchange=e=>{appData.settings.taskView=e.target.value;applySettings();saveStorage();renderWeek()};
 document.getElementById("notificationsToggle").onchange=async e=>{
   if(!e.target.checked){appData.settings.notifications=false;saveStorage();updateNotificationStatus();return}
   if(!("Notification" in window)){e.target.checked=false;alert("Этот браузер не поддерживает уведомления.");return}
