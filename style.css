@@ -2219,3 +2219,63 @@ body[data-task-view="list"] #planner .day.list-day.list-three-columns .task-time
     font-size:8px !important;
     min-width:29px !important;
 }
+
+
+/* =====================================================
+   MaDenFlow 5.4.6
+   Увеличенный шрифт режима «Список дел»
+===================================================== */
+
+/* Обычный список: читаемее */
+body[data-task-view="list"] .day.list-day .task-text{
+    font-size:15px !important;
+    line-height:1.15;
+    font-weight:800;
+}
+
+body[data-task-view="list"] .day.list-day .task-time{
+    font-size:11px !important;
+    min-width:40px;
+}
+
+/* 3–4 задачи: две колонки, немного компактнее */
+body[data-task-view="list"] .day.list-day.list-two-columns .task-text{
+    font-size:14px !important;
+}
+
+body[data-task-view="list"] .day.list-day.list-two-columns .task-time{
+    font-size:10px !important;
+    min-width:36px;
+}
+
+/* 5+ задач: три колонки, но шрифт всё равно заметно крупнее прежнего */
+body[data-task-view="list"] .day.list-day.list-three-columns .task-text{
+    font-size:13px !important;
+    line-height:1.1;
+}
+
+body[data-task-view="list"] .day.list-day.list-three-columns .task-time{
+    font-size:10px !important;
+    min-width:32px;
+}
+
+/* 9+ задач: максимально плотный режим */
+body[data-task-view="list"] .day.list-day.list-ultra .task-text{
+    font-size:12px !important;
+}
+
+body[data-task-view="list"] .day.list-day.list-ultra .task-time{
+    font-size:9px !important;
+    min-width:30px;
+}
+
+/* На маленьком экране чуть уменьшаем, но сохраняем читаемость */
+@media(max-width:640px){
+    body[data-task-view="list"] .day.list-day .task-text{
+        font-size:14px !important;
+    }
+
+    body[data-task-view="list"] .day.list-day.list-three-columns .task-text{
+        font-size:12px !important;
+    }
+}
