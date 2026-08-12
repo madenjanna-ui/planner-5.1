@@ -45,6 +45,9 @@ function applySettings(){
   document.body.classList.toggle("dark",!!settings.darkMode);
   document.body.dataset.theme=settings.theme||"standard";
   document.body.dataset.fontSize=settings.fontSize||"medium";
+  document.body.dataset.plannerFontSize=settings.plannerFontSize||settings.fontSize||"medium";
+  document.body.dataset.taskFontSize=settings.taskFontSize||settings.fontSize||"medium";
+  document.body.dataset.gradient=settings.gradientDays?"on":"off";
   document.body.dataset.taskView=settings.taskView||"cards";
 }
 function updateNotificationStatus(){
@@ -56,8 +59,10 @@ function updateNotificationStatus(){
 }
 function openSettings(){
   document.getElementById("darkModeToggle").checked=!!appData.settings.darkMode;
-  document.getElementById("fontSizeSelect").value=appData.settings.fontSize||"medium";
+  document.getElementById("plannerFontSizeSelect").value=appData.settings.plannerFontSize||appData.settings.fontSize||"medium";
+  document.getElementById("taskFontSizeSelect").value=appData.settings.taskFontSize||appData.settings.fontSize||"medium";
   document.getElementById("themeSelect").value=appData.settings.theme||"standard";
+  document.getElementById("gradientDaysToggle").checked=!!appData.settings.gradientDays;
   document.getElementById("taskViewSelect").value=appData.settings.taskView||"cards";
   document.getElementById("notificationsToggle").checked=!!appData.settings.notifications;
   document.getElementById("accountEmail").value=appData.settings.email||"";
@@ -68,7 +73,9 @@ function openSettings(){
 document.getElementById("settingsBtn").onclick=openSettings;
 document.getElementById("settingsClose").onclick=()=>settingsModal.classList.add("hidden");
 document.getElementById("darkModeToggle").onchange=e=>{appData.settings.darkMode=e.target.checked;applySettings();saveStorage()};
-document.getElementById("fontSizeSelect").onchange=e=>{appData.settings.fontSize=e.target.value;applySettings();saveStorage()};
+document.getElementById("plannerFontSizeSelect").onchange=e=>{appData.settings.plannerFontSize=e.target.value;applySettings();saveStorage()};
+document.getElementById("taskFontSizeSelect").onchange=e=>{appData.settings.taskFontSize=e.target.value;appData.settings.fontSize=e.target.value;applySettings();saveStorage();renderWeek()};
+document.getElementById("gradientDaysToggle").onchange=e=>{appData.settings.gradientDays=e.target.checked;applySettings();saveStorage()};
 document.getElementById("themeSelect").onchange=e=>{appData.settings.theme=e.target.value;applySettings();saveStorage()};
 document.getElementById("taskViewSelect").onchange=e=>{appData.settings.taskView=e.target.value;applySettings();saveStorage();renderWeek()};
 document.getElementById("notificationsToggle").onchange=async e=>{

@@ -1,9 +1,9 @@
 // MaDenFlow Storage 5.4
 const STORAGE_KEY="MaDenFlow_data";
-const defaultData={tasks:{},service:{},recurrences:[],settings:{darkMode:false,email:"",fontSize:"medium",theme:"standard",notifications:false,taskView:"cards"}};
+const defaultData={tasks:{},service:{},recurrences:[],settings:{darkMode:false,email:"",fontSize:"medium",plannerFontSize:"medium",taskFontSize:"medium",theme:"standard",gradientDays:false,notifications:false,taskView:"cards"},visits:[]};
 let appData=loadStorage();
 window.tasks=appData.tasks; window.service=appData.service;
-function loadStorage(){try{const raw=localStorage.getItem(STORAGE_KEY);const data=raw?JSON.parse(raw):structuredClone(defaultData);return {...structuredClone(defaultData),...data,tasks:data.tasks||{},service:data.service||{},recurrences:data.recurrences||[],settings:{...defaultData.settings,...(data.settings||{})}}}catch(e){return structuredClone(defaultData)}}
+function loadStorage(){try{const raw=localStorage.getItem(STORAGE_KEY);const data=raw?JSON.parse(raw):structuredClone(defaultData);return {...structuredClone(defaultData),...data,tasks:data.tasks||{},service:data.service||{},recurrences:data.recurrences||[],visits:data.visits||[],settings:{...defaultData.settings,...(data.settings||{})}}}catch(e){return structuredClone(defaultData)}}
 function saveStorage(){localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));if(typeof cloudSave==='function')cloudSave()}
 function saveTasks(){saveStorage()}
 function getTasks(date){if(!tasks[date])tasks[date]=[];return sortTasks(tasks[date])}

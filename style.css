@@ -2279,3 +2279,205 @@ body[data-task-view="list"] .day.list-day.list-ultra .task-time{
         font-size:12px !important;
     }
 }
+
+/* =====================================================
+   MaDenFlow 5.4.7 — Размер шрифта ДЕЛ
+   Настройка в ⚙️ влияет только на текст задач.
+===================================================== */
+body[data-font-size="small"] .task-text{font-size:13px !important}
+body[data-font-size="medium"] .task-text{font-size:15px !important}
+body[data-font-size="large"] .task-text{font-size:17px !important}
+body[data-font-size="xlarge"] .task-text{font-size:19px !important}
+body[data-font-size="large"] .day-name,
+body[data-font-size="xlarge"] .day-name{font-size:18px}
+body[data-font-size="xlarge"] .day-name{font-size:19px}
+
+/* Повторные посещения */
+.visits-window{width:min(560px,100%);max-height:calc(100dvh - 24px);overflow-y:auto}
+.visits-list{display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow-y:auto;margin:4px 0 14px}
+.visit-note{position:relative;padding:14px 44px 14px 16px;border-radius:16px;border-left:6px solid;box-shadow:0 6px 18px rgba(20,40,80,.08);background:#fff}
+.visit-note.green{border-left-color:#4dbb74;background:#effbf3}
+.visit-note.yellow{border-left-color:#e7b83f;background:#fff9df}
+.visit-note.mint{border-left-color:#62cdb1;background:#eafff8}
+.visit-note.red{border-left-color:#ea5c75;background:#fff0f3}
+.visit-note-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:7px}
+.visit-note-head strong{font-size:16px}.visit-note-head span{font-size:12px;color:var(--text2)}
+.visit-note-text{font-size:14px;line-height:1.4;white-space:normal;word-break:break-word}
+.visit-note-actions{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:3px}
+.visit-note-actions button{border:0;background:transparent;width:30px;height:30px;border-radius:9px;cursor:pointer}
+.visit-note-actions button:hover{background:rgba(79,140,255,.1)}
+.visit-editor-window{width:min(500px,100%);max-height:calc(100dvh - 24px);overflow-y:auto}
+.visit-editor-window label{display:block;font-weight:700;margin:10px 0}
+.visit-editor-window input,.visit-editor-window textarea,.visit-editor-window select{width:100%;margin-top:7px;padding:12px 14px;border:0;border-radius:12px;background:#f4f8ff;font:inherit;box-sizing:border-box}
+.visit-editor-window textarea{resize:vertical;min-height:120px}
+.visits-empty{text-align:center;padding:30px 16px;color:var(--text2);font-weight:700}
+@media(max-width:640px){
+ .visits-window,.visit-editor-window{max-height:calc(100dvh - 16px);padding:18px}
+ .visits-list{max-height:52vh}
+ .visit-note-text{font-size:13px}
+}
+
+
+/* =====================================================
+   MaDenFlow 5.4.8 — отдельные шрифты и новые темы
+===================================================== */
+
+/* Ежедневник: только названия/заголовки дней */
+body[data-planner-font-size="small"] .day-name{font-size:13px !important}
+body[data-planner-font-size="medium"] .day-name{font-size:15px !important}
+body[data-planner-font-size="large"] .day-name{font-size:18px !important}
+body[data-planner-font-size="xlarge"] .day-name{font-size:20px !important}
+
+/* Размер текста дел — отдельно от ежедневника */
+body[data-task-font-size="small"]{--task-font:14px;--task-font-list:15px;--task-font-list-2:14px;--task-font-list-3:13px}
+body[data-task-font-size="medium"]{--task-font:16px;--task-font-list:18px;--task-font-list-2:17px;--task-font-list-3:16px}
+body[data-task-font-size="large"]{--task-font:19px;--task-font-list:21px;--task-font-list-2:19px;--task-font-list-3:18px}
+body[data-task-font-size="xlarge"]{--task-font:22px;--task-font-list:24px;--task-font-list-2:22px;--task-font-list-3:20px}
+
+body[data-task-font-size] .task-text{font-size:var(--task-font) !important}
+body[data-task-font-size] .task-time{font-size:calc(var(--task-font) - 3px) !important}
+body[data-task-font-size] .task-menu button{font-size:var(--task-font) !important}
+
+/* Список дел тоже подчиняется настройке шрифта */
+body[data-task-view="list"] .day.list-day .task-text{font-size:var(--task-font-list) !important}
+body[data-task-view="list"] .day.list-day.list-two-columns .task-text{font-size:var(--task-font-list-2) !important}
+body[data-task-view="list"] .day.list-day.list-three-columns .task-text{font-size:var(--task-font-list-3) !important}
+
+/* Новая тема */
+body[data-theme="pinkpurple"]{
+    --weekday:#ffe4f0;
+    --weekend:#eee2ff;
+    --weekday2:#ffc9df;
+    --weekend2:#d8c2ff;
+    --day-weekday-text:#c34f82;
+    --day-weekend-text:#7652b8;
+    --primary:#9a68d5;
+    --primary-dark:#7745b5;
+}
+
+/* Градиент — отдельная настройка, работает с любой темой */
+body[data-gradient="on"] .day:not(.weekend){
+    background:linear-gradient(135deg,var(--weekday),var(--weekday2,var(--weekday))) !important;
+}
+body[data-gradient="on"] .day.weekend{
+    background:linear-gradient(135deg,var(--weekend),var(--weekend2,var(--weekend))) !important;
+}
+
+/* Градиентные пары для всех существующих тем */
+body[data-theme="standard"]{--weekday2:#dbeaff;--weekend2:#ffd0dc}
+body[data-theme="blackwhite"]{--weekday2:#333;--weekend2:#fff}
+body[data-theme="yellowgreen"]{--weekday2:#ffe77a;--weekend2:#c8e7a2}
+body[data-theme="skyblue"]{--weekday2:#bfeeff;--weekend2:#9fb8ff}
+body[data-theme="mintpistachio"]{--weekday2:#bfeee0;--weekend2:#d1e8aa}
+
+@media(max-width:640px){
+    body[data-planner-font-size="large"] .day-name{font-size:17px !important}
+    body[data-planner-font-size="xlarge"] .day-name{font-size:18px !important}
+}
+
+/* =====================================================
+   MaDenFlow 5.4.9 — реальное увеличение шрифта списка
+   Настройка «Размер шрифта дел» применяется и к списку.
+===================================================== */
+body[data-task-view="list"][data-task-font-size="small"] .task-text{font-size:15px !important}
+body[data-task-view="list"][data-task-font-size="medium"] .task-text{font-size:18px !important}
+body[data-task-view="list"][data-task-font-size="large"] .task-text{font-size:21px !important}
+body[data-task-view="list"][data-task-font-size="xlarge"] .task-text{font-size:24px !important}
+
+body[data-task-view="list"][data-task-font-size="small"] .list-two-columns .task-text{font-size:14px !important}
+body[data-task-view="list"][data-task-font-size="medium"] .list-two-columns .task-text{font-size:17px !important}
+body[data-task-view="list"][data-task-font-size="large"] .list-two-columns .task-text{font-size:20px !important}
+body[data-task-view="list"][data-task-font-size="xlarge"] .list-two-columns .task-text{font-size:22px !important}
+
+body[data-task-view="list"][data-task-font-size="small"] .list-three-columns .task-text{font-size:13px !important}
+body[data-task-view="list"][data-task-font-size="medium"] .list-three-columns .task-text{font-size:16px !important}
+body[data-task-view="list"][data-task-font-size="large"] .list-three-columns .task-text{font-size:18px !important}
+body[data-task-view="list"][data-task-font-size="xlarge"] .list-three-columns .task-text{font-size:20px !important}
+
+@media(max-width:640px){
+  body[data-task-view="list"][data-task-font-size="medium"] .task-text{font-size:17px !important}
+  body[data-task-view="list"][data-task-font-size="large"] .task-text{font-size:19px !important}
+  body[data-task-view="list"][data-task-font-size="xlarge"] .task-text{font-size:21px !important}
+  body[data-task-view="list"][data-task-font-size="medium"] .list-three-columns .task-text{font-size:15px !important}
+  body[data-task-view="list"][data-task-font-size="large"] .list-three-columns .task-text{font-size:17px !important}
+  body[data-task-view="list"][data-task-font-size="xlarge"] .list-three-columns .task-text{font-size:19px !important}
+}
+
+/* =====================================================
+   MaDenFlow 5.5.0 — ШРИФТ СПИСКА ДЕЛ ДЕЙСТВИТЕЛЬНО ВИДЕН
+===================================================== */
+
+/* В режиме списка размер текста напрямую зависит
+   от выбранной настройки «Размер шрифта дел». */
+
+/* 1 колонка */
+body[data-task-view="list"][data-task-font-size="small"] .task-text{
+    font-size:15px !important;
+}
+body[data-task-view="list"][data-task-font-size="medium"] .task-text{
+    font-size:19px !important;
+}
+body[data-task-view="list"][data-task-font-size="large"] .task-text{
+    font-size:22px !important;
+}
+body[data-task-view="list"][data-task-font-size="xlarge"] .task-text{
+    font-size:25px !important;
+}
+
+/* 2 колонки */
+body[data-task-view="list"][data-task-font-size="small"] .list-two-columns .task-text{
+    font-size:15px !important;
+}
+body[data-task-view="list"][data-task-font-size="medium"] .list-two-columns .task-text{
+    font-size:18px !important;
+}
+body[data-task-view="list"][data-task-font-size="large"] .list-two-columns .task-text{
+    font-size:21px !important;
+}
+body[data-task-view="list"][data-task-font-size="xlarge"] .list-two-columns .task-text{
+    font-size:24px !important;
+}
+
+/* 3 колонки — больше не уменьшаем текст слишком сильно */
+body[data-task-view="list"][data-task-font-size="small"] .list-three-columns .task-text{
+    font-size:15px !important;
+}
+body[data-task-view="list"][data-task-font-size="medium"] .list-three-columns .task-text{
+    font-size:18px !important;
+}
+body[data-task-view="list"][data-task-font-size="large"] .list-three-columns .task-text{
+    font-size:21px !important;
+}
+body[data-task-view="list"][data-task-font-size="xlarge"] .list-three-columns .task-text{
+    font-size:24px !important;
+}
+
+/* Чтобы увеличенный текст не прижимался к линии задачи */
+body[data-task-view="list"] .task-text{
+    line-height:1.15 !important;
+    font-weight:800 !important;
+}
+
+/* Высота строки адаптируется под крупный шрифт */
+body[data-task-view="list"] .list-three-columns .task{
+    min-height:22px !important;
+}
+
+/* Время остаётся компактным и не забирает место у текста */
+body[data-task-view="list"] .task-time{
+    flex-shrink:0;
+    white-space:nowrap;
+}
+
+/* Телефон */
+@media(max-width:640px){
+    body[data-task-view="list"][data-task-font-size="medium"] .list-three-columns .task-text{
+        font-size:17px !important;
+    }
+    body[data-task-view="list"][data-task-font-size="large"] .list-three-columns .task-text{
+        font-size:20px !important;
+    }
+    body[data-task-view="list"][data-task-font-size="xlarge"] .list-three-columns .task-text{
+        font-size:22px !important;
+    }
+}

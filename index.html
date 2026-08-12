@@ -26,6 +26,7 @@
 <main id="planner"></main>
 <div class="bottom-bar">
   <button id="serviceBtn" aria-label="Служение">👔</button>
+  <button id="visitsBtn" aria-label="Повторные посещения">📓</button>
   <button id="settingsBtn" aria-label="Настройки">⚙️</button>
 </div>
 <div id="taskModal" class="modal hidden"><div class="modal-box">
@@ -65,12 +66,35 @@
   <div class="service-buttons"><button id="deleteServiceBtn" class="danger hidden">🗑 Удалить</button><button id="saveServiceBtn">💾 Сохранить</button></div>
   <button id="cancelServiceBtn" class="secondary">Отмена</button>
 </div></div>
+<div id="visitsModal" class="modal hidden"><div class="modal-content visits-window">
+  <h3>📓 Повторные посещения</h3>
+  <div id="visitsList" class="visits-list"></div>
+  <button id="visitAddBtn" class="primary wide-btn">＋ Новая заметка</button>
+  <button id="visitsClose" class="secondary wide-btn">Закрыть</button>
+</div></div>
+<div id="visitEditorModal" class="modal hidden"><div class="modal-content visit-editor-window">
+  <h3 id="visitEditorTitle">Новая заметка</h3>
+  <label>👤 Имя человека<input id="visitName" type="text" placeholder="Имя"></label>
+  <label>📅 Дата<input id="visitDate" type="date"></label>
+  <label>📝 О чём говорили<textarea id="visitNote" rows="6" placeholder="Запишите основные мысли и договорённости..."></textarea></label>
+  <label>🎨 Цвет заметки<select id="visitColor"><option value="green">Зелёный</option><option value="yellow">Жёлтый</option><option value="mint" selected>Мятный</option><option value="red">Красный</option></select></label>
+  <div class="modal-buttons"><button id="visitSaveBtn" class="primary">Сохранить</button><button id="visitCancelBtn" class="secondary">Отмена</button></div>
+</div></div>
 <div id="settingsModal" class="modal hidden"><div class="modal-content settings-window">
   <h3>⚙️ Настройки</h3>
   <label class="settings-row"><span>🌙 Тёмный стиль</span><input type="checkbox" id="darkModeToggle"></label>
   <div class="settings-section settings-controls">
-    <strong>🔤 Размер шрифта</strong>
-    <select id="fontSizeSelect" class="settings-select">
+    <strong>🔤 Размер шрифта ежедневника</strong>
+    <select id="plannerFontSizeSelect" class="settings-select">
+      <option value="small">Маленький</option>
+      <option value="medium">Стандартный</option>
+      <option value="large">Большой</option>
+      <option value="xlarge">Очень большой</option>
+    </select>
+  </div>
+  <div class="settings-section settings-controls">
+    <strong>📝 Размер шрифта дел</strong>
+    <select id="taskFontSizeSelect" class="settings-select">
       <option value="small">Маленький</option>
       <option value="medium">Стандартный</option>
       <option value="large">Большой</option>
@@ -92,8 +116,10 @@
       <option value="yellowgreen">Жёлтая — зелёная</option>
       <option value="skyblue">Голубая — синяя</option>
       <option value="mintpistachio">Мятная — фисташковая</option>
+      <option value="pinkpurple">Розовая — фиолетовая</option>
     </select>
   </div>
+  <label class="settings-row"><span>🌈 Градиент дней</span><input type="checkbox" id="gradientDaysToggle"></label>
   <div class="settings-section settings-controls">
     <label class="settings-row settings-row-inner"><span>🔔 Уведомления по задачам</span><input type="checkbox" id="notificationsToggle"></label>
     <p>Если у задачи указано время, MaDenFlow напомнит о ней в это время, пока приложение открыто.</p>
@@ -103,6 +129,6 @@
   <div class="settings-section"><strong>☁️ Сохранение по email</strong><p>Профиль email можно сохранить в настройках. Для настоящей синхронизации между устройствами нужен подключённый облачный сервер.</p><input id="accountEmail" type="email" placeholder="your@email.com"><button id="saveEmailBtn" class="wide-btn">Сохранить email</button><div id="accountStatus" class="account-status"></div></div>
   <button id="settingsClose" class="secondary wide-btn">Закрыть</button>
 </div></div>
-<script src="cloud.js"></script><script src="storage.js"></script><script src="tasks.js"></script><script src="service.js"></script><script src="app.js"></script>
+<script src="cloud.js"></script><script src="storage.js"></script><script src="tasks.js"></script><script src="service.js"></script><script src="visits.js"></script><script src="app.js"></script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
 </body></html>
