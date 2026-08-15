@@ -22,7 +22,39 @@ sections.forEach(({section})=>{
   section.style.removeProperty("--list-count");
 })
 }updateDayStatus();activateDays();activateAddButtons()}
-function activateDays(){document.querySelectorAll(".day-title").forEach(title=>title.onclick=e=>{if(e.target.closest(".add-task-day"))return;const day=title.closest(".day");selectedDate=day.dataset.date;document.querySelectorAll(".day").forEach(x=>x.classList.remove("selected-day"));day.classList.add("selected-day")})}
+function activateDays(){
+  document.querySelectorAll(".day").forEach(day=>{
+    day.onclick=e=>{
+      if(e.target.closest(".add-task-day") || e.target.closest(".task")) return;
+      selectedDate=day.dataset.date;
+      document.querySelectorAll(".day").forEach(x=>x.classList.remove("selected-day"));
+      day.classList.add("selected-day");
+      openDayPopup(selectedDate);
+    };
+  });
+}
+function openDayPopup(dateKey){
+  closeDayPopup();
+  const list=getTasks(dateKey)||[];
+  const d=new Date(dateKey+"T12:00:00");
+  const weekday=d.toLocaleDateString("ru-RU",{weekday:"long"});
+  const dateText=d.toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
+  const overlay=document.createElement("div");
+  overlay.className="day-popup-overlay";
+  overlay.dataset.date=dateKey;
+  const title=weekday.charAt(0).toUpperCase()+weekday.slice(1)+" · "+dateText;
+  const rows=list.map(t=>{
+    const priority=t.priority||"normal";
+    const done=t.done?" done":"";
+    const time=t.time?`<span class="day-popup-time">${escapeHtml(t.time)}</span>`:"";
+    return `<div class="day-popup-task ${priority}${done}">${time}<div class="day-popup-text">${escapeHtml(t.text||"")}</div></div>`;
+  }).join("");
+  overlay.innerHTML=`<div class="day-popup" role="dialog" aria-modal="true"><div class="day-popup-head"><div><div class="day-popup-title">${title}</div><div class="day-popup-subtitle">${list.length?list.length+" дел на этот день":"На этот день дел нет"}</div></div><button class="day-popup-close" type="button" aria-label="Закрыть">×</button></div><div class="day-popup-list">${rows||'<div class="day-popup-empty">День свободен ✨</div>'}</div></div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector(".day-popup-close").onclick=closeDayPopup;
+  overlay.addEventListener("click",e=>{if(e.target===overlay)closeDayPopup()});
+}
+function closeDayPopup(){const p=document.querySelector(".day-popup-overlay");if(p)p.remove()}
 function activateAddButtons(){document.querySelectorAll(".add-task-day").forEach(btn=>btn.onclick=e=>{e.stopPropagation();selectedDate=btn.dataset.date;openTaskModal()})}
 function openTaskModal(){const modal=document.getElementById("taskModal");modal.dataset.editDate="";modal.dataset.editIndex="";document.getElementById("taskModalTitle").textContent="Новая задача";document.getElementById("newTaskInput").value="";document.getElementById("newTaskTime").value="";document.getElementById("repeatTask").checked=false;document.getElementById("repeatOptions").classList.add("hidden");document.getElementById("recurrenceBox").classList.remove("hidden");const d=new Date(selectedDate+"T12:00:00");const until=new Date(d);until.setFullYear(until.getFullYear()+1);document.getElementById("repeatUntil").value=localKey(until);modal.classList.remove("hidden");document.getElementById("newTaskInput").focus()}
 document.getElementById("repeatTask").onchange=e=>document.getElementById("repeatOptions").classList.toggle("hidden",!e.target.checked);
