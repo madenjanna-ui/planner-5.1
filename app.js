@@ -148,10 +148,9 @@ applySettings();document.body.classList.add("app-enter");setTimeout(()=>document
 window.renderWeek=renderWeek;window.updateDayStatus=updateDayStatus;window.changeWeek=changeWeek;
 
 // =====================================
-// 🔐 ПРОСТОЙ ВХОД ПО ПАРОЛЮ
+// 🔐 MaDenFlow — пароль при каждом запуске
 // =====================================
 
-// ТВОЙ ПАРОЛЬ
 const MADENFLOW_PASSWORD = "Maden2026";
 
 const loginScreen =
@@ -167,45 +166,16 @@ const loginError =
     document.getElementById("loginError");
 
 
-// Проверяем вход
-function checkLogin(){
-
-    const loggedIn =
-        sessionStorage.getItem(
-            "MaDenFlow_loggedIn"
-        );
-
-    if(loggedIn === "true"){
-
-        loginScreen.classList.add("hidden");
-
-    }else{
-
-        loginScreen.classList.remove("hidden");
-
-        setTimeout(() => {
-
-            loginPassword.focus();
-
-        },300);
-
-    }
-
-}
-
-
+// =====================================
 // Вход
+// =====================================
+
 function login(){
 
     const password =
         loginPassword.value;
 
     if(password === MADENFLOW_PASSWORD){
-
-        sessionStorage.setItem(
-            "MaDenFlow_loggedIn",
-            "true"
-        );
 
         loginError.classList.remove("show");
 
@@ -226,14 +196,20 @@ function login(){
 }
 
 
-// Кнопка входа
+// =====================================
+// Кнопка «Войти»
+// =====================================
+
 loginBtn.addEventListener(
     "click",
     login
 );
 
 
-// Enter в поле пароля
+// =====================================
+// Enter
+// =====================================
+
 loginPassword.addEventListener(
     "keydown",
     function(e){
@@ -248,5 +224,14 @@ loginPassword.addEventListener(
 );
 
 
-// Проверяем при запуске
-checkLogin();
+// =====================================
+// При каждом запуске показываем пароль
+// =====================================
+
+loginScreen.classList.remove("hidden");
+
+setTimeout(() => {
+
+    loginPassword.focus();
+
+}, 300);
