@@ -146,3 +146,107 @@ let uiTimer;const body=document.body,topHandle=document.getElementById("topHandl
 // старт
 applySettings();document.body.classList.add("app-enter");setTimeout(()=>document.body.classList.add("app-ready"),650);renderWeek();resetUITimer();checkTaskNotifications(true);
 window.renderWeek=renderWeek;window.updateDayStatus=updateDayStatus;window.changeWeek=changeWeek;
+
+// =====================================
+// 🔐 ПРОСТОЙ ВХОД ПО ПАРОЛЮ
+// =====================================
+
+// ТВОЙ ПАРОЛЬ
+const MADENFLOW_PASSWORD = "Maden2026";
+
+const loginScreen =
+    document.getElementById("loginScreen");
+
+const loginPassword =
+    document.getElementById("loginPassword");
+
+const loginBtn =
+    document.getElementById("loginBtn");
+
+const loginError =
+    document.getElementById("loginError");
+
+
+// Проверяем вход
+function checkLogin(){
+
+    const loggedIn =
+        sessionStorage.getItem(
+            "MaDenFlow_loggedIn"
+        );
+
+    if(loggedIn === "true"){
+
+        loginScreen.classList.add("hidden");
+
+    }else{
+
+        loginScreen.classList.remove("hidden");
+
+        setTimeout(() => {
+
+            loginPassword.focus();
+
+        },300);
+
+    }
+
+}
+
+
+// Вход
+function login(){
+
+    const password =
+        loginPassword.value;
+
+    if(password === MADENFLOW_PASSWORD){
+
+        sessionStorage.setItem(
+            "MaDenFlow_loggedIn",
+            "true"
+        );
+
+        loginError.classList.remove("show");
+
+        loginScreen.classList.add("hidden");
+
+        loginPassword.value = "";
+
+    }else{
+
+        loginError.classList.add("show");
+
+        loginPassword.value = "";
+
+        loginPassword.focus();
+
+    }
+
+}
+
+
+// Кнопка входа
+loginBtn.addEventListener(
+    "click",
+    login
+);
+
+
+// Enter в поле пароля
+loginPassword.addEventListener(
+    "keydown",
+    function(e){
+
+        if(e.key === "Enter"){
+
+            login();
+
+        }
+
+    }
+);
+
+
+// Проверяем при запуске
+checkLogin();
