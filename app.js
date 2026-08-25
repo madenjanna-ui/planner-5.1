@@ -1,5 +1,6 @@
 // MaDenFlow 5.0 — основной движок
 console.log("MaDenFlow 5.0 запущен 🚀");
+{
 const planner=document.getElementById("planner"),weekTitle=document.getElementById("weekTitle");
 const weekDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 let currentDate=new Date(),selectedDate=null,calendarCursor=new Date();
