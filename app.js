@@ -1,6 +1,5 @@
 // MaDenFlow 5.0 — основной движок
 console.log("MaDenFlow 5.0 запущен 🚀");
-{
 const planner=document.getElementById("planner"),weekTitle=document.getElementById("weekTitle");
 const weekDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 let currentDate=new Date(),selectedDate=null,calendarCursor=new Date();
@@ -148,91 +147,48 @@ let uiTimer;const body=document.body,topHandle=document.getElementById("topHandl
 applySettings();document.body.classList.add("app-enter");setTimeout(()=>document.body.classList.add("app-ready"),650);renderWeek();resetUITimer();checkTaskNotifications(true);
 window.renderWeek=renderWeek;window.updateDayStatus=updateDayStatus;window.changeWeek=changeWeek;
 
+
 // =====================================
 // 🔐 MaDenFlow — пароль при каждом запуске
 // =====================================
 
 const MADENFLOW_PASSWORD = "Maden2026";
 
-const loginScreen =
-    document.getElementById("loginScreen");
+const loginScreen = document.getElementById("loginScreen");
+const loginPassword = document.getElementById("loginPassword");
+const loginBtn = document.getElementById("loginBtn");
+const loginError = document.getElementById("loginError");
 
-const loginPassword =
-    document.getElementById("loginPassword");
+let madenflowUnlocked = false;
 
-const loginBtn =
-    document.getElementById("loginBtn");
-
-const loginError =
-    document.getElementById("loginError");
-
-
-// =====================================
-// Вход
-// =====================================
-
-function login(){
-
-    const password =
-        loginPassword.value;
-
-    if(password === MADENFLOW_PASSWORD){
-
-        loginError.classList.remove("show");
-
-        loginScreen.classList.add("hidden");
-
-        loginPassword.value = "";
-
-    }else{
-
-        loginError.classList.add("show");
-
-        loginPassword.value = "";
-
-        loginPassword.focus();
-
-    }
-
+function showLoginScreen(){
+    madenflowUnlocked = false;
+    document.documentElement.classList.add("madenflow-locked");
+    document.body.classList.add("madenflow-locked");
+    loginScreen.classList.remove("hidden");
+    loginPassword.value = "";
+    loginError.classList.remove("show");
+    setTimeout(()=>loginPassword.focus(),100);
 }
 
-
-// =====================================
-// Кнопка «Войти»
-// =====================================
-
-loginBtn.addEventListener(
-    "click",
-    login
-);
-
-
-// =====================================
-// Enter
-// =====================================
-
-loginPassword.addEventListener(
-    "keydown",
-    function(e){
-
-        if(e.key === "Enter"){
-
-            login();
-
-        }
-
+function unlockMaDenFlow(){
+    if(loginPassword.value === MADENFLOW_PASSWORD){
+        madenflowUnlocked = true;
+        document.documentElement.classList.remove("madenflow-locked");
+        document.body.classList.remove("madenflow-locked");
+        loginError.classList.remove("show");
+        loginScreen.classList.add("hidden");
+        loginPassword.value = "";
+    }else{
+        loginError.classList.add("show");
+        loginPassword.value = "";
+        loginPassword.focus();
     }
-);
+}
 
+loginBtn.addEventListener("click",unlockMaDenFlow);
+loginPassword.addEventListener("keydown",e=>{
+    if(e.key==="Enter") unlockMaDenFlow();
+});
 
-// =====================================
-// При каждом запуске показываем пароль
-// =====================================
-
-loginScreen.classList.remove("hidden");
-
-setTimeout(() => {
-
-    loginPassword.focus();
-
-}, 300);
+showLoginScreen();

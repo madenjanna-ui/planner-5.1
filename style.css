@@ -2823,3 +2823,16 @@ body.dark .day-popup-task{background:rgba(37,45,64,.88)}
 
 }
 
+
+/* =====================================
+   MaDenFlow — блокировка до ввода пароля
+===================================== */
+html.madenflow-locked body > *:not(#loginScreen){
+    visibility:hidden !important;
+    pointer-events:none !important;
+}
+html.madenflow-locked,
+body.madenflow-locked{
+    overflow:hidden !important;
+}
+#loginScreen{z-index:100000 !important;}
