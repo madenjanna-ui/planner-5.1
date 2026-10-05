@@ -5,7 +5,8 @@ const weekDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 let currentDate=new Date(),selectedDate=null,calendarCursor=new Date();
 function getMonday(date){const d=new Date(date);let day=d.getDay()||7;d.setDate(d.getDate()-day+1);return d}
 function localKey(d){return localDateKey(d)}
-function renderWeek(){planner.innerHTML="";const monday=getMonday(currentDate),sunday=new Date(monday);sunday.setDate(monday.getDate()+6);weekTitle.textContent=`${monday.toLocaleDateString("ru-RU")} — ${sunday.toLocaleDateString("ru-RU")}`;let maxTasks=0;const listMode=(appData.settings||{}).taskView==="list";const sections=[];for(let i=0;i<7;i++){const date=new Date(monday);date.setDate(monday.getDate()+i);const key=localKey(date);const count=getTasks(key).length;maxTasks=Math.max(maxTasks,count);const section=document.createElement("section");section.className="day"+(date.getDay()===0||date.getDay()===6?" weekend":"");if(date.toDateString()===new Date().toDateString())section.classList.add("today");section.dataset.date=key;section.dataset.taskCount=count;section.innerHTML=`<div class="day-title"><div class="day-name"><span class="day-weekday">${weekDays[i]}</span> ${date.getDate()} <span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span> <span class="day-status" data-date="${key}">⚪</span>${date.toDateString()===new Date().toDateString()?" ⭐":""}</div><button class="add-task-day" data-date="${key}">＋</button></div><div class="day-content"><div class="tasks"></div></div>`;planner.appendChild(section);loadTasks(key,section.querySelector(".tasks"));sections.push({section,count})}planner.classList.remove("week-normal","week-compact","week-ultra");planner.classList.add(maxTasks>=7?"week-ultra":maxTasks>=4?"week-compact":"week-normal");if(listMode){
+function renderWeek(){planner.innerHTML="";const monday=getMonday(currentDate),sunday=new Date(monday);sunday.setDate(monday.getDate()+6);const fmtWeekDate=d=>`${d.getDate()}.${String(d.getMonth()+1).padStart(2,"0")}`;
+weekTitle.textContent=`${fmtWeekDate(monday)} – ${fmtWeekDate(sunday)}.${sunday.getFullYear()}`;let maxTasks=0;const listMode=(appData.settings||{}).taskView==="list";const sections=[];for(let i=0;i<7;i++){const date=new Date(monday);date.setDate(monday.getDate()+i);const key=localKey(date);const count=getTasks(key).length;maxTasks=Math.max(maxTasks,count);const section=document.createElement("section");section.className="day"+(date.getDay()===0||date.getDay()===6?" weekend":"");if(date.toDateString()===new Date().toDateString())section.classList.add("today");section.dataset.date=key;section.dataset.taskCount=count;section.innerHTML=`<div class="day-title"><div class="day-name"><span class="day-weekday">${weekDays[i]}</span> ${date.getDate()} <span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span>${date.toDateString()===new Date().toDateString()?" ⭐":""}</div></div><div class="day-content"><div class="tasks"></div></div>`;planner.appendChild(section);loadTasks(key,section.querySelector(".tasks"));sections.push({section,count})}planner.classList.remove("week-normal","week-compact","week-ultra");planner.classList.add(maxTasks>=7?"week-ultra":maxTasks>=4?"week-compact":"week-normal");if(listMode){
 sections.forEach(({section,count})=>{
   section.classList.add("list-day");
   section.style.flex="1 1 0";
@@ -21,40 +22,18 @@ sections.forEach(({section})=>{
   section.style.flex="";
   section.style.removeProperty("--list-count");
 })
-}updateDayStatus();activateDays();activateAddButtons()}
+}activateDays();activateAddButtons()}
 function activateDays(){
   document.querySelectorAll(".day").forEach(day=>{
     day.onclick=e=>{
-      if(e.target.closest(".add-task-day") || e.target.closest(".task")) return;
+      if(e.target.closest(".task")) return;
       selectedDate=day.dataset.date;
-      document.querySelectorAll(".day").forEach(x=>x.classList.remove("selected-day"));
-      day.classList.add("selected-day");
-      openDayPopup(selectedDate);
+      const d=new Date(selectedDate+"T12:00:00");
+      openDayTasksModal(d);
     };
   });
 }
-function openDayPopup(dateKey){
-  closeDayPopup();
-  const list=getTasks(dateKey)||[];
-  const d=new Date(dateKey+"T12:00:00");
-  const weekday=d.toLocaleDateString("ru-RU",{weekday:"long"});
-  const dateText=d.toLocaleDateString("ru-RU",{day:"numeric",month:"long"});
-  const overlay=document.createElement("div");
-  overlay.className="day-popup-overlay";
-  overlay.dataset.date=dateKey;
-  const title=weekday.charAt(0).toUpperCase()+weekday.slice(1)+" · "+dateText;
-  const rows=list.map(t=>{
-    const priority=t.priority||"normal";
-    const done=t.done?" done":"";
-    const time=t.time?`<span class="day-popup-time">${escapeHtml(t.time)}</span>`:"";
-    return `<div class="day-popup-task ${priority}${done}">${time}<div class="day-popup-text">${escapeHtml(t.text||"")}</div></div>`;
-  }).join("");
-  overlay.innerHTML=`<div class="day-popup" role="dialog" aria-modal="true"><div class="day-popup-head"><div><div class="day-popup-title">${title}</div><div class="day-popup-subtitle">${list.length?list.length+" дел на этот день":"На этот день дел нет"}</div></div><button class="day-popup-close" type="button" aria-label="Закрыть">×</button></div><div class="day-popup-list">${rows||'<div class="day-popup-empty">День свободен ✨</div>'}</div></div>`;
-  document.body.appendChild(overlay);
-  overlay.querySelector(".day-popup-close").onclick=closeDayPopup;
-  overlay.addEventListener("click",e=>{if(e.target===overlay)closeDayPopup()});
-}
-function closeDayPopup(){const p=document.querySelector(".day-popup-overlay");if(p)p.remove()}
+function openDayPopup(){ /* legacy popup disabled — use editable dayTasksModal */ }
 function activateAddButtons(){document.querySelectorAll(".add-task-day").forEach(btn=>btn.onclick=e=>{e.stopPropagation();selectedDate=btn.dataset.date;openTaskModal()})}
 function openTaskModal(){const modal=document.getElementById("taskModal");modal.dataset.editDate="";modal.dataset.editIndex="";document.getElementById("taskModalTitle").textContent="Новая задача";document.getElementById("newTaskInput").value="";document.getElementById("newTaskTime").value="";document.getElementById("repeatTask").checked=false;document.getElementById("repeatOptions").classList.add("hidden");document.getElementById("recurrenceBox").classList.remove("hidden");const d=new Date(selectedDate+"T12:00:00");const until=new Date(d);until.setFullYear(until.getFullYear()+1);document.getElementById("repeatUntil").value=localKey(until);modal.classList.remove("hidden");document.getElementById("newTaskInput").focus()}
 document.getElementById("repeatTask").onchange=e=>document.getElementById("repeatOptions").classList.toggle("hidden",!e.target.checked);
@@ -293,11 +272,12 @@ function openDayTasksModal(date){
 }
 
 if(dayTasksModal){
-  if(dayTasksAdd) dayTasksAdd.onclick=()=>{
+  if(dayTasksAdd) dayTasksAdd.onclick=(e)=>{
+    e.stopPropagation();
     if(!selectedDayForModal) return;
-    const key=localKey(selectedDayForModal);
-    if(typeof window.addTask==="function") window.addTask(key);
-    else if(typeof addTask==="function") addTask(key);
+    selectedDate=localKey(selectedDayForModal);
+    closeDayTasksModal();
+    openTaskModal();
   };
   if(dayTasksClose) dayTasksClose.onclick=closeDayTasksModal;
 
@@ -412,3 +392,23 @@ else {
   document.body.classList.remove("madenflow-locked");
   openMonthScreen();
 }
+/* FINAL_UI_BEHAVIOR_2026_10_05 */
+(function(){
+  function closeOverlay(el){
+    if(!el) return;
+    if(el.id==="dayTasksModal"){
+      el.classList.add("hidden");
+      el.setAttribute("aria-hidden","true");
+      return;
+    }
+    if(el.classList.contains("modal") || el.classList.contains("modal-overlay")){
+      el.classList.add("hidden");
+      el.setAttribute("aria-hidden","true");
+    }
+    if(el.classList.contains("day-popup-overlay")) el.remove();
+  }
+  document.addEventListener("pointerdown",function(e){
+    const overlay=e.target.closest(".modal,.modal-overlay,.day-popup-overlay");
+    if(overlay && e.target===overlay) closeOverlay(overlay);
+  },true);
+})();

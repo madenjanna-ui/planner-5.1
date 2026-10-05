@@ -3142,3 +3142,278 @@ body.dark .day-modal-edit{background:rgba(255,255,255,.08);color:var(--text)}
   letter-spacing:.01em;
   text-align:center;
 }
+
+/* FINAL UI FIX — чистая верхняя часть */
+.glass-header .logo,
+.glass-header .app-title,
+.glass-header [data-app-title]{
+  display:none !important;
+}
+body{
+  --header-space:74px !important;
+  --bottom-space:14px !important;
+}
+.glass-header{
+  padding-top:max(env(safe-area-inset-top),8px) !important;
+  padding-bottom:7px !important;
+}
+#weekTitle{
+  font-size:15px !important;
+  line-height:1.1 !important;
+  margin:0 0 5px !important;
+}
+.week-nav{
+  gap:8px !important;
+}
+.week-nav button{
+  width:34px !important;
+  height:30px !important;
+  border-radius:10px !important;
+  font-size:17px !important;
+}
+
+/* Убираем кружочки/лишние маркеры из заголовка дня */
+.day-status,
+.day-dot,
+.day-marker,
+.day-title .status-dot{
+  display:none !important;
+}
+
+/* Справа только день недели + дата. Кнопка + скрыта. */
+.day-title .add-task-day,
+.day-title .day-add,
+.add-task-day{
+  display:none !important;
+}
+.day-title{
+  justify-content:flex-end !important;
+}
+.day-name{
+  margin-left:auto !important;
+  font-size:19px !important;
+}
+.day-month{
+  font-size:.78em !important;
+}
+
+/* Крупный стильный уголок */
+.side-toggle{
+  left:8px !important;
+  bottom:max(12px,env(safe-area-inset-bottom)) !important;
+  width:56px !important;
+  height:56px !important;
+  font-size:43px !important;
+  line-height:52px !important;
+  opacity:.95 !important;
+  border-radius:18px !important;
+  background:rgba(255,255,255,.20) !important;
+  border:1px solid rgba(255,255,255,.55) !important;
+  box-shadow:0 8px 24px rgba(30,50,80,.14) !important;
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+}
+.side-toggle.panel-open{
+  left:calc(min(258px,82vw) + 8px) !important;
+}
+
+/* Крупнее часы/посещения/пункты боковой панели */
+.side-panel{
+  font-size:18px !important;
+}
+.side-panel button,
+.side-panel a{
+  font-size:18px !important;
+  min-height:48px;
+}
+.side-panel .nav-icon{
+  font-size:23px !important;
+}
+
+/* Тап вне любого окна закрывает его */
+.modal-overlay{
+  cursor:pointer;
+}
+.modal-overlay > *{
+  cursor:default;
+}
+
+/* Окно дел выбранного дня */
+#dayTasksModal{
+  position:fixed;inset:0;z-index:12000;
+  display:flex;align-items:center;justify-content:center;
+  padding:18px;
+  background:rgba(10,20,40,.25);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+#dayTasksModal.hidden{display:none !important}
+.day-tasks-modal{
+  width:min(520px,94vw);
+  max-height:80vh;
+  display:flex;flex-direction:column;
+  padding:22px 18px 16px;
+  border-radius:26px;
+  background:rgba(255,255,255,.92);
+  box-shadow:0 24px 70px rgba(20,40,70,.24);
+  overflow:hidden;
+}
+.day-modal-title{
+  font-size:23px !important;
+  font-weight:850 !important;
+}
+.day-tasks-list{
+  flex:1 1 auto;
+  overflow:auto;
+  font-size:18px;
+}
+.day-modal-task-text{font-size:18px !important}
+.day-modal-edit{font-size:16px !important}
+.day-tasks-add{
+  display:block !important;
+  min-height:54px !important;
+  margin-top:12px !important;
+  font-size:18px !important;
+  font-weight:850 !important;
+}
+
+/* Посещения — читаемо на 6" */
+.visits-window,
+.visit-editor-window{
+  font-size:18px !important;
+}
+.visits-window h2,
+.visit-editor-window h2{
+  font-size:24px !important;
+}
+.visit-note-head strong{font-size:18px !important}
+.visit-note-head span{font-size:14px !important}
+.visit-note-text{font-size:17px !important;line-height:1.45 !important}
+.visit-note-actions button{width:38px !important;height:38px !important}
+
+/* Часы/служение */
+.service-window,
+.service-window .service-row,
+.service-window .service-total,
+.service-window .service-grand-total{
+  font-size:18px !important;
+}
+.service-window h2{font-size:24px !important}
+.service-row input,
+.service-row select{font-size:17px !important;min-height:44px}
+
+/* Общий шрифт задач */
+.task-text{font-size:18px !important}
+.task-time{font-size:14px !important}
+
+/* ===== MaDenFlow FINAL UI 2026-10-05 ===== */
+.glass-header{
+  padding: max(env(safe-area-inset-top),8px) 12px 8px !important;
+  min-height:0 !important;
+}
+.glass-header > .logo{display:none !important}
+#weekTitle{
+  margin:0 !important;
+  padding:0 !important;
+  font-size:15px !important;
+  line-height:1.15 !important;
+  font-weight:800 !important;
+}
+#planner{
+  padding-top:58px !important;
+}
+.day-title{
+  justify-content:flex-end !important;
+  align-items:flex-start !important;
+  min-height:34px !important;
+}
+.day-name{
+  margin-left:auto !important;
+  font-size:19px !important;
+  line-height:1.15 !important;
+  text-align:right !important;
+}
+.day-month{font-size:.76em !important}
+.day-status{display:none !important}
+.add-task-day{display:none !important}
+
+/* Larger, more expressive glass corner */
+.side-toggle{
+  left:8px !important;
+  bottom:max(12px,env(safe-area-inset-bottom)) !important;
+  width:58px !important;
+  height:58px !important;
+  border-radius:19px !important;
+  background:rgba(255,255,255,.22) !important;
+  border:1px solid rgba(255,255,255,.58) !important;
+  box-shadow:0 10px 30px rgba(25,45,80,.18) !important;
+  backdrop-filter:blur(16px) saturate(1.2) !important;
+  -webkit-backdrop-filter:blur(16px) saturate(1.2) !important;
+  color:var(--text) !important;
+  font-size:46px !important;
+  line-height:54px !important;
+  font-weight:300 !important;
+}
+.side-toggle.panel-open{left:calc(min(258px,82vw) + 8px) !important}
+
+/* Readable navigation */
+.side-panel-inner{padding:20px 14px !important}
+.side-nav-btn{
+  min-height:58px !important;
+  font-size:18px !important;
+}
+.side-icon{font-size:24px !important}
+
+/* Readable visits and hours */
+.visits-window,.visit-editor-window,.service-window{
+  font-size:18px !important;
+}
+.visits-window h3,.visit-editor-window h3,.service-window h3{
+  font-size:25px !important;
+}
+.visits-window .visits-list,.visit-editor-window label,.service-window label{
+  font-size:18px !important;
+}
+.visits-window button,.visit-editor-window button,.service-window button{
+  font-size:17px !important;
+  min-height:50px !important;
+}
+
+/* Editable day window */
+.day-popup-overlay{display:none !important}
+#dayTasksModal{
+  position:fixed !important; inset:0 !important;
+  z-index:12000 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:18px !important;
+  background:rgba(20,35,60,.24) !important;
+  backdrop-filter:blur(7px) !important;
+  -webkit-backdrop-filter:blur(7px) !important;
+}
+#dayTasksModal.hidden{display:none !important}
+.day-tasks-modal{
+  width:min(540px,94vw) !important;
+  max-height:78vh !important;
+  padding:22px 18px 17px !important;
+  border-radius:27px !important;
+}
+.day-modal-title{font-size:25px !important}
+.day-tasks-list{font-size:18px !important}
+.day-modal-task-text{font-size:19px !important}
+.day-modal-task-time{font-size:15px !important}
+.day-modal-edit{font-size:16px !important;min-height:42px !important}
+.day-tasks-add{
+  display:block !important;
+  min-height:56px !important;
+  margin-top:12px !important;
+  font-size:18px !important;
+  font-weight:850 !important;
+}
+
+/* General modal typography */
+.modal-content h3{font-size:24px !important}
+.modal-content p,.modal-content label{font-size:17px !important}
+
+.glass-header .logo{display:none !important}
