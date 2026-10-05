@@ -360,7 +360,9 @@ const loginBtn=document.getElementById("loginBtn");
 const loginError=document.getElementById("loginError");
 
 function getLoginCheckedAt(){
-  return Number(localStorage.getItem(LOGIN_CHECK_KEY)||0);
+  const stored=Number(localStorage.getItem(LOGIN_CHECK_KEY)||0);
+  const appStored=Number(appData?.settings?.passwordCheckedAt||0);
+  return Math.max(stored,appStored);
 }
 function passwordRequired(){
   const last=getLoginCheckedAt();
@@ -381,7 +383,11 @@ function unlockMaDenFlow(){
     loginPassword.focus();
     return;
   }
-  localStorage.setItem(LOGIN_CHECK_KEY,String(Date.now()));
+  const checkedAt=Date.now();
+  appData.settings=appData.settings||{};
+  appData.settings.passwordCheckedAt=checkedAt;
+  saveStorage();
+  localStorage.setItem(LOGIN_CHECK_KEY,String(checkedAt));
   document.documentElement.classList.remove("madenflow-locked");
   document.body.classList.remove("madenflow-locked");
   loginScreen.classList.add("hidden");

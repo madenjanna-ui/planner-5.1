@@ -3085,144 +3085,60 @@ body.dark .month-day{
 }
 
 
-/* =========================================================
-   MaDenFlow — карточка дня и окно дел
-========================================================= */
-
-/* Кнопка + внутри карточки больше не нужна */
-#planner .add-task-day,
-#planner .day-add{
-  display:none !important;
-}
-
-/* Правая часть карточки: только название дня и дата */
-#planner .day-header{
+/* MaDenFlow — согласованный вид карточки дня */
+#planner .day-title{
+  display:flex !important;
   justify-content:flex-end !important;
+  align-items:flex-start !important;
 }
-#planner .day-header .day-title,
-#planner .day-header .day-name{
+#planner .day-title .day-name{
   margin-left:auto !important;
   text-align:right !important;
 }
+#planner .day-title .add-task-day,
+#planner .day-title .day-add{
+  display:none !important;
+}
 
-/* Окно дел */
+/* Окно дел дня */
 #dayTasksModal{
-  position:fixed;
-  inset:0;
-  z-index:12000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:rgba(10,20,40,.28);
-  backdrop-filter:blur(5px);
-  -webkit-backdrop-filter:blur(5px);
+  position:fixed; inset:0; z-index:12000;
+  display:flex; align-items:center; justify-content:center;
+  padding:20px; background:rgba(10,20,40,.28);
+  backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
 }
 #dayTasksModal.hidden{display:none !important}
 .day-tasks-modal{
-  position:relative;
-  width:min(520px,92vw);
-  max-height:min(78vh,680px);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  box-sizing:border-box;
-  padding:24px 20px 18px;
-  border-radius:26px;
+  position:relative; width:min(520px,92vw);
+  max-height:min(78vh,680px); overflow:hidden;
+  display:flex; flex-direction:column; box-sizing:border-box;
+  padding:24px 20px 18px; border-radius:26px;
   background:rgba(255,255,255,.90);
   border:1px solid rgba(255,255,255,.75);
   box-shadow:0 24px 70px rgba(20,40,70,.22);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
 }
 .day-modal-close{
-  position:absolute;
-  right:12px;
-  top:10px;
-  width:40px;
-  height:40px;
-  border:0;
-  background:transparent;
-  font-size:31px;
-  line-height:1;
-  color:var(--text);
+  position:absolute; right:12px; top:10px; width:40px; height:40px;
+  border:0; background:transparent; font-size:31px; line-height:1; color:var(--text);
 }
-.day-modal-title{
-  padding:0 42px 16px 2px;
-  font-size:23px;
-  font-weight:850;
-  text-transform:capitalize;
-}
-.day-tasks-list{
-  overflow:auto;
-  display:flex;
-  flex-direction:column;
-  gap:9px;
-  min-height:70px;
-  padding:2px 1px 10px;
-}
-.day-modal-task{
-  display:flex;
-  align-items:center;
-  gap:11px;
-  padding:12px;
-  border-radius:15px;
-  background:rgba(235,242,249,.78);
-}
-.day-modal-check{
-  width:25px;
-  font-size:21px;
+.day-modal-title{padding:0 42px 16px 2px;font-size:23px;font-weight:850;text-transform:capitalize}
+.day-tasks-list{overflow:auto;display:flex;flex-direction:column;gap:9px;min-height:70px;padding:2px 1px 10px}
+.day-modal-task{display:flex;align-items:center;gap:11px;padding:12px;border-radius:15px;background:rgba(235,242,249,.78)}
+.day-modal-check{width:25px;font-size:21px;text-align:center}
+.day-modal-task-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.day-modal-task-text{font-size:18px;line-height:1.2;font-weight:700}
+.day-modal-task-time{font-size:14px;opacity:.7}
+.day-modal-edit{border:0;border-radius:11px;padding:8px 10px;background:rgba(255,255,255,.8);font-size:14px;font-weight:700}
+.day-tasks-add{flex:0 0 auto;margin-top:10px;min-height:50px;border:0;border-radius:15px;background:var(--primary);color:#fff;font-size:17px;font-weight:800}
+.day-empty{padding:25px 10px;text-align:center;font-size:17px;opacity:.65}
+body.dark .day-tasks-modal{background:rgba(25,32,48,.93);border-color:rgba(255,255,255,.1)}
+body.dark .day-modal-task{background:rgba(255,255,255,.07)}
+body.dark .day-modal-edit{background:rgba(255,255,255,.08);color:var(--text)}
+
+#weekTitle{
+  font-size:16px !important;
+  font-weight:800 !important;
+  letter-spacing:.01em;
   text-align:center;
-}
-.day-modal-task-main{
-  flex:1;
-  min-width:0;
-  display:flex;
-  flex-direction:column;
-  gap:3px;
-}
-.day-modal-task-text{
-  font-size:18px;
-  line-height:1.2;
-  font-weight:700;
-}
-.day-modal-task-time{
-  font-size:14px;
-  opacity:.7;
-}
-.day-modal-edit{
-  border:0;
-  border-radius:11px;
-  padding:8px 10px;
-  background:rgba(255,255,255,.8);
-  font-size:14px;
-  font-weight:700;
-}
-.day-tasks-add{
-  flex:0 0 auto;
-  margin-top:10px;
-  min-height:50px;
-  border:0;
-  border-radius:15px;
-  background:var(--primary);
-  color:#fff;
-  font-size:17px;
-  font-weight:800;
-}
-.day-empty{
-  padding:25px 10px;
-  text-align:center;
-  font-size:17px;
-  opacity:.65;
-}
-body.dark .day-tasks-modal{
-  background:rgba(25,32,48,.93);
-  border-color:rgba(255,255,255,.1);
-}
-body.dark .day-modal-task{
-  background:rgba(255,255,255,.07);
-}
-body.dark .day-modal-edit{
-  background:rgba(255,255,255,.08);
-  color:var(--text);
 }
