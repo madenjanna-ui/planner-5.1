@@ -292,32 +292,36 @@ function openDayTasksModal(date){
   dayTasksModal.setAttribute("aria-hidden","false");
 }
 
-dayTasksAdd.onclick=()=>{
-  if(!selectedDayForModal) return;
-  const key=localKey(selectedDayForModal);
-  if(typeof window.addTask==="function") window.addTask(key);
-  else if(typeof addTask==="function") addTask(key);
-};
-dayTasksClose.onclick=closeDayTasksModal;
+if(dayTasksModal){
+  if(dayTasksAdd) dayTasksAdd.onclick=()=>{
+    if(!selectedDayForModal) return;
+    const key=localKey(selectedDayForModal);
+    if(typeof window.addTask==="function") window.addTask(key);
+    else if(typeof addTask==="function") addTask(key);
+  };
+  if(dayTasksClose) dayTasksClose.onclick=closeDayTasksModal;
 
-dayTasksModal.addEventListener("click",(e)=>{
-  if(e.target===dayTasksModal) closeDayTasksModal();
-});
+  dayTasksModal.addEventListener("click",(e)=>{
+    if(e.target===dayTasksModal) closeDayTasksModal();
+  });
+}
 
 document.addEventListener("keydown",(e)=>{
   if(e.key==="Escape") closeDayTasksModal();
 });
 
 // Тап по карточке дня. Ищем ближайший элемент с датой из существующего рендера.
-planner.addEventListener("click",(e)=>{
-  if(e.target.closest("button,input,textarea,select,a,.task,.task-text,.task-menu")) return;
-  const card=e.target.closest(".day");
-  if(!card) return;
-  const dateAttr=card.dataset.date||card.getAttribute("data-day");
-  if(!dateAttr) return;
-  const d=new Date(dateAttr);
-  if(!Number.isNaN(d.getTime())) openDayTasksModal(d);
-});
+if(dayTasksModal){
+  planner.addEventListener("click",(e)=>{
+    if(e.target.closest("button,input,textarea,select,a,.task,.task-text,.task-menu")) return;
+    const card=e.target.closest(".day");
+    if(!card) return;
+    const dateAttr=card.dataset.date||card.getAttribute("data-day");
+    if(!dateAttr) return;
+    const d=new Date(dateAttr);
+    if(!Number.isNaN(d.getTime())) openDayTasksModal(d);
+  });
+}
 
 // Универсально: любое нажатие по пункту боковой навигации закрывает её.
 sidePanel.addEventListener("click", (e)=>{
@@ -356,12 +360,7 @@ const loginBtn=document.getElementById("loginBtn");
 const loginError=document.getElementById("loginError");
 
 function getLoginCheckedAt(){
-  let last=Number(localStorage.getItem(LOGIN_CHECK_KEY)||0);
-  if(!last){
-    const m=document.cookie.match(/(?:^|; )madenflow_password_checked=(\d+)/);
-    if(m) last=Number(m[1]||0);
-  }
-  return last;
+  return Number(localStorage.getItem(LOGIN_CHECK_KEY)||0);
 }
 function passwordRequired(){
   const last=getLoginCheckedAt();
@@ -382,9 +381,7 @@ function unlockMaDenFlow(){
     loginPassword.focus();
     return;
   }
-  const checkedAt=String(Date.now());
-  localStorage.setItem(LOGIN_CHECK_KEY,checkedAt);
-  document.cookie=`madenflow_password_checked=${checkedAt}; Max-Age=${30*24*60*60}; Path=/; SameSite=Lax`;
+  localStorage.setItem(LOGIN_CHECK_KEY,String(Date.now()));
   document.documentElement.classList.remove("madenflow-locked");
   document.body.classList.remove("madenflow-locked");
   loginScreen.classList.add("hidden");
