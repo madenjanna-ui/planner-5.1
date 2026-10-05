@@ -372,5 +372,4 @@ window.changeWeek=changeWeek;
 
 (async()=>{const last=await readLoginTime();if(!last || (Date.now()-last)>=LOGIN_PERIOD)showLoginScreen();else{document.documentElement.classList.remove("madenflow-locked");document.body.classList.remove("madenflow-locked");openMonthScreen()}})();
 
-/* close any modal by tapping its free background */
-document.addEventListener("pointerdown",e=>{const o=e.target.closest(".modal-overlay,.modal");if(o&&e.target===o){o.classList.add("hidden");o.setAttribute("aria-hidden","true")}},true);
+document.addEventListener("pointerdown",e=>{const o=e.target.closest(".modal");if(o&&e.target===o){o.classList.add("hidden");o.setAttribute("aria-hidden","true")}},true);
