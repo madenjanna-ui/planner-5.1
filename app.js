@@ -60,7 +60,7 @@ function openTaskModal(){const modal=document.getElementById("taskModal");modal.
 document.getElementById("repeatTask").onchange=e=>document.getElementById("repeatOptions").classList.toggle("hidden",!e.target.checked);
 document.getElementById("saveTaskBtn").onclick=()=>{if(!selectedDate)return;const modal=document.getElementById("taskModal"),input=document.getElementById("newTaskInput"),time=document.getElementById("newTaskTime"),text=input.value.trim();if(!text)return;const editDate=modal.dataset.editDate,editIndex=modal.dataset.editIndex,editChain=modal.dataset.editChain==="1";if(editDate!==""&&editIndex!==""){const task=getTasks(editDate)[Number(editIndex)];if(editChain&&task&&task.recurrenceId)editRecurringChain(task.recurrenceId,text,time.value);else editTask(editDate,Number(editIndex),text,time.value);modal.classList.add("hidden");modal.dataset.editDate="";modal.dataset.editIndex="";modal.dataset.editChain="0";renderWeek();return}if(document.getElementById("repeatTask").checked)addRecurringTask(selectedDate,text,document.getElementById("repeatType").value,document.getElementById("repeatUntil").value,time.value);else addTask(selectedDate,text,{time:time.value});modal.classList.add("hidden");renderWeek()};
 document.getElementById("cancelTaskBtn").onclick=()=>{const m=document.getElementById("taskModal");m.classList.add("hidden");m.dataset.editDate="";m.dataset.editIndex="";m.dataset.editChain="0"};
-document.getElementById("prevWeek").onclick=()=>changeWeek(-1);document.getElementById("nextWeek").onclick=()=>changeWeek(1);document.getElementById("todayBtn").onclick=()=>{currentDate=new Date();renderWeek()};
+
 function changeWeek(n){currentDate.setDate(currentDate.getDate()+n*7);renderWeek()}
 function updateDayStatus(){document.querySelectorAll(".day-status").forEach(s=>{const list=getTasks(s.dataset.date)||[];s.textContent=!list.length?"⚪":list.every(x=>x.done)?"🟢":"🟡"})}
 // Календарь
@@ -141,7 +141,7 @@ function checkTaskNotifications(force=false){
 setInterval(()=>checkTaskNotifications(),20000);
 
 // старт
-applySettings();document.body.classList.add("app-enter");setTimeout(()=>document.body.classList.add("app-ready"),650);renderWeek();resetUITimer();checkTaskNotifications(true);
+applySettings();document.body.classList.add("app-enter");setTimeout(()=>document.body.classList.add("app-ready"),650);renderWeek();checkTaskNotifications(true);
 window.renderWeek=renderWeek;window.updateDayStatus=updateDayStatus;window.changeWeek=changeWeek;
 
 
