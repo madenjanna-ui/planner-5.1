@@ -355,8 +355,16 @@ const loginPassword=document.getElementById("loginPassword");
 const loginBtn=document.getElementById("loginBtn");
 const loginError=document.getElementById("loginError");
 
+function getLoginCheckedAt(){
+  let last=Number(localStorage.getItem(LOGIN_CHECK_KEY)||0);
+  if(!last){
+    const m=document.cookie.match(/(?:^|; )madenflow_password_checked=(\\d+)/);
+    if(m) last=Number(m[1]||0);
+  }
+  return last;
+}
 function passwordRequired(){
-  const last=Number(localStorage.getItem(LOGIN_CHECK_KEY)||0);
+  const last=getLoginCheckedAt();
   return !last || (Date.now()-last)>=LOGIN_PERIOD;
 }
 function showLoginScreen(){
@@ -374,7 +382,9 @@ function unlockMaDenFlow(){
     loginPassword.focus();
     return;
   }
-  localStorage.setItem(LOGIN_CHECK_KEY,String(Date.now()));
+  const checkedAt=String(Date.now());
+  localStorage.setItem(LOGIN_CHECK_KEY,checkedAt);
+  document.cookie=`madenflow_password_checked=${checkedAt}; Max-Age=${30*24*60*60}; Path=/; SameSite=Lax`;
   document.documentElement.classList.remove("madenflow-locked");
   document.body.classList.remove("madenflow-locked");
   loginScreen.classList.add("hidden");
@@ -386,8 +396,7 @@ loginPassword.addEventListener("keydown",e=>{if(e.key==="Enter")unlockMaDenFlow(
 
 // Старт
 applySettings();
-document.body.classList.add("app-enter");
-setTimeout(()=>document.body.classList.add("app-ready"),650);
+document.body.classList.add("app-ready");
 renderWeek();
 checkTaskNotifications(true);
 window.renderWeek=renderWeek;
