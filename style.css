@@ -3083,3 +3083,13 @@ body.dark .month-day{
     .month-day{min-height:50px;font-size:17px;border-radius:13px}
     .month-empty{min-height:50px}
 }
+/* Убираем верхнюю шапку с экрана недели */
+.glass-header {
+    display: none !important;
+}
+
+/* Неделя получает всё освободившееся место */
+#planner {
+    padding-top: 4px !important;
+    padding-bottom: 8px !important;
+}
