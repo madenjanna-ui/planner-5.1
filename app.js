@@ -358,7 +358,7 @@ const loginError=document.getElementById("loginError");
 function getLoginCheckedAt(){
   let last=Number(localStorage.getItem(LOGIN_CHECK_KEY)||0);
   if(!last){
-    const m=document.cookie.match(/(?:^|; )madenflow_password_checked=(\\d+)/);
+    const m=document.cookie.match(/(?:^|; )madenflow_password_checked=(\d+)/);
     if(m) last=Number(m[1]||0);
   }
   return last;
@@ -391,8 +391,8 @@ function unlockMaDenFlow(){
   loginPassword.value="";
   openMonthScreen();
 }
-loginBtn.addEventListener("click",unlockMaDenFlow);
-loginPassword.addEventListener("keydown",e=>{if(e.key==="Enter")unlockMaDenFlow()});
+if(loginBtn) loginBtn.addEventListener("click",unlockMaDenFlow);
+if(loginPassword) loginPassword.addEventListener("keydown",e=>{if(e.key==="Enter")unlockMaDenFlow()});
 
 // Старт
 applySettings();
