@@ -3,7 +3,7 @@
    Base Theme
 ===================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
 
 :root{
 
@@ -2836,3 +2836,170 @@ body.madenflow-locked{
     overflow:hidden !important;
 }
 #loginScreen{z-index:100000 !important;}
+
+
+/* =====================================================
+   MaDenFlow 5.2 — month home + side navigation
+   Все основные данные и размеры недельных карточек сохраняются.
+===================================================== */
+.side-nav-handle{
+  position:fixed;
+  left:0;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:2200;
+  width:30px;
+  height:72px;
+  border:0;
+  border-radius:0 16px 16px 0;
+  background:rgba(255,255,255,.72);
+  color:var(--primary);
+  box-shadow:6px 0 24px rgba(40,60,120,.12);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  font-size:30px;
+  line-height:1;
+  cursor:pointer;
+  transition:opacity .25s,transform .25s;
+}
+.side-nav-handle:active{transform:translateY(-50%) scale(.96)}
+.side-nav-handle.hidden-handle{opacity:0;pointer-events:none}
+
+.side-nav{
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  width:min(300px,82vw);
+  z-index:2300;
+  padding:max(env(safe-area-inset-top),22px) 18px max(env(safe-area-inset-bottom),22px);
+  background:rgba(255,255,255,.86);
+  backdrop-filter:blur(30px) saturate(1.15);
+  -webkit-backdrop-filter:blur(30px) saturate(1.15);
+  box-shadow:24px 0 60px rgba(20,30,60,.18);
+  transform:translateX(-105%);
+  transition:transform .32s cubic-bezier(.2,.8,.2,1);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.side-nav.open{transform:translateX(0)}
+.side-nav-close{
+  align-self:flex-end;
+  width:38px;height:38px;
+  border:0;background:transparent;
+  color:var(--text2);
+  font-size:30px;
+}
+.side-nav-title{
+  font-size:23px;font-weight:800;
+  padding:4px 8px 14px;
+}
+.side-nav-item{
+  width:100%;
+  min-height:58px;
+  border:0;
+  border-radius:17px;
+  background:rgba(245,248,255,.9);
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:12px 16px;
+  font:700 16px/1 inherit;
+  text-align:left;
+  box-shadow:0 5px 16px rgba(40,60,120,.07);
+}
+.side-nav-item span:first-child{
+  width:28px;text-align:center;
+  color:var(--primary);
+  font-size:22px;
+}
+.side-nav-item:active{transform:scale(.98)}
+
+.month-home{
+  position:fixed;
+  inset:0;
+  z-index:2100;
+  overflow:auto;
+  padding:max(env(safe-area-inset-top),24px) 16px max(env(safe-area-inset-bottom),24px);
+  background:
+    radial-gradient(circle at 15% 10%,rgba(124,58,237,.08),transparent 35%),
+    linear-gradient(180deg,#fbfdff 0%,#edf4ff 100%);
+}
+.month-home-head{
+  max-width:650px;
+  margin:0 auto 20px;
+  display:grid;
+  grid-template-columns:48px 1fr 48px;
+  align-items:center;
+  text-align:center;
+}
+.month-home-head button{
+  width:44px;height:44px;
+  border:0;border-radius:14px;
+  background:rgba(255,255,255,.82);
+  color:var(--primary);
+  font-size:30px;
+  box-shadow:var(--shadow);
+}
+.month-home-caption{
+  color:var(--text2);
+  font-size:13px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+#homeMonthTitle{
+  margin-top:2px;
+  font-size:27px;
+  font-weight:800;
+  color:var(--text);
+}
+.home-calendar-grid{
+  width:min(650px,100%);
+  margin:0 auto;
+  grid-template-columns:repeat(7,1fr);
+  gap:8px;
+}
+.home-calendar-grid .cal-day{
+  min-height:48px;
+  border-radius:15px;
+}
+.home-calendar-grid .cal-day.today{
+  border:2px solid var(--primary);
+}
+.home-calendar-grid .cal-day.in-week{
+  box-shadow:inset 0 0 0 2px rgba(79,140,255,.16);
+}
+.home-calendar-grid .cal-day.has-tasks::after{
+  content:"";
+  width:5px;height:5px;
+  border-radius:50%;
+  background:var(--primary);
+  position:absolute;
+  bottom:6px;left:50%;
+  transform:translateX(-50%);
+}
+.home-today-btn{
+  display:block;
+  width:min(650px,100%);
+  margin:18px auto 0;
+  min-height:50px;
+  border:0;border-radius:16px;
+  background:var(--primary);
+  color:#fff;
+  font:800 16px inherit;
+  box-shadow:0 10px 25px rgba(79,140,255,.22);
+}
+.month-home-active .glass-header,
+.month-home-active #planner,
+.month-home-active .top-handle,
+.month-home-active .side-nav-handle{
+  visibility:hidden;
+}
+@media (max-width:480px){
+  .side-nav{width:78vw}
+  .home-calendar-grid{gap:6px}
+  .home-calendar-grid .cal-day{min-height:44px}
+}

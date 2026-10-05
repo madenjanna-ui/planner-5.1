@@ -15,20 +15,36 @@
 <header class="glass-header">
   <div class="logo">☁️ MaDenFlow</div>
   <div id="weekTitle"></div>
-  <div class="week-nav">
-    <button id="prevWeek" aria-label="Предыдущая неделя">◀</button>
-    <button id="calendarBtn" aria-label="Календарь">🗓️</button>
-    <button id="todayBtn" aria-label="Сегодня">📅</button>
-    <button id="nextWeek" aria-label="Следующая неделя">▶</button>
-  </div>
 </header>
 <div id="topHandle" class="top-handle" aria-label="Показать шапку"><div class="top-line"></div></div>
+
 <main id="planner"></main>
-<div class="bottom-bar">
-  <button id="serviceBtn" aria-label="Служение">👔</button>
-  <button id="visitsBtn" aria-label="Повторные посещения">📓</button>
-  <button id="settingsBtn" aria-label="Настройки">⚙️</button>
-</div>
+
+<!-- Выезжающая навигация. Она лежит поверх недели и не меняет её размеры. -->
+<button id="sideNavHandle" class="side-nav-handle" aria-label="Открыть навигацию">›</button>
+<aside id="sideNav" class="side-nav" aria-hidden="true">
+  <button id="sideNavClose" class="side-nav-close" aria-label="Закрыть навигацию">‹</button>
+  <div class="side-nav-title">Навигация</div>
+  <button id="sideTodayBtn" class="side-nav-item"><span>⌾</span><span>Текущая дата</span></button>
+  <button id="sideCalendarBtn" class="side-nav-item"><span>▦</span><span>Календарь</span></button>
+  <button id="serviceBtn" class="side-nav-item"><span>◷</span><span>Часы</span></button>
+  <button id="visitsBtn" class="side-nav-item"><span>♧</span><span>Посещения</span></button>
+  <button id="settingsBtn" class="side-nav-item"><span>⚙</span><span>Настройки</span></button>
+</aside>
+
+<!-- Первый экран после входа: текущий месяц -->
+<section id="monthHome" class="month-home hidden" aria-label="Календарь месяца">
+  <div class="month-home-head">
+    <button id="homeMonthPrev" aria-label="Предыдущий месяц">‹</button>
+    <div>
+      <div class="month-home-caption">Календарь</div>
+      <h1 id="homeMonthTitle"></h1>
+    </div>
+    <button id="homeMonthNext" aria-label="Следующий месяц">›</button>
+  </div>
+  <div id="homeCalendarGrid" class="calendar-grid home-calendar-grid"></div>
+  <button id="homeTodayBtn" class="home-today-btn">Сегодня</button>
+</section>
 <div id="taskModal" class="modal hidden"><div class="modal-box">
   <h3 id="taskModalTitle">Новая задача</h3>
   <input id="newTaskInput" placeholder="Введите задачу...">

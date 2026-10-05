@@ -60,14 +60,16 @@ function openTaskModal(){const modal=document.getElementById("taskModal");modal.
 document.getElementById("repeatTask").onchange=e=>document.getElementById("repeatOptions").classList.toggle("hidden",!e.target.checked);
 document.getElementById("saveTaskBtn").onclick=()=>{if(!selectedDate)return;const modal=document.getElementById("taskModal"),input=document.getElementById("newTaskInput"),time=document.getElementById("newTaskTime"),text=input.value.trim();if(!text)return;const editDate=modal.dataset.editDate,editIndex=modal.dataset.editIndex,editChain=modal.dataset.editChain==="1";if(editDate!==""&&editIndex!==""){const task=getTasks(editDate)[Number(editIndex)];if(editChain&&task&&task.recurrenceId)editRecurringChain(task.recurrenceId,text,time.value);else editTask(editDate,Number(editIndex),text,time.value);modal.classList.add("hidden");modal.dataset.editDate="";modal.dataset.editIndex="";modal.dataset.editChain="0";renderWeek();return}if(document.getElementById("repeatTask").checked)addRecurringTask(selectedDate,text,document.getElementById("repeatType").value,document.getElementById("repeatUntil").value,time.value);else addTask(selectedDate,text,{time:time.value});modal.classList.add("hidden");renderWeek()};
 document.getElementById("cancelTaskBtn").onclick=()=>{const m=document.getElementById("taskModal");m.classList.add("hidden");m.dataset.editDate="";m.dataset.editIndex="";m.dataset.editChain="0"};
-document.getElementById("prevWeek").onclick=()=>changeWeek(-1);document.getElementById("nextWeek").onclick=()=>changeWeek(1);document.getElementById("todayBtn").onclick=()=>{currentDate=new Date();renderWeek()};
+// Переключение недель — свайпом по рабочей области.
+document.getElementById("sideTodayBtn").onclick=()=>{currentDate=new Date();hideMonthHome();renderWeek();closeSideNav()};
+document.getElementById("sideCalendarBtn").onclick=()=>openCalendar();
 function changeWeek(n){currentDate.setDate(currentDate.getDate()+n*7);renderWeek()}
 let touchStartX=0,touchStartY=0;planner.addEventListener("touchstart",e=>{touchStartX=e.changedTouches[0].screenX;touchStartY=e.changedTouches[0].screenY},{passive:true});planner.addEventListener("touchend",e=>{const dx=e.changedTouches[0].screenX-touchStartX,dy=e.changedTouches[0].screenY-touchStartY;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.2)changeWeek(dx<0?1:-1);resetUITimer()},{passive:true});
 function updateDayStatus(){document.querySelectorAll(".day-status").forEach(s=>{const list=getTasks(s.dataset.date)||[];s.textContent=!list.length?"⚪":list.every(x=>x.done)?"🟢":"🟡"})}
 // Календарь
 function openCalendar(){calendarCursor=new Date(currentDate);renderCalendar();document.getElementById("calendarModal").classList.remove("hidden")}
 function renderCalendar(){const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth();document.getElementById("calendarTitle").textContent=new Date(y,m,1).toLocaleDateString("ru-RU",{month:"long",year:"numeric"});const grid=document.getElementById("calendarGrid");grid.innerHTML=weekDays.map(d=>`<div class="cal-weekday">${d}</div>`).join("");const first=(new Date(y,m,1).getDay()||7)-1,days=new Date(y,m+1,0).getDate();for(let i=0;i<first;i++)grid.insertAdjacentHTML("beforeend",`<div class="cal-empty"></div>`);for(let day=1;day<=days;day++){const d=new Date(y,m,day),key=localKey(d),btn=document.createElement("button");btn.className="cal-day";if(d.toDateString()===new Date().toDateString())btn.classList.add("today");if(d>=getMonday(currentDate)&&d<=new Date(getMonday(currentDate).getFullYear(),getMonday(currentDate).getMonth(),getMonday(currentDate).getDate()+6))btn.classList.add("in-week");btn.textContent=day;btn.onclick=()=>{currentDate=d;renderWeek();document.getElementById("calendarModal").classList.add("hidden")};grid.appendChild(btn)}}
-document.getElementById("calendarBtn").onclick=openCalendar;document.getElementById("calendarPrev").onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderCalendar()};document.getElementById("calendarNext").onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderCalendar()};document.getElementById("calendarToday").onclick=()=>{currentDate=new Date();renderWeek();document.getElementById("calendarModal").classList.add("hidden")};document.getElementById("calendarClose").onclick=()=>document.getElementById("calendarModal").classList.add("hidden");
+document.getElementById("calendarPrev").onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderCalendar()};document.getElementById("calendarNext").onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderCalendar()};document.getElementById("calendarToday").onclick=()=>{currentDate=new Date();renderWeek();document.getElementById("calendarModal").classList.add("hidden")};document.getElementById("calendarClose").onclick=()=>document.getElementById("calendarModal").classList.add("hidden");
 // Служение
  document.getElementById("serviceBtn").onclick=()=>openService(localKey(currentDate).slice(0,7));
 // Настройки
@@ -144,51 +146,113 @@ setInterval(()=>checkTaskNotifications(),20000);
 // Автоскрытие: тач/скролл не раскрывают шапку. Ручка снизу раскрывает.
 let uiTimer;const body=document.body,topHandle=document.getElementById("topHandle");function hideUI(){body.classList.add("ui-hidden")}function resetUITimer(){clearTimeout(uiTimer);uiTimer=setTimeout(hideUI,5000)}function showUI(){body.classList.remove("ui-hidden");clearTimeout(uiTimer);uiTimer=setTimeout(hideUI,5000)}topHandle.onclick=showUI;document.addEventListener("pointerdown",e=>{if(e.target.closest("button,input,.modal,.task-menu"))return;resetUITimer()},{passive:true});
 // старт
-applySettings();document.body.classList.add("app-enter");setTimeout(()=>document.body.classList.add("app-ready"),650);renderWeek();resetUITimer();checkTaskNotifications(true);
+applySettings();document.body.classList.add("app-enter");setTimeout(()=>document.body.classList.add("app-ready"),650);checkTaskNotifications(true);
 window.renderWeek=renderWeek;window.updateDayStatus=updateDayStatus;window.changeWeek=changeWeek;
 
 
 // =====================================
-// 🔐 MaDenFlow — пароль при каждом запуске
+// 📅 Навигация и первый экран — календарь месяца
 // =====================================
+let homeMonthCursor=new Date();
 
+function renderHomeCalendar(){
+  const y=homeMonthCursor.getFullYear(), m=homeMonthCursor.getMonth();
+  const title=new Date(y,m,1).toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
+  document.getElementById("homeMonthTitle").textContent=title.charAt(0).toUpperCase()+title.slice(1);
+  const grid=document.getElementById("homeCalendarGrid");
+  grid.innerHTML=weekDays.map(d=>`<div class="cal-weekday">${d}</div>`).join("");
+  const first=(new Date(y,m,1).getDay()||7)-1;
+  const days=new Date(y,m+1,0).getDate();
+  for(let i=0;i<first;i++)grid.insertAdjacentHTML("beforeend",'<div class="cal-empty"></div>');
+  for(let day=1;day<=days;day++){
+    const d=new Date(y,m,day),btn=document.createElement("button");
+    btn.className="cal-day";
+    if(d.toDateString()===new Date().toDateString())btn.classList.add("today");
+    const monday=getMonday(currentDate);
+    const sunday=new Date(monday); sunday.setDate(sunday.getDate()+6);
+    if(d>=monday&&d<=sunday)btn.classList.add("in-week");
+    const key=localKey(d);
+    if((getTasks(key)||[]).length)btn.classList.add("has-tasks");
+    btn.textContent=day;
+    btn.onclick=()=>{currentDate=d;hideMonthHome();renderWeek()};
+    grid.appendChild(btn);
+  }
+}
+function showMonthHome(){
+  closeSideNav();
+  homeMonthCursor=new Date(currentDate);
+  renderHomeCalendar();
+  document.getElementById("monthHome").classList.remove("hidden");
+  document.body.classList.add("month-home-active");
+}
+function hideMonthHome(){
+  document.getElementById("monthHome").classList.add("hidden");
+  document.body.classList.remove("month-home-active");
+}
+document.getElementById("homeMonthPrev").onclick=()=>{homeMonthCursor.setMonth(homeMonthCursor.getMonth()-1);renderHomeCalendar()};
+document.getElementById("homeMonthNext").onclick=()=>{homeMonthCursor.setMonth(homeMonthCursor.getMonth()+1);renderHomeCalendar()};
+document.getElementById("homeTodayBtn").onclick=()=>{currentDate=new Date();showMonthHome()};
+let homeTouchX=0,homeTouchY=0;
+document.getElementById("monthHome").addEventListener("touchstart",e=>{homeTouchX=e.changedTouches[0].screenX;homeTouchY=e.changedTouches[0].screenY},{passive:true});
+document.getElementById("monthHome").addEventListener("touchend",e=>{
+  const dx=e.changedTouches[0].screenX-homeTouchX,dy=e.changedTouches[0].screenY-homeTouchY;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.2){homeMonthCursor.setMonth(homeMonthCursor.getMonth()+(dx<0?1:-1));renderHomeCalendar()}
+},{passive:true});
+
+// Боковая панель поверх недели.
+const sideNav=document.getElementById("sideNav");
+function openSideNav(){sideNav.classList.add("open");sideNav.setAttribute("aria-hidden","false");document.getElementById("sideNavHandle").classList.add("hidden-handle")}
+function closeSideNav(){sideNav.classList.remove("open");sideNav.setAttribute("aria-hidden","true");document.getElementById("sideNavHandle").classList.remove("hidden-handle")}
+document.getElementById("sideNavHandle").onclick=openSideNav;
+document.getElementById("sideNavClose").onclick=closeSideNav;
+document.addEventListener("pointerdown",e=>{if(sideNav.classList.contains("open")&&!e.target.closest("#sideNav")&&!e.target.closest("#sideNavHandle"))closeSideNav()},{passive:true});
+
+
+// =====================================
+// 🔐 MaDenFlow — пароль: первый вход и повтор через месяц
 const MADENFLOW_PASSWORD = "Maden2026";
-
+const PASSWORD_CHECK_KEY = "MaDenFlow_passwordVerifiedAt";
 const loginScreen = document.getElementById("loginScreen");
 const loginPassword = document.getElementById("loginPassword");
 const loginBtn = document.getElementById("loginBtn");
 const loginError = document.getElementById("loginError");
-
 let madenflowUnlocked = false;
 
+function passwordIsDue(){
+  const last=Number(localStorage.getItem(PASSWORD_CHECK_KEY)||0);
+  return !last || (Date.now()-last >= 30*24*60*60*1000);
+}
 function showLoginScreen(){
-    madenflowUnlocked = false;
-    document.documentElement.classList.add("madenflow-locked");
-    document.body.classList.add("madenflow-locked");
-    loginScreen.classList.remove("hidden");
-    loginPassword.value = "";
-    loginError.classList.remove("show");
-    setTimeout(()=>loginPassword.focus(),100);
+  madenflowUnlocked=false;
+  document.documentElement.classList.add("madenflow-locked");
+  document.body.classList.add("madenflow-locked");
+  loginScreen.classList.remove("hidden");
+  loginPassword.value="";
+  loginError.classList.remove("show");
+  setTimeout(()=>loginPassword.focus(),100);
 }
-
 function unlockMaDenFlow(){
-    if(loginPassword.value === MADENFLOW_PASSWORD){
-        madenflowUnlocked = true;
-        document.documentElement.classList.remove("madenflow-locked");
-        document.body.classList.remove("madenflow-locked");
-        loginError.classList.remove("show");
-        loginScreen.classList.add("hidden");
-        loginPassword.value = "";
-    }else{
-        loginError.classList.add("show");
-        loginPassword.value = "";
-        loginPassword.focus();
-    }
+  if(loginPassword.value===MADENFLOW_PASSWORD){
+    madenflowUnlocked=true;
+    localStorage.setItem(PASSWORD_CHECK_KEY,String(Date.now()));
+    document.documentElement.classList.remove("madenflow-locked");
+    document.body.classList.remove("madenflow-locked");
+    loginError.classList.remove("show");
+    loginScreen.classList.add("hidden");
+    loginPassword.value="";
+    showMonthHome();
+  }else{
+    loginError.classList.add("show");
+    loginPassword.value="";
+    loginPassword.focus();
+  }
 }
-
 loginBtn.addEventListener("click",unlockMaDenFlow);
-loginPassword.addEventListener("keydown",e=>{
-    if(e.key==="Enter") unlockMaDenFlow();
-});
+loginPassword.addEventListener("keydown",e=>{if(e.key==="Enter")unlockMaDenFlow()});
 
-showLoginScreen();
+if(passwordIsDue()) showLoginScreen();
+else {
+  document.documentElement.classList.remove("madenflow-locked");
+  document.body.classList.remove("madenflow-locked");
+  showMonthHome();
+}
