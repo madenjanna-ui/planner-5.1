@@ -3086,154 +3086,143 @@ body.dark .month-day{
 
 
 /* =========================================================
-   MaDenFlow — стабильный экран недели для iPhone 6"+ 
-   Финальная коррекция: без прыжков и старых резервных отступов
+   MaDenFlow — карточка дня и окно дел
 ========================================================= */
 
-body{
-    --header-space:58px !important;
-    --bottom-space:0px !important;
-    padding-top:var(--header-space) !important;
-    padding-bottom:0 !important;
-    min-height:100dvh;
-    overflow:hidden;
+/* Кнопка + внутри карточки больше не нужна */
+#planner .add-task-day,
+#planner .day-add{
+  display:none !important;
 }
 
-/* Вверху оставляем только диапазон недели — название приложения убираем */
-.glass-header{
-    display:block !important;
-    height:58px;
-    box-sizing:border-box;
-    padding:
-        max(env(safe-area-inset-top),8px)
-        12px
-        8px !important;
-    transform:none !important;
-    opacity:1 !important;
-    transition:none !important;
+/* Правая часть карточки: только название дня и дата */
+#planner .day-header{
+  justify-content:flex-end !important;
 }
-.glass-header .logo{
-    display:none !important;
-}
-#weekTitle{
-    margin:0 !important;
-    padding:0 !important;
-    font-size:18px !important;
-    line-height:1.2 !important;
-    font-weight:800 !important;
+#planner .day-header .day-title,
+#planner .day-header .day-name{
+  margin-left:auto !important;
+  text-align:right !important;
 }
 
-/* Неделя всегда занимает одну и ту же область экрана */
-#planner{
-    width:100%;
-    max-width:700px;
-    height:calc(100dvh - var(--header-space)) !important;
-    min-height:0 !important;
-    margin:0 auto !important;
-    padding:8px 10px 8px !important;
-    box-sizing:border-box !important;
-    gap:8px !important;
-    overflow:hidden !important;
-    transform:none !important;
-    transition:none !important;
+/* Окно дел */
+#dayTasksModal{
+  position:fixed;
+  inset:0;
+  z-index:12000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(10,20,40,.28);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
 }
-
-/* Все семь дней делят доступную высоту одинаково */
-#planner .day{
-    flex:1 1 0 !important;
-    min-height:0 !important;
-    overflow:hidden !important;
-    padding:10px 12px !important;
-    box-sizing:border-box !important;
+#dayTasksModal.hidden{display:none !important}
+.day-tasks-modal{
+  position:relative;
+  width:min(520px,92vw);
+  max-height:min(78vh,680px);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-sizing:border-box;
+  padding:24px 20px 18px;
+  border-radius:26px;
+  background:rgba(255,255,255,.90);
+  border:1px solid rgba(255,255,255,.75);
+  box-shadow:0 24px 70px rgba(20,40,70,.22);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
 }
-
-/* Читаемый размер для экрана 6"+ */
-#planner .day-name{
-    font-size:21px !important;
-    line-height:1.15 !important;
-    font-weight:850 !important;
-    gap:6px !important;
+.day-modal-close{
+  position:absolute;
+  right:12px;
+  top:10px;
+  width:40px;
+  height:40px;
+  border:0;
+  background:transparent;
+  font-size:31px;
+  line-height:1;
+  color:var(--text);
 }
-#planner .day-month{
-    font-size:14px !important;
-    font-weight:800 !important;
+.day-modal-title{
+  padding:0 42px 16px 2px;
+  font-size:23px;
+  font-weight:850;
+  text-transform:capitalize;
 }
-#planner .day-status{
-    font-size:22px !important;
+.day-tasks-list{
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  min-height:70px;
+  padding:2px 1px 10px;
 }
-#planner .add-task-day{
-    width:40px !important;
-    height:40px !important;
-    font-size:24px !important;
-    border-radius:13px !important;
+.day-modal-task{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:12px;
+  border-radius:15px;
+  background:rgba(235,242,249,.78);
 }
-#planner .task{
-    min-height:40px !important;
-    padding:7px 9px !important;
+.day-modal-check{
+  width:25px;
+  font-size:21px;
+  text-align:center;
 }
-#planner .task-text{
-    font-size:19px !important;
-    line-height:1.18 !important;
+.day-modal-task-main{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
 }
-#planner .task-time{
-    font-size:15px !important;
+.day-modal-task-text{
+  font-size:18px;
+  line-height:1.2;
+  font-weight:700;
 }
-
-/* При входе и перерисовке неделя не должна физически сдвигаться */
-body.app-enter #planner,
-body.app-ready #planner{
-    transform:none !important;
+.day-modal-task-time{
+  font-size:14px;
+  opacity:.7;
 }
-body.app-enter .glass-header,
-body.app-ready .glass-header{
-    transform:none !important;
+.day-modal-edit{
+  border:0;
+  border-radius:11px;
+  padding:8px 10px;
+  background:rgba(255,255,255,.8);
+  font-size:14px;
+  font-weight:700;
 }
-body.app-ready .day{
-    animation:none !important;
+.day-tasks-add{
+  flex:0 0 auto;
+  margin-top:10px;
+  min-height:50px;
+  border:0;
+  border-radius:15px;
+  background:var(--primary);
+  color:#fff;
+  font-size:17px;
+  font-weight:800;
 }
-
-/* Старые скрытые элементы больше не участвуют в расчёте */
-.top-handle,
-.bottom-bar{
-    display:none !important;
+.day-empty{
+  padding:25px 10px;
+  text-align:center;
+  font-size:17px;
+  opacity:.65;
 }
-
-/* Нижний уголок */
-.side-toggle{
-    left:8px !important;
-    bottom:max(10px, env(safe-area-inset-bottom)) !important;
+body.dark .day-tasks-modal{
+  background:rgba(25,32,48,.93);
+  border-color:rgba(255,255,255,.1);
 }
-
-/* На iPhone не добавляем старые 95px снизу */
-@supports(padding:max(0px)){
-    body{
-        padding-bottom:0 !important;
-    }
+body.dark .day-modal-task{
+  background:rgba(255,255,255,.07);
 }
-
-@media(max-width:640px){
-    #weekTitle{font-size:17px !important}
-    #planner .day-name{font-size:20px !important}
-    #planner .task-text{font-size:18px !important}
-    #planner .task-time{font-size:14px !important}
+body.dark .day-modal-edit{
+  background:rgba(255,255,255,.08);
+  color:var(--text);
 }
-
-
-/* MaDenFlow — финальная настройка экрана недели */
-body{--header-space:40px !important;--bottom-space:0px !important;padding-top:var(--header-space) !important;padding-bottom:0 !important;min-height:100dvh !important;overflow:hidden !important}
-.glass-header{height:40px !important;padding:3px 12px 2px !important;box-sizing:border-box !important;display:flex !important;align-items:center !important;justify-content:center !important;background:transparent !important;border:0 !important;box-shadow:none !important}
-.glass-header .logo{display:none !important}
-#weekTitle{font-size:14px !important;line-height:1 !important;font-weight:700 !important;letter-spacing:.1px !important;opacity:.72 !important;white-space:nowrap !important}
-#planner{height:calc(100dvh - var(--header-space)) !important;min-height:0 !important;margin:0 !important;padding:4px 9px 7px !important;gap:6px !important;overflow:hidden !important;box-sizing:border-box !important;transform:none !important;transition:none !important}
-#planner .day{flex:1 1 0 !important;min-height:0 !important;padding:9px 12px !important;box-sizing:border-box !important}
-#planner .day-name,#planner .day-name .day-weekday{font-size:23px !important;line-height:1.12 !important;font-weight:850 !important}
-#planner .day-month{font-size:14px !important;font-weight:800 !important}
-#planner .day-status{font-size:23px !important}
-#planner .add-task-day{width:42px !important;height:42px !important;font-size:26px !important}
-#planner .task{min-height:42px !important;padding:7px 9px !important}
-#planner .task-text{font-size:21px !important;line-height:1.18 !important}
-#planner .task-time{font-size:16px !important}
-.side-toggle{position:fixed !important;left:7px !important;bottom:max(9px,env(safe-area-inset-bottom)) !important;z-index:8500 !important;width:54px !important;height:54px !important;padding:0 !important;display:flex !important;align-items:center !important;justify-content:center !important;border:1px solid rgba(255,255,255,.48) !important;border-radius:17px !important;background:rgba(255,255,255,.24) !important;color:var(--text) !important;font:300 48px/46px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif !important;text-shadow:0 1px 3px rgba(0,0,0,.16) !important;box-shadow:0 7px 20px rgba(30,50,80,.16),inset 0 0 14px rgba(255,255,255,.16) !important;backdrop-filter:blur(12px) saturate(1.18) !important;-webkit-backdrop-filter:blur(12px) saturate(1.18) !important;opacity:.92 !important}
-.side-toggle.panel-open{left:268px !important}.side-toggle:active{transform:scale(.92) !important;opacity:1 !important}.side-toggle::first-letter{font-weight:500 !important}
-body.dark .side-toggle{background:rgba(255,255,255,.11) !important;border-color:rgba(255,255,255,.20) !important}
-@media(max-width:640px){#weekTitle{font-size:14px !important}#planner .day-name,#planner .day-name .day-weekday{font-size:22px !important}#planner .task-text{font-size:20px !important}#planner .task-time{font-size:15px !important}}

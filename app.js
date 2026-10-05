@@ -5,7 +5,7 @@ const weekDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 let currentDate=new Date(),selectedDate=null,calendarCursor=new Date();
 function getMonday(date){const d=new Date(date);let day=d.getDay()||7;d.setDate(d.getDate()-day+1);return d}
 function localKey(d){return localDateKey(d)}
-function renderWeek(){planner.innerHTML="";const monday=getMonday(currentDate),sunday=new Date(monday);sunday.setDate(monday.getDate()+6);weekTitle.textContent=`${monday.getDate()}.${String(monday.getMonth()+1).padStart(2,"0")} – ${sunday.getDate()}.${String(sunday.getMonth()+1).padStart(2,"0")}.${sunday.getFullYear()}`;let maxTasks=0;const listMode=(appData.settings||{}).taskView==="list";const sections=[];for(let i=0;i<7;i++){const date=new Date(monday);date.setDate(monday.getDate()+i);const key=localKey(date);const count=getTasks(key).length;maxTasks=Math.max(maxTasks,count);const section=document.createElement("section");section.className="day"+(date.getDay()===0||date.getDay()===6?" weekend":"");if(date.toDateString()===new Date().toDateString())section.classList.add("today");section.dataset.date=key;section.dataset.taskCount=count;section.innerHTML=`<div class="day-title"><div class="day-name"><span class="day-weekday">${weekDays[i]}</span> ${date.getDate()} <span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span> <span class="day-status" data-date="${key}">⚪</span>${date.toDateString()===new Date().toDateString()?" ⭐":""}</div><button class="add-task-day" data-date="${key}">＋</button></div><div class="day-content"><div class="tasks"></div></div>`;planner.appendChild(section);loadTasks(key,section.querySelector(".tasks"));sections.push({section,count})}planner.classList.remove("week-normal","week-compact","week-ultra");planner.classList.add(maxTasks>=7?"week-ultra":maxTasks>=4?"week-compact":"week-normal");if(listMode){
+function renderWeek(){planner.innerHTML="";const monday=getMonday(currentDate),sunday=new Date(monday);sunday.setDate(monday.getDate()+6);weekTitle.textContent=`${monday.toLocaleDateString("ru-RU")} — ${sunday.toLocaleDateString("ru-RU")}`;let maxTasks=0;const listMode=(appData.settings||{}).taskView==="list";const sections=[];for(let i=0;i<7;i++){const date=new Date(monday);date.setDate(monday.getDate()+i);const key=localKey(date);const count=getTasks(key).length;maxTasks=Math.max(maxTasks,count);const section=document.createElement("section");section.className="day"+(date.getDay()===0||date.getDay()===6?" weekend":"");if(date.toDateString()===new Date().toDateString())section.classList.add("today");section.dataset.date=key;section.dataset.taskCount=count;section.innerHTML=`<div class="day-title"><div class="day-name"><span class="day-weekday">${weekDays[i]}</span> ${date.getDate()} <span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span> <span class="day-status" data-date="${key}">⚪</span>${date.toDateString()===new Date().toDateString()?" ⭐":""}</div><button class="add-task-day" data-date="${key}">＋</button></div><div class="day-content"><div class="tasks"></div></div>`;planner.appendChild(section);loadTasks(key,section.querySelector(".tasks"));sections.push({section,count})}planner.classList.remove("week-normal","week-compact","week-ultra");planner.classList.add(maxTasks>=7?"week-ultra":maxTasks>=4?"week-compact":"week-normal");if(listMode){
 sections.forEach(({section,count})=>{
   section.classList.add("list-day");
   section.style.flex="1 1 0";
@@ -141,7 +141,7 @@ function checkTaskNotifications(force=false){
 setInterval(()=>checkTaskNotifications(),20000);
 
 // старт
-applySettings();document.body.classList.add("app-ready");renderWeek();checkTaskNotifications(true);
+applySettings();document.body.classList.add("app-enter");setTimeout(()=>document.body.classList.add("app-ready"),650);renderWeek();checkTaskNotifications(true);
 window.renderWeek=renderWeek;window.updateDayStatus=updateDayStatus;window.changeWeek=changeWeek;
 
 
@@ -237,6 +237,88 @@ document.getElementById("calendarBtn").onclick=()=>{
 };
 
 
+
+// day-card-tap-handler
+// Тап по карточке дня открывает список дел. Кнопки/сами задачи остаются интерактивными.
+const dayTasksModal=document.getElementById("dayTasksModal");
+const dayTasksList=document.getElementById("dayTasksList");
+const dayTasksTitle=document.getElementById("dayTasksTitle");
+const dayTasksAdd=document.getElementById("dayTasksAdd");
+const dayTasksClose=document.getElementById("dayTasksClose");
+let selectedDayForModal=null;
+
+function closeDayTasksModal(){
+  if(!dayTasksModal) return;
+  dayTasksModal.classList.add("hidden");
+  dayTasksModal.setAttribute("aria-hidden","true");
+  selectedDayForModal=null;
+}
+
+function openDayTasksModal(date){
+  if(!dayTasksModal) return;
+  selectedDayForModal=new Date(date);
+  const key=localKey(selectedDayForModal);
+  const tasks=getTasks(key)||[];
+  dayTasksTitle.textContent=selectedDayForModal.toLocaleDateString("ru-RU",{
+    weekday:"long",day:"numeric",month:"long"
+  });
+  dayTasksList.innerHTML="";
+  if(!tasks.length){
+    dayTasksList.innerHTML='<div class="day-empty">На этот день дел пока нет.</div>';
+  }else{
+    tasks.forEach((task,index)=>{
+      const row=document.createElement("div");
+      row.className="day-modal-task";
+      row.innerHTML=`
+        <span class="day-modal-check">${task.done?"✓":"○"}</span>
+        <span class="day-modal-task-main">
+          <span class="day-modal-task-text"></span>
+          ${task.time?`<span class="day-modal-task-time"></span>`:""}
+        </span>
+        <button class="day-modal-edit" type="button">Изменить</button>`;
+      row.querySelector(".day-modal-task-text").textContent=task.text||task.title||"Задача";
+      if(task.time) row.querySelector(".day-modal-task-time").textContent=task.time;
+      row.querySelector(".day-modal-edit").onclick=(e)=>{
+        e.stopPropagation();
+        // Используем существующий редактор задачи проекта, если он доступен.
+        if(typeof window.editTask==="function") window.editTask(key,index);
+        else if(typeof editTask==="function") editTask(key,index);
+        else alert("Редактор этой задачи уже доступен через обычное окно задач.");
+      };
+      dayTasksList.appendChild(row);
+    });
+  }
+  dayTasksModal.classList.remove("hidden");
+  dayTasksModal.setAttribute("aria-hidden","false");
+}
+
+dayTasksAdd.onclick=()=>{
+  if(!selectedDayForModal) return;
+  const key=localKey(selectedDayForModal);
+  if(typeof window.addTask==="function") window.addTask(key);
+  else if(typeof addTask==="function") addTask(key);
+};
+dayTasksClose.onclick=closeDayTasksModal;
+
+dayTasksModal.addEventListener("click",(e)=>{
+  if(e.target===dayTasksModal) closeDayTasksModal();
+});
+
+document.addEventListener("keydown",(e)=>{
+  if(e.key==="Escape") closeDayTasksModal();
+});
+
+// Тап по карточке дня. Ищем ближайший элемент с датой из существующего рендера.
+planner.addEventListener("click",(e)=>{
+  if(e.target.closest("button,input,textarea,select,a,.task,.task-text,.task-menu")) return;
+  const card=e.target.closest(".day");
+  if(!card) return;
+  const dateAttr=card.dataset.date||card.getAttribute("data-day");
+  if(!dateAttr) return;
+  const d=new Date(dateAttr);
+  if(!Number.isNaN(d.getTime())) openDayTasksModal(d);
+});
+
 // Универсально: любое нажатие по пункту боковой навигации закрывает её.
 sidePanel.addEventListener("click", (e)=>{
   if(e.target.closest(".side-nav-btn")) closeNavigationBeforeAction();
@@ -266,51 +348,16 @@ planner.addEventListener("touchend",e=>{
 // Пароль: первый вход и повторная проверка через 30 дней.
 const MADENFLOW_PASSWORD = "Maden2026";
 const LOGIN_CHECK_KEY = "MaDenFlow_password_checked_at";
-const LOGIN_COOKIE = "madenflow_login_checked";
 const LOGIN_PERIOD = 30*24*60*60*1000;
-const LOGIN_DB = "MaDenFlowAuth";
-const LOGIN_STORE = "auth";
-const LOGIN_DB_KEY = "login";
 
 const loginScreen=document.getElementById("loginScreen");
 const loginPassword=document.getElementById("loginPassword");
 const loginBtn=document.getElementById("loginBtn");
 const loginError=document.getElementById("loginError");
 
-function readLoginStamp(){
-  const local=Number(localStorage.getItem(LOGIN_CHECK_KEY)||0);
-  const match=document.cookie.match(new RegExp("(?:^|; )"+LOGIN_COOKIE+"=(\\d+)"));
-  const cookie=match?Number(match[1]||0):0;
-  return Math.max(local,cookie);
-}
-function writeLoginStamp(stamp){
-  const value=String(stamp);
-  localStorage.setItem(LOGIN_CHECK_KEY,value);
-  document.cookie=`${LOGIN_COOKIE}=${value}; Max-Age=${30*24*60*60}; Path=/; SameSite=Lax`;
-  try{
-    const req=indexedDB.open(LOGIN_DB,1);
-    req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(LOGIN_STORE))req.result.createObjectStore(LOGIN_STORE)};
-    req.onsuccess=()=>{try{req.result.transaction(LOGIN_STORE,"readwrite").objectStore(LOGIN_STORE).put({checkedAt:stamp},LOGIN_DB_KEY)}catch(e){}};
-  }catch(e){}
-}
-function readLoginFromIDB(){
-  return new Promise(resolve=>{
-    try{
-      const req=indexedDB.open(LOGIN_DB,1);
-      req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(LOGIN_STORE))req.result.createObjectStore(LOGIN_STORE)};
-      req.onerror=()=>resolve(0);
-      req.onsuccess=()=>{
-        try{
-          const get=req.result.transaction(LOGIN_STORE,"readonly").objectStore(LOGIN_STORE).get(LOGIN_DB_KEY);
-          get.onsuccess=()=>resolve(Number(get.result?.checkedAt||0));
-          get.onerror=()=>resolve(0);
-        }catch(e){resolve(0)}
-      };
-    }catch(e){resolve(0)}
-  });
-}
-function passwordRequired(stamp=readLoginStamp()){
-  return !stamp || (Date.now()-stamp)>=LOGIN_PERIOD;
+function passwordRequired(){
+  const last=Number(localStorage.getItem(LOGIN_CHECK_KEY)||0);
+  return !last || (Date.now()-last)>=LOGIN_PERIOD;
 }
 function showLoginScreen(){
   document.documentElement.classList.add("madenflow-locked");
@@ -322,32 +369,34 @@ function showLoginScreen(){
 }
 function unlockMaDenFlow(){
   if(loginPassword.value!==MADENFLOW_PASSWORD){
-    loginError.classList.add("show"); loginPassword.value=""; loginPassword.focus(); return;
+    loginError.classList.add("show");
+    loginPassword.value="";
+    loginPassword.focus();
+    return;
   }
-  writeLoginStamp(Date.now());
+  localStorage.setItem(LOGIN_CHECK_KEY,String(Date.now()));
   document.documentElement.classList.remove("madenflow-locked");
   document.body.classList.remove("madenflow-locked");
-  loginScreen.classList.add("hidden"); loginPassword.value=""; openMonthScreen();
+  loginScreen.classList.add("hidden");
+  loginPassword.value="";
+  openMonthScreen();
 }
 loginBtn.addEventListener("click",unlockMaDenFlow);
 loginPassword.addEventListener("keydown",e=>{if(e.key==="Enter")unlockMaDenFlow()});
 
 // Старт
 applySettings();
-document.body.classList.add("app-ready");
+document.body.classList.add("app-enter");
+setTimeout(()=>document.body.classList.add("app-ready"),650);
 renderWeek();
 checkTaskNotifications(true);
-
 window.renderWeek=renderWeek;
 window.updateDayStatus=updateDayStatus;
 window.changeWeek=changeWeek;
 
-(async()=>{
-  const stored=Math.max(readLoginStamp(),await readLoginFromIDB());
-  if(stored && !passwordRequired(stored)){
-    writeLoginStamp(stored);
-    document.documentElement.classList.remove("madenflow-locked");
-    document.body.classList.remove("madenflow-locked");
-    openMonthScreen();
-  }else showLoginScreen();
-})();
+if(passwordRequired()) showLoginScreen();
+else {
+  document.documentElement.classList.remove("madenflow-locked");
+  document.body.classList.remove("madenflow-locked");
+  openMonthScreen();
+}
