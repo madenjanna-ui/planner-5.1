@@ -3093,3 +3093,17 @@ body.dark .month-day{
     padding-top: 4px !important;
     padding-bottom: 8px !important;
 }
+/* MaDenFlow — нижняя панель удалена, возвращаем всю высоту недели */
+body {
+    padding-bottom: 0 !important;
+}
+
+#planner {
+    padding-bottom: 10px !important;
+    min-height: calc(100vh - 10px);
+}
+
+/* Верхнюю шапку на экране недели не показываем */
+.glass-header {
+    display: none !important;
+}
