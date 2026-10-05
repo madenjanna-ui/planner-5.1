@@ -171,6 +171,16 @@ function closeSidePanel(){
   sideToggle.textContent="›";
   sideToggle.setAttribute("aria-label","Открыть навигацию");
 }
+
+// Закрываем боковую панель перед любым действием из неё.
+// Это предотвращает ситуацию, когда панель остаётся поверх нового окна.
+function closeNavigationBeforeAction(){
+  closeSidePanel();
+  // На случай анимации/перехода сразу убираем фокус с кнопки панели.
+  if (document.activeElement && document.activeElement.classList.contains("side-nav-btn")) {
+    document.activeElement.blur();
+  }
+}
 sideToggle.addEventListener("click",()=>sidePanel.classList.contains("open")?closeSidePanel():openSidePanel());
 
 function openMonthScreen(){
@@ -215,12 +225,31 @@ document.getElementById("monthToday").onclick=()=>{monthScreenCursor=new Date();
 
 // Внутри боковой панели
 document.getElementById("todayBtn").onclick=()=>{
+  closeNavigationBeforeAction();
   currentDate=new Date();
-  closeSidePanel();
   closeMonthScreen();
   renderWeek();
 };
-document.getElementById("calendarBtn").onclick=()=>openMonthScreen();
+
+document.getElementById("calendarBtn").onclick=()=>{
+  closeNavigationBeforeAction();
+  openMonthScreen();
+};
+
+
+// Универсально: любое нажатие по пункту боковой навигации закрывает её.
+sidePanel.addEventListener("click", (e)=>{
+  if(e.target.closest(".side-nav-btn")) closeNavigationBeforeAction();
+});
+
+
+// Если пользователь нажал по рабочей области или другому элементу вне панели,
+// панель автоматически закрывается.
+document.addEventListener("pointerdown",(e)=>{
+  if(!sidePanel.classList.contains("open")) return;
+  if(e.target.closest("#sidePanel") || e.target.closest("#sideToggle")) return;
+  closeNavigationBeforeAction();
+},{capture:true});
 
 // Свайп по неделе остаётся основным переходом между неделями.
 let touchStartX=0,touchStartY=0;
