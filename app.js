@@ -141,7 +141,7 @@ function checkTaskNotifications(force=false){
 setInterval(()=>checkTaskNotifications(),20000);
 
 // старт
-applySettings();document.body.classList.add("app-enter");setTimeout(()=>document.body.classList.add("app-ready"),650);renderWeek();checkTaskNotifications(true);
+applySettings();document.body.classList.add("app-ready");renderWeek();checkTaskNotifications(true);
 window.renderWeek=renderWeek;window.updateDayStatus=updateDayStatus;window.changeWeek=changeWeek;
 
 

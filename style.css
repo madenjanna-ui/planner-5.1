@@ -3083,27 +3083,137 @@ body.dark .month-day{
     .month-day{min-height:50px;font-size:17px;border-radius:13px}
     .month-empty{min-height:50px}
 }
-/* Убираем верхнюю шапку с экрана недели */
-.glass-header {
-    display: none !important;
+
+
+/* =========================================================
+   MaDenFlow — стабильный экран недели для iPhone 6"+ 
+   Финальная коррекция: без прыжков и старых резервных отступов
+========================================================= */
+
+body{
+    --header-space:58px !important;
+    --bottom-space:0px !important;
+    padding-top:var(--header-space) !important;
+    padding-bottom:0 !important;
+    min-height:100dvh;
+    overflow:hidden;
 }
 
-/* Неделя получает всё освободившееся место */
-#planner {
-    padding-top: 4px !important;
-    padding-bottom: 8px !important;
+/* Вверху оставляем только диапазон недели — название приложения убираем */
+.glass-header{
+    display:block !important;
+    height:58px;
+    box-sizing:border-box;
+    padding:
+        max(env(safe-area-inset-top),8px)
+        12px
+        8px !important;
+    transform:none !important;
+    opacity:1 !important;
+    transition:none !important;
 }
-/* MaDenFlow — нижняя панель удалена, возвращаем всю высоту недели */
-body {
-    padding-bottom: 0 !important;
+.glass-header .logo{
+    display:none !important;
+}
+#weekTitle{
+    margin:0 !important;
+    padding:0 !important;
+    font-size:18px !important;
+    line-height:1.2 !important;
+    font-weight:800 !important;
 }
 
-#planner {
-    padding-bottom: 10px !important;
-    min-height: calc(100vh - 10px);
+/* Неделя всегда занимает одну и ту же область экрана */
+#planner{
+    width:100%;
+    max-width:700px;
+    height:calc(100dvh - var(--header-space)) !important;
+    min-height:0 !important;
+    margin:0 auto !important;
+    padding:8px 10px 8px !important;
+    box-sizing:border-box !important;
+    gap:8px !important;
+    overflow:hidden !important;
+    transform:none !important;
+    transition:none !important;
 }
 
-/* Верхнюю шапку на экране недели не показываем */
-.glass-header {
-    display: none !important;
+/* Все семь дней делят доступную высоту одинаково */
+#planner .day{
+    flex:1 1 0 !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+    padding:10px 12px !important;
+    box-sizing:border-box !important;
+}
+
+/* Читаемый размер для экрана 6"+ */
+#planner .day-name{
+    font-size:21px !important;
+    line-height:1.15 !important;
+    font-weight:850 !important;
+    gap:6px !important;
+}
+#planner .day-month{
+    font-size:14px !important;
+    font-weight:800 !important;
+}
+#planner .day-status{
+    font-size:22px !important;
+}
+#planner .add-task-day{
+    width:40px !important;
+    height:40px !important;
+    font-size:24px !important;
+    border-radius:13px !important;
+}
+#planner .task{
+    min-height:40px !important;
+    padding:7px 9px !important;
+}
+#planner .task-text{
+    font-size:19px !important;
+    line-height:1.18 !important;
+}
+#planner .task-time{
+    font-size:15px !important;
+}
+
+/* При входе и перерисовке неделя не должна физически сдвигаться */
+body.app-enter #planner,
+body.app-ready #planner{
+    transform:none !important;
+}
+body.app-enter .glass-header,
+body.app-ready .glass-header{
+    transform:none !important;
+}
+body.app-ready .day{
+    animation:none !important;
+}
+
+/* Старые скрытые элементы больше не участвуют в расчёте */
+.top-handle,
+.bottom-bar{
+    display:none !important;
+}
+
+/* Нижний уголок */
+.side-toggle{
+    left:8px !important;
+    bottom:max(10px, env(safe-area-inset-bottom)) !important;
+}
+
+/* На iPhone не добавляем старые 95px снизу */
+@supports(padding:max(0px)){
+    body{
+        padding-bottom:0 !important;
+    }
+}
+
+@media(max-width:640px){
+    #weekTitle{font-size:17px !important}
+    #planner .day-name{font-size:20px !important}
+    #planner .task-text{font-size:18px !important}
+    #planner .task-time{font-size:14px !important}
 }
