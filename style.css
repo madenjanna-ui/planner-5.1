@@ -3,7 +3,7 @@
    Base Theme
 ===================================================== */
 
-
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
 :root{
 
@@ -2839,167 +2839,247 @@ body.madenflow-locked{
 
 
 /* =====================================================
-   MaDenFlow 5.2 — month home + side navigation
-   Все основные данные и размеры недельных карточек сохраняются.
+   MaDenFlow 5.2 — чистый экран недели и боковая навигация
+   Нижняя панель удалена. Служебная навигация выезжает слева.
 ===================================================== */
-.side-nav-handle{
-  position:fixed;
-  left:0;
-  top:50%;
-  transform:translateY(-50%);
-  z-index:2200;
-  width:30px;
-  height:72px;
-  border:0;
-  border-radius:0 16px 16px 0;
-  background:rgba(255,255,255,.72);
-  color:var(--primary);
-  box-shadow:6px 0 24px rgba(40,60,120,.12);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  font-size:30px;
-  line-height:1;
-  cursor:pointer;
-  transition:opacity .25s,transform .25s;
-}
-.side-nav-handle:active{transform:translateY(-50%) scale(.96)}
-.side-nav-handle.hidden-handle{opacity:0;pointer-events:none}
 
-.side-nav{
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  width:min(300px,82vw);
-  z-index:2300;
-  padding:max(env(safe-area-inset-top),22px) 18px max(env(safe-area-inset-bottom),22px);
-  background:rgba(255,255,255,.86);
-  backdrop-filter:blur(30px) saturate(1.15);
-  -webkit-backdrop-filter:blur(30px) saturate(1.15);
-  box-shadow:24px 0 60px rgba(20,30,60,.18);
-  transform:translateX(-105%);
-  transition:transform .32s cubic-bezier(.2,.8,.2,1);
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+/* Старую ручку/полоску и нижнюю панель больше не показываем */
+.top-handle,
+.bottom-bar{
+    display:none !important;
 }
-.side-nav.open{transform:translateX(0)}
-.side-nav-close{
-  align-self:flex-end;
-  width:38px;height:38px;
-  border:0;background:transparent;
-  color:var(--text2);
-  font-size:30px;
-}
-.side-nav-title{
-  font-size:23px;font-weight:800;
-  padding:4px 8px 14px;
-}
-.side-nav-item{
-  width:100%;
-  min-height:58px;
-  border:0;
-  border-radius:17px;
-  background:rgba(245,248,255,.9);
-  color:var(--text);
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:12px 16px;
-  font:700 16px/1 inherit;
-  text-align:left;
-  box-shadow:0 5px 16px rgba(40,60,120,.07);
-}
-.side-nav-item span:first-child{
-  width:28px;text-align:center;
-  color:var(--primary);
-  font-size:22px;
-}
-.side-nav-item:active{transform:scale(.98)}
 
-.month-home{
-  position:fixed;
-  inset:0;
-  z-index:2100;
-  overflow:auto;
-  padding:max(env(safe-area-inset-top),24px) 16px max(env(safe-area-inset-bottom),24px);
-  background:
-    radial-gradient(circle at 15% 10%,rgba(124,58,237,.08),transparent 35%),
-    linear-gradient(180deg,#fbfdff 0%,#edf4ff 100%);
+/* Неделя занимает освободившееся место */
+#planner{
+    padding-bottom:14px !important;
 }
-.month-home-head{
-  max-width:650px;
-  margin:0 auto 20px;
-  display:grid;
-  grid-template-columns:48px 1fr 48px;
-  align-items:center;
-  text-align:center;
+
+/* Крупнее основной текст планера */
+.day-name{
+    font-size:18px !important;
+    line-height:1.15 !important;
+    font-weight:800 !important;
 }
-.month-home-head button{
-  width:44px;height:44px;
-  border:0;border-radius:14px;
-  background:rgba(255,255,255,.82);
-  color:var(--primary);
-  font-size:30px;
-  box-shadow:var(--shadow);
+.task-text{
+    font-size:18px !important;
+    line-height:1.2 !important;
 }
-.month-home-caption{
-  color:var(--text2);
-  font-size:13px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.08em;
+.task-time{
+    font-size:13px !important;
 }
-#homeMonthTitle{
-  margin-top:2px;
-  font-size:27px;
-  font-weight:800;
-  color:var(--text);
+
+/* Небольшая аккуратная стрелка в левом нижнем углу */
+.side-toggle{
+    position:fixed;
+    left:8px;
+    bottom:12px;
+    z-index:8500;
+    width:38px;
+    height:38px;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:var(--text);
+    font:300 30px/38px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    cursor:pointer;
+    opacity:.78;
+    -webkit-tap-highlight-color:transparent;
+    transition:left .28s ease,transform .2s ease,opacity .2s ease;
 }
-.home-calendar-grid{
-  width:min(650px,100%);
-  margin:0 auto;
-  grid-template-columns:repeat(7,1fr);
-  gap:8px;
+.side-toggle:active{transform:scale(.9);opacity:1}
+.side-toggle.panel-open{left:264px}
+
+/* Панель лежит поверх недели и ничего в ней не перекраивает */
+.side-panel{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:min(258px,82vw);
+    z-index:8400;
+    transform:translateX(-105%);
+    transition:transform .30s cubic-bezier(.22,.8,.25,1);
+    pointer-events:none;
 }
-.home-calendar-grid .cal-day{
-  min-height:48px;
-  border-radius:15px;
+.side-panel.open{
+    transform:translateX(0);
+    pointer-events:auto;
 }
-.home-calendar-grid .cal-day.today{
-  border:2px solid var(--primary);
+.side-panel::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,.82);
+    box-shadow:12px 0 36px rgba(30,50,80,.16);
+    backdrop-filter:blur(22px) saturate(1.1);
+    -webkit-backdrop-filter:blur(22px) saturate(1.1);
+    border-right:1px solid rgba(255,255,255,.65);
+    z-index:-1;
 }
-.home-calendar-grid .cal-day.in-week{
-  box-shadow:inset 0 0 0 2px rgba(79,140,255,.16);
+.side-panel-inner{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding:calc(env(safe-area-inset-top) + 76px) 14px calc(env(safe-area-inset-bottom) + 22px);
+    height:100%;
+    box-sizing:border-box;
 }
-.home-calendar-grid .cal-day.has-tasks::after{
-  content:"";
-  width:5px;height:5px;
-  border-radius:50%;
-  background:var(--primary);
-  position:absolute;
-  bottom:6px;left:50%;
-  transform:translateX(-50%);
+.side-nav-btn{
+    width:100%;
+    min-height:58px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:10px 14px;
+    border:0;
+    border-radius:17px;
+    background:rgba(255,255,255,.62);
+    color:var(--text);
+    font:700 17px/1.15 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    text-align:left;
+    cursor:pointer;
+    box-shadow:0 5px 15px rgba(30,50,80,.06);
+    -webkit-tap-highlight-color:transparent;
 }
-.home-today-btn{
-  display:block;
-  width:min(650px,100%);
-  margin:18px auto 0;
-  min-height:50px;
-  border:0;border-radius:16px;
-  background:var(--primary);
-  color:#fff;
-  font:800 16px inherit;
-  box-shadow:0 10px 25px rgba(79,140,255,.22);
+.side-nav-btn:active{transform:scale(.98)}
+.side-icon{
+    width:34px;
+    flex:0 0 34px;
+    text-align:center;
+    font-size:25px;
 }
-.month-home-active .glass-header,
-.month-home-active #planner,
-.month-home-active .top-handle,
-.month-home-active .side-nav-handle{
-  visibility:hidden;
+
+/* Месячный экран — первый экран после входа */
+.month-screen{
+    position:fixed;
+    inset:0;
+    z-index:8200;
+    overflow:auto;
+    padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 24px);
+    box-sizing:border-box;
+    background:var(--bg,#f5f8fc);
 }
-@media (max-width:480px){
-  .side-nav{width:78vw}
-  .home-calendar-grid{gap:6px}
-  .home-calendar-grid .cal-day{min-height:44px}
+.month-screen.hidden{display:none !important}
+.month-screen-head{
+    width:min(620px,100%);
+    margin:0 auto;
+    text-align:center;
+}
+.month-screen-head .logo{
+    font-size:21px;
+    font-weight:800;
+}
+.month-screen-title{
+    margin-top:12px;
+    font-size:28px;
+    line-height:1.15;
+    font-weight:850;
+    text-transform:capitalize;
+    color:var(--primary);
+}
+.month-screen-nav{
+    width:min(620px,100%);
+    margin:16px auto 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+.month-screen-nav button{
+    border:0;
+    border-radius:14px;
+    min-width:48px;
+    min-height:44px;
+    padding:8px 14px;
+    background:rgba(255,255,255,.72);
+    color:var(--text);
+    font:700 16px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    box-shadow:0 5px 16px rgba(30,50,80,.07);
+}
+.month-screen-nav button:first-child,
+.month-screen-nav button:last-child{
+    font-size:30px;
+    font-weight:300;
+    padding:2px 15px;
+}
+.month-screen-grid{
+    width:min(620px,100%);
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:7px;
+    padding:14px;
+    box-sizing:border-box;
+    border-radius:26px;
+    background:rgba(255,255,255,.68);
+    box-shadow:0 12px 35px rgba(30,50,80,.10);
+}
+.month-weekday{
+    text-align:center;
+    font-size:13px;
+    font-weight:800;
+    color:var(--text2);
+    padding:4px 0 7px;
+}
+.month-empty{min-height:54px}
+.month-day{
+    position:relative;
+    min-height:54px;
+    border:0;
+    border-radius:15px;
+    background:rgba(240,246,252,.8);
+    color:var(--text);
+    font:800 18px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+}
+.month-day:active{transform:scale(.95)}
+.month-day.today{
+    box-shadow:inset 0 0 0 2px var(--primary);
+}
+.month-day.selected{
+    background:var(--primary);
+    color:#fff;
+}
+.month-day.has-tasks::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    bottom:6px;
+    width:5px;
+    height:5px;
+    margin-left:-2.5px;
+    border-radius:50%;
+    background:var(--primary);
+}
+.month-day.selected.has-tasks::after{background:#fff}
+
+body.dark .side-panel::after{
+    background:rgba(25,32,48,.90);
+    border-right-color:rgba(255,255,255,.08);
+}
+body.dark .side-nav-btn,
+body.dark .month-screen-nav button{
+    background:rgba(255,255,255,.07);
+}
+body.dark .month-screen{
+    background:#171d2a;
+}
+body.dark .month-screen-grid{
+    background:rgba(30,37,53,.88);
+}
+body.dark .month-day{
+    background:rgba(255,255,255,.07);
+}
+
+@media(max-width:640px){
+    .day-name{font-size:17px !important}
+    .task-text{font-size:17px !important}
+    .task-time{font-size:12px !important}
+    .side-nav-btn{min-height:56px;font-size:17px}
+    .month-screen-title{font-size:26px}
+    .month-screen-grid{gap:5px;padding:10px;border-radius:22px}
+    .month-day{min-height:50px;font-size:17px;border-radius:13px}
+    .month-empty{min-height:50px}
 }
