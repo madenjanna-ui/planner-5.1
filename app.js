@@ -5,7 +5,7 @@ const weekDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 let currentDate=new Date(),selectedDate=null,calendarCursor=new Date();
 function getMonday(date){const d=new Date(date);let day=d.getDay()||7;d.setDate(d.getDate()-day+1);return d}
 function localKey(d){return localDateKey(d)}
-function renderWeek(){planner.innerHTML="";const monday=getMonday(currentDate),sunday=new Date(monday);sunday.setDate(monday.getDate()+6);const fmtWeekDate=d=>`${d.getDate()}.${String(d.getMonth()+1).padStart(2,"0")}`; weekTitle.textContent=`${fmtWeekDate(monday)} – ${fmtWeekDate(sunday)}.${sunday.getFullYear()}`;let maxTasks=0;const listMode=(appData.settings||{}).taskView==="list";const sections=[];for(let i=0;i<7;i++){const date=new Date(monday);date.setDate(monday.getDate()+i);const key=localKey(date);const count=getTasks(key).length;maxTasks=Math.max(maxTasks,count);const section=document.createElement("section");section.className="day"+(date.getDay()===0||date.getDay()===6?" weekend":"");if(date.toDateString()===new Date().toDateString())section.classList.add("today");section.dataset.date=key;section.dataset.taskCount=count;section.innerHTML=`<div class="day-title"><div class="day-name"><span class="day-weekday">${weekDays[i]}</span> ${date.getDate()} <span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span>${date.toDateString()===new Date().toDateString()?" ⭐":""}</div></div><div class="day-content"><div class="tasks"></div></div>`;planner.appendChild(section);loadTasks(key,section.querySelector(".tasks"));sections.push({section,count})}planner.classList.remove("week-normal","week-compact","week-ultra");planner.classList.add(maxTasks>=7?"week-ultra":maxTasks>=4?"week-compact":"week-normal");if(listMode){
+function renderWeek(){planner.innerHTML="";const monday=getMonday(currentDate),sunday=new Date(monday);sunday.setDate(monday.getDate()+6);const fmtWeekDate=d=>`${d.getDate()}.${String(d.getMonth()+1).padStart(2,"0")}`; weekTitle.textContent=`${fmtWeekDate(monday)} – ${fmtWeekDate(sunday)}.${sunday.getFullYear()}`;let maxTasks=0;const listMode=(appData.settings||{}).taskView==="list";const sections=[];for(let i=0;i<7;i++){const date=new Date(monday);date.setDate(monday.getDate()+i);const key=localKey(date);const count=getTasks(key).length;maxTasks=Math.max(maxTasks,count);const section=document.createElement("section");section.className="day"+(date.getDay()===0||date.getDay()===6?" weekend":"");const today=new Date();today.setHours(0,0,0,0);const cardDate=new Date(date);cardDate.setHours(0,0,0,0);if(cardDate<today)section.classList.add("past");if(cardDate.getTime()===today.getTime())section.classList.add("today");section.dataset.date=key;section.dataset.taskCount=count;section.innerHTML=`<div class="day-title"><div class="day-name"><span class="day-weekday">${weekDays[i]}</span> ${date.getDate()} <span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span>${date.toDateString()===new Date().toDateString()?" ⭐":""}</div></div><div class="day-content"><div class="tasks"></div></div>`;planner.appendChild(section);loadTasks(key,section.querySelector(".tasks"));sections.push({section,count})}planner.classList.remove("week-normal","week-compact","week-ultra");planner.classList.add(maxTasks>=7?"week-ultra":maxTasks>=4?"week-compact":"week-normal");if(listMode){
 sections.forEach(({section,count})=>{
   section.classList.add("list-day");
   section.style.flex="1 1 0";
@@ -25,8 +25,7 @@ sections.forEach(({section})=>{
 function activateDays(){
   document.querySelectorAll(".day").forEach(day=>{
     day.onclick=e=>{
-      if(window.__suppressPlannerTapUntil && Date.now()<window.__suppressPlannerTapUntil) return;
-      if(e.target.closest(".task,.day-modal-edit,button,input,textarea,select,a")) return;
+      if(e.target.closest(".task")) return;
       const key=day.dataset.date, d=new Date(key+"T12:00:00");
       if(!Number.isNaN(d.getTime()) && typeof openDayTasksModal==="function"){ selectedDate=key; openDayTasksModal(d); }
     };
@@ -55,7 +54,7 @@ function openDayPopup(dateKey){
 }
 function closeDayPopup(){const p=document.querySelector(".day-popup-overlay");if(p)p.remove()}
 function activateAddButtons(){document.querySelectorAll(".add-task-day").forEach(btn=>btn.onclick=e=>{e.stopPropagation();selectedDate=btn.dataset.date;openTaskModal()})}
-function openTaskModal(){if(!selectedDate)return; if(typeof closeDayTasksModal==="function") closeDayTasksModal();const modal=document.getElementById("taskModal");modal.dataset.editDate="";modal.dataset.editIndex="";modal.dataset.editChain="0";document.getElementById("taskModalTitle").textContent="Новая задача";document.getElementById("newTaskInput").value="";document.getElementById("newTaskTime").value="";document.getElementById("repeatTask").checked=false;document.getElementById("repeatOptions").classList.add("hidden");document.getElementById("recurrenceBox").classList.remove("hidden");const d=new Date(selectedDate+"T12:00:00");const until=new Date(d);until.setFullYear(until.getFullYear()+1);document.getElementById("repeatUntil").value=localKey(until);modal.classList.remove("hidden");document.getElementById("newTaskInput").focus()}
+function openTaskModal(){if(!selectedDate)return;const modal=document.getElementById("taskModal");modal.dataset.editDate="";modal.dataset.editIndex="";modal.dataset.editChain="0";document.getElementById("taskModalTitle").textContent="Новая задача";document.getElementById("newTaskInput").value="";document.getElementById("newTaskTime").value="";document.getElementById("repeatTask").checked=false;document.getElementById("repeatOptions").classList.add("hidden");document.getElementById("recurrenceBox").classList.remove("hidden");const d=new Date(selectedDate+"T12:00:00");const until=new Date(d);until.setFullYear(until.getFullYear()+1);document.getElementById("repeatUntil").value=localKey(until);modal.classList.remove("hidden");document.getElementById("newTaskInput").focus()}
 document.getElementById("repeatTask").onchange=e=>document.getElementById("repeatOptions").classList.toggle("hidden",!e.target.checked);
 document.getElementById("saveTaskBtn").onclick=()=>{if(!selectedDate)return;const modal=document.getElementById("taskModal"),input=document.getElementById("newTaskInput"),time=document.getElementById("newTaskTime"),text=input.value.trim();if(!text)return;const taskDate=selectedDate,editDate=modal.dataset.editDate,editIndex=modal.dataset.editIndex,editChain=modal.dataset.editChain==="1";if(editDate!==""&&editIndex!==""){const task=getTasks(editDate)[Number(editIndex)];if(editChain&&task&&task.recurrenceId)editRecurringChain(task.recurrenceId,text,time.value);else editTask(editDate,Number(editIndex),text,time.value);modal.classList.add("hidden");modal.dataset.editDate="";modal.dataset.editIndex="";modal.dataset.editChain="0";renderWeek();openDayTasksModal(new Date(editDate+"T12:00:00"));return}if(document.getElementById("repeatTask").checked)addRecurringTask(taskDate,text,document.getElementById("repeatType").value,document.getElementById("repeatUntil").value,time.value);else addTask(taskDate,text,{time:time.value});modal.classList.add("hidden");renderWeek();openDayTasksModal(new Date(taskDate+"T12:00:00"))};
 document.getElementById("cancelTaskBtn").onclick=()=>{const m=document.getElementById("taskModal");m.classList.add("hidden");m.dataset.editDate="";m.dataset.editIndex="";m.dataset.editChain="0"};
@@ -248,6 +247,7 @@ let selectedDayForModal=null;
 
 function closeDayTasksModal(){
   if(!dayTasksModal) return;
+  suppressPlannerTap(700);
   dayTasksModal.classList.add("hidden");
   dayTasksModal.setAttribute("aria-hidden","true");
   selectedDayForModal=null;
@@ -278,21 +278,19 @@ function openDayTasksModal(date){
       row.querySelector(".day-modal-task-text").textContent=task.text||task.title||"Задача";
       if(task.time) row.querySelector(".day-modal-task-time").textContent=task.time;
       row.querySelector(".day-modal-edit").onclick=(e)=>{
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
+        suppressPlannerTap();
         closeDayTasksModal();
-        if(typeof window.editTaskDialog==="function") window.editTaskDialog(key,index);
-        else {
-          selectedDate=key;
-          const modal=document.getElementById("taskModal");
-          if(modal){
-            modal.dataset.editDate=key; modal.dataset.editIndex=String(index); modal.dataset.editChain="0";
-            document.getElementById("taskModalTitle").textContent="Изменить задачу";
-            const t=getTasks(key)[index]||{};
-            document.getElementById("newTaskInput").value=t.text||t.title||"";
-            document.getElementById("newTaskTime").value=t.time||"";
-            modal.classList.remove("hidden");
-          }
-        }
+        const task=getTasks(key)[index];
+        if(typeof window.editTaskDialog==="function"){ window.editTaskDialog(key,index); return; }
+        selectedDate=key;
+        const modal=document.getElementById("taskModal");
+        modal.dataset.editDate=key; modal.dataset.editIndex=String(index); modal.dataset.editChain="0";
+        document.getElementById("taskModalTitle").textContent="Изменить задачу";
+        document.getElementById("newTaskInput").value=task?.text||task?.title||"";
+        document.getElementById("newTaskTime").value=task?.time||"";
+        modal.classList.remove("hidden");
+        document.getElementById("newTaskInput").focus();
       };
       dayTasksList.appendChild(row);
     });
@@ -303,11 +301,11 @@ function openDayTasksModal(date){
 
 if(dayTasksModal){
   if(dayTasksAdd) dayTasksAdd.onclick=(e)=>{
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation(); suppressPlannerTap();
     if(!selectedDayForModal) return;
     selectedDate=localKey(selectedDayForModal);
     closeDayTasksModal();
-    openTaskModal();
+    setTimeout(()=>openTaskModal(),0);
   };
   if(dayTasksClose) dayTasksClose.onclick=closeDayTasksModal;
 
@@ -319,31 +317,32 @@ if(dayTasksModal){
 document.addEventListener("keydown",(e)=>{
   if(e.key==="Escape") closeDayTasksModal();
 });
+// Блокируем события модальных окон от попадания в календарь.
+document.addEventListener("pointerdown",e=>{
+  const overlay=e.target.closest(".modal,.modal-overlay");
+  if(overlay){ e.stopPropagation(); }
+},{capture:true});
+document.addEventListener("click",e=>{
+  const overlay=e.target.closest(".modal,.modal-overlay");
+  if(overlay){ e.stopPropagation(); }
+},{capture:true});
 
-// Защита от "сквозного" тапа после закрытия модальных окон на iPhone.
-// Если пользователь нажал кнопку закрытия, следующий click не должен попасть в карточку дня.
-window.__suppressPlannerTapUntil = 0;
-const modalCloseSelectors = [
-  "#calendarClose", "#closeServiceBtn", "#visitsClose", "#settingsClose",
-  "#dayTasksClose", "#cancelTaskBtn"
-].join(",");
-document.addEventListener("pointerdown", (e)=>{
-  const t=e.target;
-  if(t && t.closest && t.closest(modalCloseSelectors)){
-    window.__suppressPlannerTapUntil=Date.now()+900;
-    return;
-  }
-  const overlay=t && t.closest && t.closest(".modal-overlay,.modal");
-  if(overlay && t===overlay) window.__suppressPlannerTapUntil=Date.now()+900;
-}, {capture:true});
-document.addEventListener("click", (e)=>{
-  if(!window.__suppressPlannerTapUntil || Date.now()>=window.__suppressPlannerTapUntil) return;
-  if(e.target.closest && e.target.closest("#planner,.day")){
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    window.__suppressPlannerTapUntil=0;
-  }
-}, {capture:true});
+
+// Тап по карточке дня. Ищем ближайший элемент с датой из существующего рендера.
+let suppressPlannerTapUntil=0;
+function suppressPlannerTap(ms=550){suppressPlannerTapUntil=Date.now()+ms}
+if(dayTasksModal){
+  planner.addEventListener("click",(e)=>{
+    if(Date.now()<suppressPlannerTapUntil) return;
+    if(e.target.closest("button,input,textarea,select,a,.task,.task-text,.task-menu")) return;
+    const card=e.target.closest(".day");
+    if(!card) return;
+    const dateAttr=card.dataset.date||card.getAttribute("data-day");
+    if(!dateAttr) return;
+    const d=new Date(dateAttr+"T12:00:00");
+    if(!Number.isNaN(d.getTime())) openDayTasksModal(d);
+  });
+}
 
 // Универсально: любое нажатие по пункту боковой навигации закрывает её.
 sidePanel.addEventListener("click", (e)=>{
