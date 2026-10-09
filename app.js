@@ -132,6 +132,60 @@ function openTaskEditor(dateKey,index){
   modal.classList.remove("hidden");
   setTimeout(()=>document.getElementById("newTaskInput").focus(),50);
 }
+// Сохранение и отмена задачи. Этот обработчик должен находиться в app.js,
+// потому что именно здесь открывается форма taskModal.
+const saveTaskButton=document.getElementById("saveTaskBtn");
+if(saveTaskButton){
+  saveTaskButton.onclick=function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const modal=document.getElementById("taskModal");
+    const input=document.getElementById("newTaskInput");
+    const time=document.getElementById("newTaskTime");
+    const text=(input.value||"").trim();
+    if(!selectedDate){
+      const dayPopup=document.querySelector(".day-popup-overlay");
+      if(dayPopup) selectedDate=dayPopup.dataset.date||null;
+    }
+    if(!selectedDate){ alert("Сначала выберите день для задачи."); return; }
+    if(!text){ input.focus(); return; }
+    const editDate=modal.dataset.editDate||"";
+    const editIndex=modal.dataset.editIndex||"";
+    const editChain=modal.dataset.editChain==="1";
+    try{
+      if(editDate!=="" && editIndex!==""){
+        const task=(getTasks(editDate)||[])[Number(editIndex)];
+        if(editChain && task && task.recurrenceId && typeof editRecurringChain==="function"){
+          editRecurringChain(task.recurrenceId,text,time.value);
+        }else if(typeof editTask==="function"){
+          editTask(editDate,Number(editIndex),text,time.value);
+        }else{ alert("Не удалось найти функцию редактирования задачи."); return; }
+      }else if(document.getElementById("repeatTask").checked){
+        if(typeof addRecurringTask!=="function"){ alert("Функция повторяющихся задач недоступна."); return; }
+        addRecurringTask(selectedDate,text,document.getElementById("repeatType").value,document.getElementById("repeatUntil").value,time.value);
+      }else{
+        if(typeof addTask!=="function"){ alert("Функция сохранения задач недоступна."); return; }
+        addTask(selectedDate,text,{time:time.value});
+      }
+      modal.classList.add("hidden");
+      modal.dataset.editDate=""; modal.dataset.editIndex=""; modal.dataset.editChain="0";
+      if(typeof renderWeek==="function") renderWeek();
+    }catch(err){
+      console.error("MaDenFlow: ошибка сохранения задачи",err);
+      alert("Не удалось сохранить задачу. Проверьте подключение файла tasks.js и попробуйте ещё раз.");
+    }
+  };
+}
+const cancelTaskButton=document.getElementById("cancelTaskBtn");
+if(cancelTaskButton){
+  cancelTaskButton.onclick=function(e){
+    e.preventDefault();
+    const modal=document.getElementById("taskModal");
+    modal.classList.add("hidden");
+    modal.dataset.editDate=""; modal.dataset.editIndex=""; modal.dataset.editChain="0";
+  };
+}
+
 function closeDayPopup(){
   document.querySelectorAll(".day-popup-overlay").forEach(p=>p.remove());
 }
