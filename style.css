@@ -3832,3 +3832,61 @@ body[data-task-font-size="xlarge"] #planner .task-time{font-size:clamp(10px,2.8v
   .day-popup-action{width:36px !important;min-width:36px !important;height:38px !important;border-radius:11px !important;font-size:17px !important}
   .day-popup-task-row .day-popup-task{gap:7px !important;padding:8px 9px !important}
 }
+
+
+/* MaDenFlow — исправление контрастности дат и задач в темах */
+body[data-theme="blackwhite"]{
+  --list-task-text:#f8fafc;
+  --text:#26364d;
+  --text2:#596579;
+}
+body[data-theme="blackwhite"] #planner .day:not(.weekend) .day-number,
+body[data-theme="blackwhite"] #planner .day:not(.weekend) .day-month{
+  color:#f8fafc !important;
+}
+body[data-theme="blackwhite"] #planner .day.weekend .day-number,
+body[data-theme="blackwhite"] #planner .day.weekend .day-month{
+  color:#26364d !important;
+}
+body[data-theme="blackwhite"] #planner .tasks > .task .task-text,
+body[data-theme="blackwhite"] #planner .tasks > .task .task-time{
+  color:#f8fafc !important;
+  text-shadow:0 1px 1px rgba(0,0,0,.22) !important;
+}
+body[data-theme="blackwhite"] #planner .day-weekday{
+  text-shadow:none !important;
+}
+body.dark{
+  --list-task-text:#f3f6ff;
+}
+body.dark #planner .day-number,
+body.dark #planner .day-month{
+  color:#f3f6ff !important;
+}
+body.dark #planner .day-weekday{
+  color:#e5ecff !important;
+}
+body.dark #planner .tasks > .task .task-text,
+body.dark #planner .tasks > .task .task-time{
+  color:#f3f6ff !important;
+  text-shadow:0 1px 1px rgba(0,0,0,.25) !important;
+}
+body.dark #weekTitle{
+  color:#e7edfa !important;
+  background:rgba(25,31,45,.94) !important;
+  border-top-color:rgba(255,255,255,.12) !important;
+}
+body.dark .side-panel .side-nav-btn,
+body.dark .month-screen-title,
+body.dark #calendarTitle{
+  color:#f3f6ff !important;
+}
+body.dark .month-day,
+body.dark .cal-day{
+  color:#f3f6ff !important;
+}
+body.dark .month-day.today,
+body.dark .cal-day.today{
+  background:#477fdb !important;
+  color:#fff !important;
+}
