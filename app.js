@@ -73,7 +73,15 @@ function openDayPopup(dateKey){
   const rows=list.map((t,index)=>{
     const priority=t.priority||"normal", done=t.done?" done":"";
     const time=t.time?`<span class="day-popup-time">${escapeHtml(t.time)}</span>`:"";
-    return `<button type="button" class="day-popup-task ${priority}${done}" data-index="${index}">${time}<span class="day-popup-text">${escapeHtml(t.text||"")}</span><span class="day-popup-edit">Изменить</span></button>`;
+    return `<div class="day-popup-task-row ${priority}${done}" data-index="${index}">
+      <button type="button" class="day-popup-task ${priority}${done}" data-index="${index}" aria-label="Открыть задачу ${escapeHtml(t.text||"")}">
+        ${time}<span class="day-popup-text">${escapeHtml(t.text||"")}</span>
+      </button>
+      <div class="day-popup-actions">
+        <button type="button" class="day-popup-action day-popup-edit" data-action="edit" data-index="${index}" aria-label="Редактировать задачу" title="Редактировать">✏️</button>
+        <button type="button" class="day-popup-action day-popup-delete" data-action="delete" data-index="${index}" aria-label="Удалить задачу" title="Удалить">❌</button>
+      </div>
+    </div>`;
   }).join("");
   overlay.innerHTML=`<div class="day-popup" role="dialog" aria-modal="true">
     <div class="day-popup-head"><div><div class="day-popup-title">${title}</div><div class="day-popup-subtitle">${list.length?list.length+" дел на этот день":"День свободен"}</div></div><button class="day-popup-close" type="button" aria-label="Закрыть">×</button></div>
@@ -108,12 +116,29 @@ function openDayPopup(dateKey){
       setTimeout(()=>document.getElementById("newTaskInput").focus(),50);
     }
   };
-  overlay.querySelectorAll(".day-popup-task").forEach(row=>row.onclick=e=>{
+  overlay.querySelectorAll('.day-popup-task, .day-popup-action').forEach(button=>button.onclick=e=>{
+    e.preventDefault();
     e.stopPropagation();
     selectedDate=dateKey;
-    const index=Number(row.dataset.index);
-    const task=getTasks(dateKey)[index];
+    const index=Number(button.dataset.index);
+    const task=(getTasks(dateKey)||[])[index];
     if(!task) return;
+    if(button.dataset.action === "delete"){
+      const label=task.text ? `«${task.text}»` : "эту задачу";
+      if(!confirm(`Удалить ${label}?`)) return;
+      try{
+        const tasks=getTasks(dateKey);
+        if(!Array.isArray(tasks)) throw new Error("Список задач дня недоступен");
+        tasks.splice(index,1);
+        if(typeof saveStorage === "function") saveStorage();
+        if(typeof renderWeek === "function") renderWeek();
+        openDayPopup(dateKey);
+      }catch(err){
+        console.error("MaDenFlow: ошибка удаления задачи",err);
+        alert("Не удалось удалить задачу. Попробуйте ещё раз.");
+      }
+      return;
+    }
     openTaskEditor(dateKey,index);
   });
   overlay.addEventListener("click",e=>{if(e.target===overlay)closeDayPopup()});
