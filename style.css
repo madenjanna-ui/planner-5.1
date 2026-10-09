@@ -3833,70 +3833,42 @@ body[data-task-font-size="xlarge"] #planner .task-time{font-size:clamp(10px,2.8v
   .day-popup-task-row .day-popup-task{gap:7px !important;padding:8px 9px !important}
 }
 
-/* MaDenFlow — contrast correction v2: task pills and date rail */
-#planner .day .day-date-side{position:relative;z-index:1}
-#planner .day .day-weekday,
-#planner .day .day-number,
-#planner .day .day-month,
-#planner .day .day-star{
-  opacity:1 !important;
-  text-shadow:none !important;
-}
 
-/* Black-and-white theme: dark weekdays, light weekend cards */
-body[data-theme="blackwhite"]:not(.dark) #planner .day:not(.weekend) .day-weekday,
-body[data-theme="blackwhite"]:not(.dark) #planner .day:not(.weekend) .day-number,
-body[data-theme="blackwhite"]:not(.dark) #planner .day:not(.weekend) .day-month,
-body[data-theme="blackwhite"]:not(.dark) #planner .day:not(.weekend) .day-star{
-  color:#fff !important;
-}
-body[data-theme="blackwhite"]:not(.dark) #planner .day.weekend .day-weekday,
-body[data-theme="blackwhite"]:not(.dark) #planner .day.weekend .day-number,
-body[data-theme="blackwhite"]:not(.dark) #planner .day.weekend .day-month,
-body[data-theme="blackwhite"]:not(.dark) #planner .day.weekend .day-star{
-  color:#273142 !important;
-}
-/* Task pills stay readable even when the surrounding day card is dark */
-body[data-theme="blackwhite"]:not(.dark) #planner .task{
-  background:#fff !important;
-  color:#202938 !important;
-  border:1px solid rgba(30,40,55,.12) !important;
-}
-body[data-theme="blackwhite"]:not(.dark) #planner .task .task-text,
-body[data-theme="blackwhite"]:not(.dark) #planner .task .task-time,
-body[data-theme="blackwhite"]:not(.dark) #planner .task .task-text-wrap{
-  color:#202938 !important;
-  text-shadow:none !important;
-}
-
-/* Dark mode: light date labels and dark task pills with light text */
-body.dark #planner .day .day-weekday,
-body.dark #planner .day .day-number,
-body.dark #planner .day .day-month,
-body.dark #planner .day .day-star{
-  color:#f4f7ff !important;
-  opacity:1 !important;
-}
-body.dark #planner .task{
-  background:#252d40 !important;
-  color:#f4f7ff !important;
-  border:1px solid rgba(255,255,255,.14) !important;
-}
-body.dark #planner .task .task-text,
-body.dark #planner .task .task-time,
-body.dark #planner .task .task-text-wrap{
-  color:#f4f7ff !important;
-  text-shadow:none !important;
-}
-body.dark #planner .task .checkmark{
-  background:#f8fbff !important;
-  border-color:#9bb9ee !important;
-}
-body.dark #planner .task input:checked + .checkmark{
-  background:#4dbb74 !important;
-  border-color:#4dbb74 !important;
-}
-
-/* Keep selected day distinct without fading its date rail */
-#planner .day.today .day-date-side,
-#planner .day.selected-day .day-date-side{opacity:1 !important;filter:none !important}
+/* MaDenFlow Appearance Editor — live custom theme */
+body[data-custom-appearance="on"]{background:var(--custom-bg,#eef3fb)!important;color:var(--custom-text,#26364d)!important;}
+body[data-custom-appearance="on"] #planner .day:not(.weekend){background:var(--custom-weekday,#dce7fa)!important;color:var(--custom-text,#26364d)!important;}
+body[data-custom-appearance="on"] #planner .day.weekend{background:var(--custom-weekend,#f5dce9)!important;color:var(--custom-text,#26364d)!important;}
+body[data-custom-appearance="on"] #planner .day .day-weekday,body[data-custom-appearance="on"] #planner .day .day-number,body[data-custom-appearance="on"] #planner .day .day-month{color:var(--custom-text,#26364d)!important;}
+body[data-custom-appearance="on"] #planner .task{background:var(--custom-card,#fff)!important;background-color:color-mix(in srgb,var(--custom-card,#fff) var(--custom-card-alpha,100%),transparent)!important;border-radius:var(--custom-card-radius,14px)!important;}
+body[data-custom-appearance="on"] #planner .task .task-text{color:var(--custom-text,#26364d)!important;font-size:var(--custom-task-font,15px)!important;}
+body[data-custom-appearance="on"] .side-panel{background:var(--custom-sidebar,#e0e8f2)!important;color:var(--custom-text,#26364d)!important;}
+body[data-custom-appearance="on"] .side-nav-btn{color:var(--custom-text,#26364d)!important;}
+.appearance-window{max-height:min(88dvh,900px)!important;overflow-y:auto!important;padding:18px!important;gap:13px!important;}
+.appearance-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.appearance-head h3{margin:0 0 4px;font-size:22px;}
+.appearance-head p{margin:0;color:var(--text2,#718096);font-size:13px;}
+.appearance-x{width:34px;height:34px;border:0;border-radius:50%;font-size:24px;line-height:1;background:rgba(120,130,150,.12);color:inherit;flex-shrink:0;}
+.appearance-swatches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px;}
+.appearance-swatch{display:grid;grid-template-columns:22px 22px 1fr;align-items:center;gap:5px;padding:9px 7px;border:1px solid rgba(120,130,150,.22);border-radius:12px;background:rgba(255,255,255,.5);color:inherit;text-align:left;font-size:12px;font-weight:700;}
+.appearance-swatch i{height:22px;border-radius:6px;display:block;border:1px solid rgba(0,0,0,.08);}
+.appearance-preview-wrap{padding:12px;border:1px solid rgba(120,130,150,.2);border-radius:16px;background:rgba(130,145,165,.06);}
+.appearance-preview-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px;font-size:13px;}
+.appearance-preview-title span{font-size:11px;color:#64748b;}
+.appearance-preview{padding:8px;border-radius:12px;transition:background .15s,color .15s;}
+.appearance-preview-day{display:grid;grid-template-columns:45px minmax(0,1fr);gap:8px;padding:8px;border-radius:10px;}
+.appearance-preview-date{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-right:1px solid rgba(90,110,140,.2);padding-right:6px;}
+.appearance-preview-date b{font-size:10px;}.appearance-preview-date strong{font-size:23px;line-height:1.1}.appearance-preview-date small{font-size:10px;}
+.appearance-preview-tasks{display:grid;gap:6px;align-content:center;min-width:0;}
+.appearance-preview-tasks>div{padding:8px 9px;box-shadow:0 2px 6px rgba(20,40,80,.08);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transition:all .15s;}
+.appearance-details{border:1px solid rgba(120,130,150,.18);border-radius:14px;padding:12px;}
+.appearance-details summary{font-weight:800;cursor:pointer;padding:2px 0 10px;}
+.appearance-controls-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.appearance-color-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:10px;background:rgba(130,145,165,.08);font-size:13px;font-weight:650;}
+.appearance-color-row input[type=color]{width:38px;height:32px;padding:2px;border:0;border-radius:8px;background:transparent;flex-shrink:0;}
+.appearance-range-row{display:grid;gap:7px;margin-top:14px;font-size:13px;font-weight:650;}
+.appearance-range-row span{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.appearance-range-row b{font-variant-numeric:tabular-nums;color:var(--text2,#64748b);}
+.appearance-range-row input{width:100%;accent-color:#6d80ce;}
+.appearance-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.appearance-actions button{min-height:44px;border-radius:12px;font-weight:800;}
+@media(max-width:420px){.appearance-window{padding:14px!important}.appearance-controls-grid{gap:7px}.appearance-color-row{padding:8px;font-size:12px}.appearance-swatches{gap:6px}.appearance-swatch{font-size:11px;grid-template-columns:18px 18px 1fr;padding:8px 5px}}

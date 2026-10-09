@@ -232,7 +232,7 @@ function changeWeek(n){currentDate.setDate(currentDate.getDate()+n*7);renderWeek
 function updateDayStatus(){document.querySelectorAll(".day-status").forEach(s=>{const list=getTasks(s.dataset.date)||[];s.textContent=!list.length?"⚪":list.every(x=>x.done)?"🟢":"🟡"})}
 // Календарь
 function openCalendar(){calendarCursor=new Date(currentDate);renderCalendar();document.getElementById("calendarModal").classList.remove("hidden")}
-function renderCalendar(){const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth();document.getElementById("calendarTitle").textContent=`${new Date(y,m,1).toLocaleDateString("ru-RU",{month:"long"})} ${y}`;const grid=document.getElementById("calendarGrid");grid.innerHTML=weekDays.map(d=>`<div class="cal-weekday">${d}</div>`).join("");const first=(new Date(y,m,1).getDay()||7)-1,days=new Date(y,m+1,0).getDate();for(let i=0;i<first;i++)grid.insertAdjacentHTML("beforeend",`<div class="cal-empty"></div>`);for(let day=1;day<=days;day++){const d=new Date(y,m,day),key=localKey(d),btn=document.createElement("button");btn.className="cal-day";if(d.toDateString()===new Date().toDateString())btn.classList.add("today");if(d>=getMonday(currentDate)&&d<=new Date(getMonday(currentDate).getFullYear(),getMonday(currentDate).getMonth(),getMonday(currentDate).getDate()+6))btn.classList.add("in-week");btn.textContent=day;btn.onclick=()=>{currentDate=d;renderWeek();document.getElementById("calendarModal").classList.add("hidden")};grid.appendChild(btn)}}
+function renderCalendar(){const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth();document.getElementById("calendarTitle").textContent=new Date(y,m,1).toLocaleDateString("ru-RU",{month:"long",year:"numeric"});const grid=document.getElementById("calendarGrid");grid.innerHTML=weekDays.map(d=>`<div class="cal-weekday">${d}</div>`).join("");const first=(new Date(y,m,1).getDay()||7)-1,days=new Date(y,m+1,0).getDate();for(let i=0;i<first;i++)grid.insertAdjacentHTML("beforeend",`<div class="cal-empty"></div>`);for(let day=1;day<=days;day++){const d=new Date(y,m,day),key=localKey(d),btn=document.createElement("button");btn.className="cal-day";if(d.toDateString()===new Date().toDateString())btn.classList.add("today");if(d>=getMonday(currentDate)&&d<=new Date(getMonday(currentDate).getFullYear(),getMonday(currentDate).getMonth(),getMonday(currentDate).getDate()+6))btn.classList.add("in-week");btn.textContent=day;btn.onclick=()=>{currentDate=d;renderWeek();document.getElementById("calendarModal").classList.add("hidden")};grid.appendChild(btn)}}
 document.getElementById("calendarBtn").onclick=openCalendar;document.getElementById("calendarPrev").onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderCalendar()};document.getElementById("calendarNext").onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderCalendar()};document.getElementById("calendarToday").onclick=()=>{currentDate=new Date();renderWeek();document.getElementById("calendarModal").classList.add("hidden")};document.getElementById("calendarClose").onclick=()=>document.getElementById("calendarModal").classList.add("hidden");
 // Служение
  document.getElementById("serviceBtn").onclick=()=>openService(localKey(currentDate).slice(0,7));
@@ -249,6 +249,19 @@ function applySettings(){
   document.body.dataset.taskView=settings.taskView||"cards";
   document.body.dataset.listTextColor=settings.listTextColor||"navy";
   document.body.dataset.sidebarColor=settings.sidebarColor||"bluegray";
+  const custom=settings.theme==="custom" && settings.appearance;
+  document.body.dataset.customAppearance=custom?"on":"off";
+  const a=settings.appearance||{};
+  const root=document.documentElement.style;
+  root.setProperty("--custom-bg",a.bg||"#eef3fb");
+  root.setProperty("--custom-weekday",a.weekday||"#dce7fa");
+  root.setProperty("--custom-weekend",a.weekend||"#f5dce9");
+  root.setProperty("--custom-card",a.card||"#ffffff");
+  root.setProperty("--custom-text",a.text||"#26364d");
+  root.setProperty("--custom-sidebar",a.sidebar||"#e0e8f2");
+  root.setProperty("--custom-card-alpha",String(Number(a.opacity??100))+"%");
+  root.setProperty("--custom-card-radius",(a.radius||14)+"px");
+  root.setProperty("--custom-task-font",(a.font||15)+"px");
 }
 function updateNotificationStatus(){
   const el=document.getElementById("notificationStatus");
@@ -280,12 +293,48 @@ document.getElementById("darkModeToggle").onchange=e=>{appData.settings.darkMode
 document.getElementById("plannerFontSizeSelect").onchange=e=>{appData.settings.plannerFontSize=e.target.value;applySettings();saveStorage()};
 document.getElementById("taskFontSizeSelect").onchange=e=>{appData.settings.taskFontSize=e.target.value;appData.settings.fontSize=e.target.value;applySettings();saveStorage();renderWeek()};
 document.getElementById("gradientDaysToggle").onchange=e=>{appData.settings.gradientDays=e.target.checked;applySettings();saveStorage()};
-document.getElementById("themeSelect").onchange=e=>{appData.settings.theme=e.target.value;applySettings();saveStorage()};
+document.getElementById("themeSelect").onchange=e=>{appData.settings.theme=e.target.value;if(e.target.value==="custom"){appData.settings.appearance=appData.settings.appearance||{bg:"#eef3fb",weekday:"#dce7fa",weekend:"#f5dce9",card:"#ffffff",text:"#26364d",sidebar:"#e0e8f2",font:15,opacity:100,radius:14};}applySettings();saveStorage();updateAppearancePreview();};
 const sidebarColorSelect=document.getElementById("sidebarColorSelect");
 if(sidebarColorSelect) sidebarColorSelect.onchange=e=>{appData.settings.sidebarColor=e.target.value;applySettings();saveStorage()};
 document.getElementById("taskViewSelect").onchange=e=>{appData.settings.taskView=e.target.value;applySettings();saveStorage();renderWeek()};
 const listTextColorSelect=document.getElementById("listTextColorSelect");
 if(listTextColorSelect) listTextColorSelect.onchange=e=>{appData.settings.listTextColor=e.target.value;applySettings();saveStorage()};
+
+// Оформление: ручные параметры применяются сразу и сохраняются локально.
+const appearanceModal=document.getElementById("appearanceModal");
+const appearanceDefaults={bg:"#eef3fb",weekday:"#dce7fa",weekend:"#f5dce9",card:"#ffffff",text:"#26364d",sidebar:"#e0e8f2",font:15,opacity:100,radius:14};
+function getAppearance(){return {...appearanceDefaults,...(appData.settings.appearance||{})};}
+function updateAppearancePreview(){
+  const a=getAppearance();
+  const preview=document.getElementById("appearancePreview");
+  if(!preview)return;
+  preview.style.background=a.bg;preview.style.color=a.text;
+  const day=preview.querySelector(".appearance-preview-day");if(day)day.style.background=a.weekday;
+  const date=preview.querySelector(".appearance-preview-date");if(date)date.style.color=a.text;
+  const tasks=preview.querySelectorAll(".appearance-preview-tasks > div");tasks.forEach(el=>{el.style.background=a.card;el.style.color=a.text;el.style.opacity=Number(a.opacity)/100;el.style.borderRadius=a.radius+"px";el.style.fontSize=a.font+"px";});
+  preview.style.borderRadius=a.radius+"px";
+}
+function openAppearance(){
+  const a=getAppearance();
+  for(const key of ["bg","weekday","weekend","card","text","sidebar"])document.getElementById("appearance"+key[0].toUpperCase()+key.slice(1)).value=a[key];
+  document.getElementById("appearanceFont").value=a.font;document.getElementById("appearanceOpacity").value=a.opacity;document.getElementById("appearanceRadius").value=a.radius;
+  document.getElementById("appearanceFontValue").textContent=a.font+" px";document.getElementById("appearanceOpacityValue").textContent=a.opacity+"%";document.getElementById("appearanceRadiusValue").textContent=a.radius+" px";
+  document.getElementById("themeSelect").value=appData.settings.theme||"standard";
+  updateAppearancePreview();appearanceModal.classList.remove("hidden");
+}
+document.getElementById("appearanceBtn").onclick=openAppearance;
+document.getElementById("appearanceClose").onclick=()=>appearanceModal.classList.add("hidden");
+document.getElementById("appearanceDone").onclick=()=>appearanceModal.classList.add("hidden");
+function changeAppearance(){
+  const a={bg:document.getElementById("appearanceBg").value,weekday:document.getElementById("appearanceWeekday").value,weekend:document.getElementById("appearanceWeekend").value,card:document.getElementById("appearanceCard").value,text:document.getElementById("appearanceText").value,sidebar:document.getElementById("appearanceSidebar").value,font:Number(document.getElementById("appearanceFont").value),opacity:Number(document.getElementById("appearanceOpacity").value),radius:Number(document.getElementById("appearanceRadius").value)};
+  appData.settings.appearance=a;appData.settings.theme="custom";document.getElementById("themeSelect").value="custom";
+  document.getElementById("appearanceFontValue").textContent=a.font+" px";document.getElementById("appearanceOpacityValue").textContent=a.opacity+"%";document.getElementById("appearanceRadiusValue").textContent=a.radius+" px";
+  applySettings();saveStorage();updateAppearancePreview();
+}
+["appearanceBg","appearanceWeekday","appearanceWeekend","appearanceCard","appearanceText","appearanceSidebar","appearanceFont","appearanceOpacity","appearanceRadius"].forEach(id=>document.getElementById(id).addEventListener("input",changeAppearance));
+document.querySelectorAll(".appearance-swatch").forEach(btn=>btn.addEventListener("click",()=>{appData.settings.theme=btn.dataset.preset;document.getElementById("themeSelect").value=btn.dataset.preset;applySettings();saveStorage();openAppearance();}));
+document.getElementById("appearanceReset").onclick=()=>{appData.settings.appearance={...appearanceDefaults};appData.settings.theme="standard";document.getElementById("themeSelect").value="standard";applySettings();saveStorage();openAppearance();};
+
 // Обновление PWA по кнопке. Старый кэш не очищаем, пока новая версия не установлена.
 (function setupAppUpdate(){
   const button=document.getElementById("appUpdateBtn");
@@ -421,7 +470,7 @@ function closeMonthScreen(){
 
 function renderMonthScreen(){
   const y=monthScreenCursor.getFullYear(), m=monthScreenCursor.getMonth();
-  monthScreenTitle.textContent=`${new Date(y,m,1).toLocaleDateString("ru-RU",{month:"long"})} ${y}`;
+  monthScreenTitle.textContent=new Date(y,m,1).toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
   const grid=monthScreenGrid;
   grid.innerHTML=weekDays.map(d=>`<div class="month-weekday">${d}</div>`).join("");
   const first=(new Date(y,m,1).getDay()||7)-1;

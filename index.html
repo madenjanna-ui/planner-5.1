@@ -14,10 +14,10 @@
 <body id="appBody">
 <header class="glass-header">
   <div class="logo">☁️ MaDenFlow</div>
+  <div id="weekTitle"></div>
 </header>
 
 <main id="planner"></main>
-<div id="weekTitle" aria-label="Диапазон текущей недели"></div>
 
 <!-- Боковая навигация: открывается поверх недели -->
 <button id="sideToggle" class="side-toggle" aria-label="Открыть навигацию">›</button>
@@ -35,6 +35,9 @@
     </button>
     <button id="visitsBtn" class="side-nav-btn" aria-label="Повторные посещения">
       <span class="side-icon">📓</span><span>Посещения</span>
+    </button>
+    <button id="appearanceBtn" class="side-nav-btn" aria-label="Оформление">
+      <span class="side-icon">🎨</span><span>Оформление</span>
     </button>
     <button id="settingsBtn" class="side-nav-btn" aria-label="Настройки">
       <span class="side-icon">⚙️</span><span>Настройки</span>
@@ -134,35 +137,6 @@
       <option value="list">Список дел</option>
     </select>
   </div>
-  <div class="settings-section settings-controls" id="listTextColorSection">
-    <strong>🎨 Цвет текста задач</strong>
-    <select id="listTextColorSelect" class="settings-select">
-      <option value="navy">Тёмно-синий</option>
-      <option value="black">Чёрный</option>
-      <option value="slate">Серо-синий</option>
-      <option value="green">Зелёный</option>
-    </select>
-    <p>Цвет применяется и в режиме «Карточки», и в режиме «Список дел».</p>
-  </div>
-  <div class="settings-section settings-controls">
-    <strong>🎨 Цветовая тема</strong>
-    <select id="themeSelect" class="settings-select">
-      <option value="standard">Синяя — розовая</option>
-      <option value="blackwhite">Чёрная — белая</option>
-      <option value="yellowgreen">Жёлтая — зелёная</option>
-      <option value="skyblue">Голубая — синяя</option>
-      <option value="mintpistachio">Мятная — фисташковая</option>
-      <option value="pinkpurple">Розовая — фиолетовая</option>
-    </select>
-  </div>
-  <div class="settings-section settings-controls">
-    <strong>🪟 Цвет боковой навигации</strong>
-    <select id="sidebarColorSelect" class="settings-select">
-      <option value="bluegray">Серо-голубой</option>
-      <option value="light">Светлый</option>
-      <option value="dark">Тёмный</option>
-    </select>
-  </div>
   <label class="settings-row"><span>🌈 Градиент дней</span><input type="checkbox" id="gradientDaysToggle"></label>
   <div class="settings-section settings-controls">
     <label class="settings-row settings-row-inner"><span>🔔 Уведомления по задачам</span><input type="checkbox" id="notificationsToggle"></label>
@@ -170,9 +144,47 @@
     <div id="notificationStatus" class="account-status"></div>
   </div>
   <div class="settings-section"><strong>💾 Резервная копия</strong><p>Сохраните все задачи и записи в файл или восстановите их позже.</p><div class="settings-buttons"><button id="exportDataBtn">Экспорт</button><button id="importDataBtn">Восстановить</button></div><input id="importDataFile" type="file" accept="application/json" class="hidden"></div>
-  <div class="settings-section"><strong>🔄 Обновление приложения</strong><p id="appUpdateStatus">При наличии интернета можно загрузить последнюю версию. Без интернета приложение продолжит работать в офлайн-режиме.</p><button id="appUpdateBtn" class="wide-btn" type="button">⟳ Обновить приложение</button></div>
   <div class="settings-section"><strong>☁️ Сохранение по email</strong><p>Профиль email можно сохранить в настройках. Для настоящей синхронизации между устройствами нужен подключённый облачный сервер.</p><input id="accountEmail" type="email" placeholder="your@email.com"><button id="saveEmailBtn" class="wide-btn">Сохранить email</button><div id="accountStatus" class="account-status"></div></div>
   <button id="settingsClose" class="secondary wide-btn">Закрыть</button>
+</div></div>
+
+<div id="appearanceModal" class="modal hidden"><div class="modal-content settings-window appearance-window">
+  <div class="appearance-head"><div><h3>🎨 Оформление</h3><p>Меняйте внешний вид и сразу смотрите результат.</p></div><button id="appearanceClose" class="appearance-x" aria-label="Закрыть">×</button></div>
+  <div class="settings-section settings-controls">
+    <strong>Готовые темы</strong>
+    <select id="themeSelect" class="settings-select">
+      <option value="standard">Синяя — розовая</option>
+      <option value="blackwhite">Чёрная — белая</option>
+      <option value="yellowgreen">Жёлтая — зелёная</option>
+      <option value="skyblue">Голубая — синяя</option>
+      <option value="mintpistachio">Мятная — фисташковая</option>
+      <option value="pinkpurple">Розовая — фиолетовая</option>
+      <option value="custom">✏️ Моя тема</option>
+    </select>
+    <div class="appearance-swatches" aria-label="Примеры тем">
+      <button type="button" class="appearance-swatch" data-preset="standard"><i style="background:#d9e5fa"></i><i style="background:#f6dce9"></i><span>Сине-розовая</span></button>
+      <button type="button" class="appearance-swatch" data-preset="blackwhite"><i style="background:#222831"></i><i style="background:#f5f6f8"></i><span>Ч/б</span></button>
+      <button type="button" class="appearance-swatch" data-preset="yellowgreen"><i style="background:#f6e6a9"></i><i style="background:#d7e9c6"></i><span>Жёлто-зелёная</span></button>
+      <button type="button" class="appearance-swatch" data-preset="pinkpurple"><i style="background:#f6d9e8"></i><i style="background:#e3d9fa"></i><span>Розово-фиолетовая</span></button>
+    </div>
+  </div>
+  <div class="appearance-preview-wrap"><div class="appearance-preview-title"><strong>Предварительный просмотр</strong><span>Обновляется сразу</span></div>
+    <div id="appearancePreview" class="appearance-preview"><div class="appearance-preview-day"><div class="appearance-preview-date"><b>ПН</b><strong>12</strong><small>окт</small></div><div class="appearance-preview-tasks"><div>□ Важное дело</div><div>□ Запланированная встреча</div></div></div></div>
+  </div>
+  <details class="appearance-details" open><summary>✏️ Ручная настройка</summary>
+    <div class="appearance-controls-grid">
+      <label class="appearance-color-row"><span>Фон приложения</span><input id="appearanceBg" type="color" value="#eef3fb"></label>
+      <label class="appearance-color-row"><span>Будние дни</span><input id="appearanceWeekday" type="color" value="#dce7fa"></label>
+      <label class="appearance-color-row"><span>Выходные</span><input id="appearanceWeekend" type="color" value="#f5dce9"></label>
+      <label class="appearance-color-row"><span>Карточки дел</span><input id="appearanceCard" type="color" value="#ffffff"></label>
+      <label class="appearance-color-row"><span>Цвет текста</span><input id="appearanceText" type="color" value="#26364d"></label>
+      <label class="appearance-color-row"><span>Боковое меню</span><input id="appearanceSidebar" type="color" value="#e0e8f2"></label>
+    </div>
+    <label class="appearance-range-row"><span>Размер шрифта дел <b id="appearanceFontValue">15 px</b></span><input id="appearanceFont" type="range" min="11" max="22" step="1" value="15"></label>
+    <label class="appearance-range-row"><span>Прозрачность карточек <b id="appearanceOpacityValue">100%</b></span><input id="appearanceOpacity" type="range" min="35" max="100" step="5" value="100"></label>
+    <label class="appearance-range-row"><span>Скругление карточек <b id="appearanceRadiusValue">14 px</b></span><input id="appearanceRadius" type="range" min="4" max="28" step="2" value="14"></label>
+  </details>
+  <div class="appearance-actions"><button id="appearanceReset" class="secondary">Сбросить</button><button id="appearanceDone" class="primary">Готово</button></div>
 </div></div>
 <!-- =====================================
      ЭКРАН ВХОДА
@@ -208,15 +220,5 @@
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
 
   
-</div>
-
-<!-- Окно дел выбранного дня -->
-<div id="dayTasksModal" class="modal-overlay hidden" aria-hidden="true">
-  <div class="day-tasks-modal" role="dialog" aria-modal="true" aria-labelledby="dayTasksTitle">
-    <button id="dayTasksClose" class="day-modal-close" aria-label="Закрыть">×</button>
-    <div class="day-modal-title" id="dayTasksTitle"></div>
-    <div id="dayTasksList" class="day-tasks-list"></div>
-    <button id="dayTasksAdd" class="day-tasks-add">＋ Добавить задачу</button>
-  </div>
 </div>
 </body></html>
