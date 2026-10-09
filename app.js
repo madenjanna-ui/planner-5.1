@@ -83,10 +83,29 @@ function openDayPopup(dateKey){
   document.body.appendChild(overlay);
   overlay.querySelector(".day-popup-close").onclick=e=>{e.stopPropagation();closeDayPopup()};
   overlay.querySelector(".day-popup-add").onclick=e=>{
+    e.preventDefault();
     e.stopPropagation();
     selectedDate=dateKey;
+    // Закрываем окно дня и открываем штатную форму добавления задачи.
     closeDayPopup();
-    openTaskModal();
+    if(typeof window.addTask === "function"){
+      window.addTask(dateKey);
+    }else if(typeof addTask === "function"){
+      addTask(dateKey);
+    }else{
+      // Fallback: если функция проекта не экспортирована в window,
+      // открываем форму и явно задаём выбранную дату.
+      const modal=document.getElementById("taskModal");
+      if(modal){
+        modal.dataset.editDate="";
+        modal.dataset.editIndex="";
+        selectedDate=dateKey;
+        document.getElementById("taskModalTitle").textContent="Новая задача";
+        document.getElementById("newTaskInput").value="";
+        document.getElementById("newTaskTime").value="";
+        modal.classList.remove("hidden");
+      }
+    }
   };
   overlay.querySelectorAll(".day-popup-task").forEach(row=>row.onclick=e=>{
     e.stopPropagation();
