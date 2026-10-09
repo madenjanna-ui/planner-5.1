@@ -3872,3 +3872,38 @@ body[data-custom-appearance="on"] .side-nav-btn{color:var(--custom-text,#26364d)
 .appearance-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .appearance-actions button{min-height:44px;border-radius:12px;font-weight:800;}
 @media(max-width:420px){.appearance-window{padding:14px!important}.appearance-controls-grid{gap:7px}.appearance-color-row{padding:8px;font-size:12px}.appearance-swatches{gap:6px}.appearance-swatch{font-size:11px;grid-template-columns:18px 18px 1fr;padding:8px 5px}}
+
+
+/* MaDenFlow appearance menu visibility fix */
+#sidePanel { overflow-y:auto !important; -webkit-overflow-scrolling:touch !important; }
+#sidePanel .side-panel-inner { height:auto !important; min-height:100% !important; max-height:none !important; overflow:visible !important; padding-bottom:calc(18px + env(safe-area-inset-bottom,0px)) !important; box-sizing:border-box !important; }
+#sidePanel #appearanceBtn { display:flex !important; visibility:visible !important; opacity:1 !important; position:relative !important; order:5 !important; flex-shrink:0 !important; min-height:58px !important; width:100% !important; }
+#sidePanel #settingsBtn { order:6 !important; flex-shrink:0 !important; }
+#sidePanel #todayBtn,#sidePanel #calendarBtn,#sidePanel #serviceBtn,#sidePanel #visitsBtn { flex-shrink:0 !important; }
+
+
+/* MaDenFlow: week range visibility + configurable task-time color */
+:root{--task-time-color:#26364d;--week-range-bg:rgba(230,236,244,.96);--week-range-text:#34465c;}
+#weekTitle{display:flex !important;visibility:visible !important;opacity:1 !important;z-index:990 !important;color:var(--week-range-text) !important;background:var(--week-range-bg) !important;min-height:34px !important;height:calc(34px + env(safe-area-inset-bottom,0px)) !important;font-size:13px !important;font-weight:800 !important;}
+#planner{bottom:calc(34px + env(safe-area-inset-bottom,0px) + 3px) !important;}
+#planner .task-time{color:var(--task-time-color) !important;font-weight:800 !important;text-shadow:none !important;}
+#planner .task-time *{color:inherit !important;}
+
+
+/* MaDenFlow appearance v2: date sizing, system text and task-time colors */
+.appearance-subtitle{font-weight:800;font-size:14px;margin-top:8px;padding-top:10px;border-top:1px solid rgba(120,130,150,.18)}
+.appearance-select-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:42px;font-size:13px}
+.appearance-select-row select{max-width:58%;min-width:0;border:1px solid rgba(120,130,150,.28);border-radius:10px;padding:8px;background:rgba(255,255,255,.7);color:#26364d}
+#appearanceWeekTextColorRow,#appearanceTimeColorRow{display:none}
+body[data-custom-appearance="on"] #planner .day .day-weekday{font-size:var(--custom-weekday-size,20px)!important}
+body[data-custom-appearance="on"] #planner .day .day-number{font-size:var(--custom-date-size,30px)!important}
+body[data-custom-appearance="on"] #planner .day .day-month{font-size:var(--custom-month-size,14px)!important}
+body[data-custom-appearance="on"][data-week-text-mode="custom"] #planner .day .day-weekday,
+body[data-custom-appearance="on"][data-week-text-mode="custom"] #planner .day .day-number,
+body[data-custom-appearance="on"][data-week-text-mode="custom"] #planner .day .day-month{color:var(--custom-week-text-color,#26364d)!important}
+body[data-custom-appearance="on"][data-time-text-mode="custom"] #planner .task-time{color:var(--custom-time-color,#26364d)!important}
+body[data-custom-appearance="on"][data-time-text-mode="system"] #planner .task-time{color:var(--custom-text,#26364d)!important}
+body[data-custom-appearance="on"][data-time-text-mode="auto"] #planner .task-time{color:#26364d!important}
+#weekRange,#weekRangeLabel,.week-range,.week-range-label,#weekDateRange{
+  display:flex;visibility:visible;opacity:1;
+}

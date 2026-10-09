@@ -183,6 +183,15 @@
     <label class="appearance-range-row"><span>Размер шрифта дел <b id="appearanceFontValue">15 px</b></span><input id="appearanceFont" type="range" min="11" max="22" step="1" value="15"></label>
     <label class="appearance-range-row"><span>Прозрачность карточек <b id="appearanceOpacityValue">100%</b></span><input id="appearanceOpacity" type="range" min="35" max="100" step="5" value="100"></label>
     <label class="appearance-range-row"><span>Скругление карточек <b id="appearanceRadiusValue">14 px</b></span><input id="appearanceRadius" type="range" min="4" max="28" step="2" value="14"></label>
+    <div class="appearance-subtitle">📅 Дата в карточке дня</div>
+    <label class="appearance-range-row"><span>День недели <b id="appearanceWeekdaySizeValue">20 px</b></span><input id="appearanceWeekdaySize" type="range" min="12" max="28" step="1" value="20"></label>
+    <label class="appearance-range-row"><span>Число месяца <b id="appearanceDateSizeValue">30 px</b></span><input id="appearanceDateSize" type="range" min="18" max="42" step="1" value="30"></label>
+    <label class="appearance-range-row"><span>Название месяца <b id="appearanceMonthSizeValue">14 px</b></span><input id="appearanceMonthSize" type="range" min="10" max="20" step="1" value="14"></label>
+    <div class="appearance-subtitle">🔤 Цвет текста еженедельника</div>
+    <label class="appearance-select-row"><span>Цвет текста</span><select id="appearanceSystemText"><option value="system">Системный (по теме)</option><option value="auto">Автоматический контраст</option><option value="custom">Свой цвет</option></select></label>
+    <label class="appearance-color-row" id="appearanceWeekTextColorRow"><span>Свой цвет текста</span><input id="appearanceWeekTextColor" type="color" value="#26364d"></label>
+    <label class="appearance-select-row"><span>Цвет времени</span><select id="appearanceTimeMode"><option value="auto">Автоматический контраст</option><option value="system">Системный</option><option value="custom">Свой цвет</option></select></label>
+    <label class="appearance-color-row" id="appearanceTimeColorRow"><span>Свой цвет времени</span><input id="appearanceTimeColor" type="color" value="#26364d"></label>
   </details>
   <div class="appearance-actions"><button id="appearanceReset" class="secondary">Сбросить</button><button id="appearanceDone" class="primary">Готово</button></div>
 </div></div>
