@@ -25,7 +25,7 @@ function renderWeek(){
     if(dayOnly.getTime()===today.getTime()) section.classList.add("today");
     if(dayOnly<today) section.classList.add("past-day");
     section.dataset.date=key; section.dataset.taskCount=count;
-    section.innerHTML=`<div class="day-title"><div class="day-name"><span class="day-weekday">${weekDays[i]}</span> ${date.getDate()} <span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span>${date.toDateString()===new Date().toDateString()?" ⭐":""}</div></div><div class="day-content"><div class="tasks"></div></div>`;
+    section.innerHTML=`<div class="day-content"><div class="tasks"></div></div><div class="day-title"><div class="day-date-side"><span class="day-weekday">${weekDays[i]}</span><span class="day-number">${date.getDate()}</span><span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span>${date.toDateString()===new Date().toDateString()?'<span class="day-star">★</span>':''}</div></div>`;
     planner.appendChild(section);
     loadTasks(key,section.querySelector(".tasks"));
     sections.push({section,count});
