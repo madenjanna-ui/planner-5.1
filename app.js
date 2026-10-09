@@ -222,6 +222,8 @@ function applySettings(){
   document.body.dataset.taskFontSize=settings.taskFontSize||settings.fontSize||"medium";
   document.body.dataset.gradient=settings.gradientDays?"on":"off";
   document.body.dataset.taskView=settings.taskView||"cards";
+  document.body.dataset.listTextColor=settings.listTextColor||"navy";
+  document.body.dataset.sidebarColor=settings.sidebarColor||"bluegray";
 }
 function updateNotificationStatus(){
   const el=document.getElementById("notificationStatus");
@@ -235,8 +237,12 @@ function openSettings(){
   document.getElementById("plannerFontSizeSelect").value=appData.settings.plannerFontSize||appData.settings.fontSize||"medium";
   document.getElementById("taskFontSizeSelect").value=appData.settings.taskFontSize||appData.settings.fontSize||"medium";
   document.getElementById("themeSelect").value=appData.settings.theme||"standard";
+  const sidebarColorSelect=document.getElementById("sidebarColorSelect");
+  if(sidebarColorSelect) sidebarColorSelect.value=appData.settings.sidebarColor||"bluegray";
   document.getElementById("gradientDaysToggle").checked=!!appData.settings.gradientDays;
   document.getElementById("taskViewSelect").value=appData.settings.taskView||"cards";
+  const listColorSelect=document.getElementById("listTextColorSelect");
+  if(listColorSelect) listColorSelect.value=appData.settings.listTextColor||"navy";
   document.getElementById("notificationsToggle").checked=!!appData.settings.notifications;
   document.getElementById("accountEmail").value=appData.settings.email||"";
   document.getElementById("accountStatus").textContent=appData.settings.email?`Email сохранён: ${appData.settings.email}`:"Email не подключён";
@@ -250,7 +256,58 @@ document.getElementById("plannerFontSizeSelect").onchange=e=>{appData.settings.p
 document.getElementById("taskFontSizeSelect").onchange=e=>{appData.settings.taskFontSize=e.target.value;appData.settings.fontSize=e.target.value;applySettings();saveStorage();renderWeek()};
 document.getElementById("gradientDaysToggle").onchange=e=>{appData.settings.gradientDays=e.target.checked;applySettings();saveStorage()};
 document.getElementById("themeSelect").onchange=e=>{appData.settings.theme=e.target.value;applySettings();saveStorage()};
+const sidebarColorSelect=document.getElementById("sidebarColorSelect");
+if(sidebarColorSelect) sidebarColorSelect.onchange=e=>{appData.settings.sidebarColor=e.target.value;applySettings();saveStorage()};
 document.getElementById("taskViewSelect").onchange=e=>{appData.settings.taskView=e.target.value;applySettings();saveStorage();renderWeek()};
+const listTextColorSelect=document.getElementById("listTextColorSelect");
+if(listTextColorSelect) listTextColorSelect.onchange=e=>{appData.settings.listTextColor=e.target.value;applySettings();saveStorage()};
+// Обновление PWA по кнопке. Старый кэш не очищаем, пока новая версия не установлена.
+(function setupAppUpdate(){
+  const button=document.getElementById("appUpdateBtn");
+  const status=document.getElementById("appUpdateStatus");
+  if(!button||!status) return;
+  let busy=false;
+  const workerUrl=new URL("sw.js",document.baseURI);
+  function waitForState(worker,states,timeout=30000){
+    return new Promise((resolve,reject)=>{
+      if(states.includes(worker.state)){resolve(worker.state);return;}
+      const timer=setTimeout(()=>finish(new Error("Время ожидания обновления истекло.")),timeout);
+      function finish(err){clearTimeout(timer);worker.removeEventListener("statechange",check);err?reject(err):resolve(worker.state)}
+      function check(){if(states.includes(worker.state))finish();else if(worker.state==="redundant")finish(new Error("Новая версия не установилась."))}
+      worker.addEventListener("statechange",check);
+    });
+  }
+  button.addEventListener("click",async()=>{
+    if(busy)return;
+    if(!navigator.onLine){status.textContent="Нет интернета. Продолжаем работать на сохранённой офлайн-версии.";return;}
+    if(!("serviceWorker" in navigator)||!window.isSecureContext){status.textContent="Обновление доступно только при открытии приложения через HTTPS (например, GitHub Pages).";return;}
+    busy=true;button.disabled=true;status.textContent="Проверяем наличие новой версии…";
+    try{
+      const registration=await navigator.serviceWorker.register(workerUrl.href,{scope:"./",updateViaCache:"none"});
+      await registration.update();
+      let worker=registration.installing;
+      if(worker) await waitForState(worker,["installed","activated"]);
+      worker=registration.waiting;
+      if(worker){
+        status.textContent="Новая версия загружена. Применяем обновление…";
+        const activated=new Promise((resolve,reject)=>{
+          const timer=setTimeout(()=>reject(new Error("Не удалось активировать новую версию.")),30000);
+          navigator.serviceWorker.addEventListener("controllerchange",()=>{clearTimeout(timer);resolve();},{once:true});
+        });
+        worker.postMessage({type:"MADENFLOW_SKIP_WAITING"});
+        await activated;
+        status.textContent="Обновлено! Перезапускаем MaDenFlow…";
+        window.location.reload();
+        return;
+      }
+      status.textContent="У вас уже последняя версия MaDenFlow.";
+    }catch(err){
+      console.warn("MaDenFlow update failed:",err);
+      status.textContent=navigator.onLine?"Не удалось обновиться. Текущая версия сохранена; попробуйте ещё раз при стабильном интернете.":"Нет интернета. Текущая офлайн-версия сохранена.";
+    }finally{busy=false;button.disabled=false;}
+  });
+})();
+
 document.getElementById("notificationsToggle").onchange=async e=>{
   if(!e.target.checked){appData.settings.notifications=false;saveStorage();updateNotificationStatus();return}
   if(!("Notification" in window)){e.target.checked=false;alert("Этот браузер не поддерживает уведомления.");return}

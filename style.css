@@ -3407,3 +3407,90 @@ body > .day-popup-overlay .day-popup{pointer-events:auto !important;}
 #taskModal.modal{z-index:12000 !important; position:fixed !important;}
 #calendarModal.modal, #settingsModal.modal{z-index:11000 !important;}
 .day-popup-overlay{z-index:7000 !important;}
+
+
+/* MaDenFlow 6.1 — серо-голубой интерфейс, 8 дел на день и обновление */
+:root{
+  --bg:#e8edf4;
+  --bg2:#f2f5f9;
+}
+body{
+  background:linear-gradient(180deg,#f4f6f9 0%,#e6ebf2 52%,#dce4ee 100%) !important;
+  --header-space:48px !important;
+  --bottom-space:46px !important;
+  padding-top:var(--header-space) !important;
+  padding-bottom:var(--bottom-space) !important;
+}
+.glass-header{
+  position:fixed !important;top:0 !important;left:0 !important;right:0 !important;
+  height:48px !important;padding:env(safe-area-inset-top,0px) 12px 0 !important;
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  background:rgba(239,243,248,.78) !important;border-bottom:1px solid rgba(255,255,255,.75) !important;
+  box-shadow:0 4px 18px rgba(53,70,94,.06) !important;z-index:900 !important;
+}
+.glass-header .logo{display:block !important;font-size:20px !important;line-height:1 !important;margin:0 !important;color:#536b86 !important}
+#weekTitle{
+  position:fixed !important;left:0 !important;right:0 !important;bottom:calc(env(safe-area-inset-bottom,0px) + 2px) !important;
+  z-index:880 !important;margin:0 !important;padding:8px 12px !important;
+  font-size:14px !important;font-weight:800 !important;line-height:1.2 !important;text-align:center !important;
+  color:#66778c !important;background:rgba(239,243,248,.82) !important;
+  border-top:1px solid rgba(255,255,255,.7) !important;backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;white-space:nowrap !important;
+}
+#planner{
+  height:calc(100dvh - var(--header-space) - var(--bottom-space)) !important;
+  min-height:0 !important;padding:8px 10px 7px !important;gap:7px !important;overflow:hidden !important;
+}
+#planner .day{background:rgba(248,250,253,.78) !important;border:1px solid rgba(255,255,255,.8) !important;box-shadow:0 5px 18px rgba(51,69,94,.07) !important}
+#planner .day.weekend{background:rgba(225,233,243,.86) !important}
+#planner .day.today{background:rgba(255,255,255,.94) !important;border:2px solid #7597bd !important}
+.side-panel{background:rgba(224,232,242,.97) !important;border-right:1px solid rgba(255,255,255,.8) !important;box-shadow:12px 0 38px rgba(43,59,81,.16) !important}
+.side-panel-inner{background:transparent !important}
+.side-nav-btn{background:rgba(255,255,255,.58) !important;color:#354961 !important;border:1px solid rgba(255,255,255,.75) !important}
+.side-toggle{background:rgba(224,232,242,.82) !important;color:#354961 !important;border-color:rgba(255,255,255,.86) !important}
+
+/* В режиме «Список дел» помещаем первые восемь задач в три ряда: 2 + 3 + 3. */
+body[data-task-view="list"] #planner .day.list-day .day-content{overflow:hidden !important;min-height:0 !important}
+body[data-task-view="list"] #planner .day.list-day .tasks{
+  display:grid !important;grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+  grid-template-rows:repeat(3,minmax(0,1fr)) !important;gap:4px !important;
+  align-content:stretch !important;height:100% !important;max-height:100% !important;
+  overflow:hidden !important;min-height:0 !important;
+}
+body[data-task-view="list"] #planner .day.list-day .tasks>.task{
+  grid-column:span 2 !important;min-width:0 !important;min-height:0 !important;height:100% !important;
+  max-height:none !important;padding:4px 5px !important;gap:4px !important;
+  display:flex !important;align-items:center !important;overflow:hidden !important;
+}
+body[data-task-view="list"] #planner .day.list-day .tasks>.task:nth-child(1),
+body[data-task-view="list"] #planner .day.list-day .tasks>.task:nth-child(2){grid-column:span 3 !important}
+body[data-task-view="list"] #planner .day.list-day .tasks>.task:nth-child(n+9){display:none !important}
+body[data-task-view="list"] #planner .day.list-day .task-text{
+  color:var(--list-task-text,#25364b) !important;font-size:clamp(10px,2.8vw,15px) !important;
+  line-height:1.08 !important;font-weight:800 !important;overflow:hidden !important;
+  display:-webkit-box !important;-webkit-line-clamp:2 !important;-webkit-box-orient:vertical !important;
+}
+body[data-task-view="list"] #planner .day.list-day .task-time{font-size:clamp(9px,2.4vw,12px) !important;white-space:nowrap !important}
+body[data-task-view="list"] #planner .day.list-day .task-check,
+body[data-task-view="list"] #planner .day.list-day .checkmark{width:15px !important;height:15px !important;min-width:15px !important;flex:0 0 15px !important}
+/* Цвет текста задач одинаково работает в режимах «Список дел» и «Карточки». */
+body[data-list-text-color="navy"]{--list-task-text:#25364b}
+body[data-list-text-color="black"]{--list-task-text:#111827}
+body[data-list-text-color="slate"]{--list-task-text:#65758a}
+body[data-list-text-color="green"]{--list-task-text:#356b50}
+#planner .task-text{color:var(--list-task-text,#25364b) !important}
+#appUpdateBtn{min-height:54px !important;font-weight:800 !important;background:#dfe8f4 !important;color:#354961 !important;border:1px solid rgba(255,255,255,.9) !important}
+#appUpdateBtn:disabled{opacity:.6 !important}
+#appUpdateStatus{font-size:14px !important;line-height:1.4 !important;color:var(--text2) !important}
+@media(max-height:760px){
+  #planner .day{padding:5px 8px !important}
+  .day-title{min-height:23px !important;margin-bottom:3px !important}
+  .day-name,.day-weekday{font-size:18px !important}
+  body[data-task-view="list"] #planner .day.list-day .tasks{gap:3px !important}
+}
+
+body[data-sidebar-color="bluegray"] .side-panel{background:rgba(224,232,242,.97) !important;color:#354961 !important}
+body[data-sidebar-color="light"] .side-panel{background:rgba(248,250,253,.97) !important;color:#354961 !important}
+body[data-sidebar-color="dark"] .side-panel{background:rgba(35,45,61,.97) !important;color:#f4f7fb !important}
+body[data-sidebar-color="dark"] .side-nav-btn{background:rgba(255,255,255,.10) !important;color:#f4f7fb !important;border-color:rgba(255,255,255,.14) !important}
+body[data-sidebar-color="dark"] .side-toggle{background:rgba(35,45,61,.85) !important;color:#f4f7fb !important;border-color:rgba(255,255,255,.18) !important}

@@ -134,6 +134,16 @@
       <option value="list">Список дел</option>
     </select>
   </div>
+  <div class="settings-section settings-controls" id="listTextColorSection">
+    <strong>🎨 Цвет текста задач</strong>
+    <select id="listTextColorSelect" class="settings-select">
+      <option value="navy">Тёмно-синий</option>
+      <option value="black">Чёрный</option>
+      <option value="slate">Серо-синий</option>
+      <option value="green">Зелёный</option>
+    </select>
+    <p>Цвет применяется и в режиме «Карточки», и в режиме «Список дел».</p>
+  </div>
   <div class="settings-section settings-controls">
     <strong>🎨 Цветовая тема</strong>
     <select id="themeSelect" class="settings-select">
@@ -145,6 +155,14 @@
       <option value="pinkpurple">Розовая — фиолетовая</option>
     </select>
   </div>
+  <div class="settings-section settings-controls">
+    <strong>🪟 Цвет боковой навигации</strong>
+    <select id="sidebarColorSelect" class="settings-select">
+      <option value="bluegray">Серо-голубой</option>
+      <option value="light">Светлый</option>
+      <option value="dark">Тёмный</option>
+    </select>
+  </div>
   <label class="settings-row"><span>🌈 Градиент дней</span><input type="checkbox" id="gradientDaysToggle"></label>
   <div class="settings-section settings-controls">
     <label class="settings-row settings-row-inner"><span>🔔 Уведомления по задачам</span><input type="checkbox" id="notificationsToggle"></label>
@@ -152,6 +170,7 @@
     <div id="notificationStatus" class="account-status"></div>
   </div>
   <div class="settings-section"><strong>💾 Резервная копия</strong><p>Сохраните все задачи и записи в файл или восстановите их позже.</p><div class="settings-buttons"><button id="exportDataBtn">Экспорт</button><button id="importDataBtn">Восстановить</button></div><input id="importDataFile" type="file" accept="application/json" class="hidden"></div>
+  <div class="settings-section"><strong>🔄 Обновление приложения</strong><p id="appUpdateStatus">При наличии интернета можно загрузить последнюю версию. Без интернета приложение продолжит работать в офлайн-режиме.</p><button id="appUpdateBtn" class="wide-btn" type="button">⟳ Обновить приложение</button></div>
   <div class="settings-section"><strong>☁️ Сохранение по email</strong><p>Профиль email можно сохранить в настройках. Для настоящей синхронизации между устройствами нужен подключённый облачный сервер.</p><input id="accountEmail" type="email" placeholder="your@email.com"><button id="saveEmailBtn" class="wide-btn">Сохранить email</button><div id="accountStatus" class="account-status"></div></div>
   <button id="settingsClose" class="secondary wide-btn">Закрыть</button>
 </div></div>
