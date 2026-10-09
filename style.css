@@ -3528,3 +3528,113 @@ body[data-task-view="list"] #planner .day.list-day .tasks>.task:nth-child(n+9){d
 body[data-task-view="list"] #planner .day.list-day .task-text{font-size:clamp(9px,2.6vw,14px) !important;line-height:1.05 !important;-webkit-line-clamp:2 !important;overflow:hidden !important;}
 body[data-task-view="list"] #planner .day.list-day .task-time{font-size:clamp(8px,2.2vw,11px) !important;min-width:0 !important;white-space:nowrap !important;}
 @media(max-width:640px){#weekTitle{font-size:13px !important;min-height:40px !important;}#planner .day-name,#planner .day-weekday{font-size:18px !important;}#planner .day-month{font-size:11px !important;}}
+
+
+/* MaDenFlow 6.3 — исправление свободного места, карточек, тем и контраста */
+:root{--header-space:0px !important;--bottom-space:0px !important;}
+html,body{min-height:100%;}
+body{
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  background:#e7edf5 !important;
+  box-sizing:border-box !important;
+}
+body *{box-sizing:border-box;}
+/* Шапка учитывает вырез/status bar, но не оставляет лишнюю пустую полосу. */
+.glass-header{
+  position:fixed !important;top:0 !important;left:0 !important;right:0 !important;
+  height:calc(42px + env(safe-area-inset-top,0px)) !important;
+  min-height:calc(42px + env(safe-area-inset-top,0px)) !important;
+  padding:env(safe-area-inset-top,0px) 12px 0 !important;
+  box-sizing:border-box !important;z-index:900 !important;
+  background:rgba(239,243,248,.94) !important;
+}
+.glass-header .logo{display:none !important;}
+/* Planner fills precisely the area between top bar and bottom week label. */
+#planner{
+  position:fixed !important;left:0 !important;right:0 !important;
+  top:calc(42px + env(safe-area-inset-top,0px)) !important;
+  bottom:calc(43px + env(safe-area-inset-bottom,0px)) !important;
+  width:100% !important;max-width:none !important;height:auto !important;
+  min-height:0 !important;margin:0 !important;padding:7px 10px !important;
+  display:flex !important;flex-direction:column !important;gap:6px !important;
+  overflow:hidden !important;box-sizing:border-box !important;
+}
+#planner .day{
+  display:flex !important;flex:1 1 0 !important;min-height:0 !important;min-width:0 !important;
+  flex-direction:column !important;overflow:hidden !important;padding:5px 8px !important;
+  border-radius:18px !important;box-sizing:border-box !important;
+}
+#planner .day-title{flex:0 0 auto !important;min-height:23px !important;margin:0 2px 3px 0 !important;padding:0 !important;}
+#planner .day-content{display:flex !important;flex:1 1 0 !important;min-height:0 !important;height:auto !important;overflow:hidden !important;}
+#planner .tasks{flex:1 1 0 !important;min-height:0 !important;min-width:0 !important;overflow:hidden !important;}
+#weekTitle{
+  position:fixed !important;left:0 !important;right:0 !important;top:auto !important;
+  bottom:0 !important;height:calc(43px + env(safe-area-inset-bottom,0px)) !important;
+  min-height:calc(43px + env(safe-area-inset-bottom,0px)) !important;
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  padding:0 12px env(safe-area-inset-bottom,0px) !important;margin:0 !important;
+  z-index:880 !important;box-sizing:border-box !important;text-align:center !important;
+  font-size:14px !important;line-height:1.2 !important;white-space:nowrap !important;
+  background:rgba(230,236,245,.97) !important;color:#61748d !important;
+  border-top:1px solid rgba(255,255,255,.95) !important;
+  backdrop-filter:blur(14px) !important;-webkit-backdrop-filter:blur(14px) !important;
+}
+/* 8 tasks: 2 in row one, then 3 + 3. Grid items must not each be 100% tall. */
+body[data-task-view="list"] #planner .day.list-day .day-content{display:flex !important;flex:1 1 0 !important;min-height:0 !important;overflow:hidden !important;}
+body[data-task-view="list"] #planner .day.list-day .tasks{
+  display:grid !important;grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+  grid-template-rows:repeat(3,minmax(0,1fr)) !important;grid-auto-flow:row !important;
+  grid-auto-rows:minmax(0,1fr) !important;align-content:stretch !important;align-items:stretch !important;
+  gap:3px !important;height:100% !important;max-height:100% !important;min-height:0 !important;overflow:hidden !important;
+}
+body[data-task-view="list"] #planner .day.list-day .tasks>.task{
+  grid-column:span 2 !important;display:flex !important;align-self:stretch !important;
+  width:100% !important;height:auto !important;min-height:0 !important;max-height:none !important;
+  margin:0 !important;padding:3px 4px !important;gap:4px !important;overflow:hidden !important;
+  border-radius:10px !important;background:rgba(255,255,255,.9) !important;
+  box-shadow:0 1px 4px rgba(40,55,80,.08) !important;box-sizing:border-box !important;
+}
+body[data-task-view="list"] #planner .day.list-day .tasks>.task:nth-child(1),
+body[data-task-view="list"] #planner .day.list-day .tasks>.task:nth-child(2){grid-column:span 3 !important;}
+body[data-task-view="list"] #planner .day.list-day .tasks>.task:nth-child(n+9){display:none !important;}
+#planner .task-text{color:var(--list-task-text,#25364b) !important;}
+body[data-task-view="list"] #planner .day.list-day .task-text{
+  color:var(--list-task-text,#25364b) !important;font-size:clamp(10px,2.7vw,14px) !important;
+  line-height:1.08 !important;font-weight:800 !important;min-width:0 !important;overflow:hidden !important;
+  display:-webkit-box !important;-webkit-line-clamp:2 !important;-webkit-box-orient:vertical !important;
+}
+body[data-task-view="list"] #planner .day.list-day .task-time{font-size:clamp(9px,2.25vw,12px) !important;white-space:nowrap !important;}
+body[data-task-view="list"] #planner .day.list-day .task-check,
+body[data-task-view="list"] #planner .day.list-day .checkmark{width:15px !important;height:15px !important;min-width:15px !important;flex:0 0 15px !important;}
+/* Themes are applied to the actual cards and app background (not just data attributes). */
+body[data-theme="standard"]{--weekday:#e8f1ff;--weekend:#ffe8ee;--day-weekday-text:#3f6da9;--day-weekend-text:#b85c75;--primary:#4f8cff;--primary-dark:#326fe0;background:linear-gradient(180deg,#f5f7fb,#dfe8f5) !important;}
+body[data-theme="blackwhite"]{--weekday:#282d36;--weekend:#f7f8fa;--day-weekday-text:#f6f7fa;--day-weekend-text:#4b5563;--primary:#404854;--primary-dark:#252b34;background:linear-gradient(180deg,#f6f7f8,#dfe2e6) !important;--list-task-text:#202938;}
+body[data-theme="yellowgreen"]{--weekday:#fff0a6;--weekend:#d7efb8;--day-weekday-text:#826900;--day-weekend-text:#47733a;--primary:#699a37;--primary-dark:#4d7626;background:linear-gradient(180deg,#fffbea,#e4efce) !important;}
+body[data-theme="skyblue"]{--weekday:#d8f2ff;--weekend:#cbd9ff;--day-weekday-text:#267b9f;--day-weekend-text:#4a62b1;--primary:#4388df;--primary-dark:#2b64b3;background:linear-gradient(180deg,#f2fbff,#d9e7fb) !important;}
+body[data-theme="mintpistachio"]{--weekday:#d5f0e5;--weekend:#e0efc5;--day-weekday-text:#317b66;--day-weekend-text:#638436;--primary:#459a7b;--primary-dark:#31785e;background:linear-gradient(180deg,#f1fbf6,#dcebd4) !important;}
+body[data-theme="pinkpurple"]{--weekday:#ffe1ed;--weekend:#eadfff;--day-weekday-text:#b7477a;--day-weekend-text:#7750ad;--primary:#9461cb;--primary-dark:#7044a7;background:linear-gradient(180deg,#fff7fb,#e9e0f5) !important;}
+#planner .day:not(.weekend){background:var(--weekday) !important;color:var(--text,#26364d) !important;}
+#planner .day.weekend{background:var(--weekend) !important;color:var(--text,#26364d) !important;}
+#planner .day:not(.weekend) .day-weekday{color:var(--day-weekday-text) !important;}
+#planner .day.weekend .day-weekday{color:var(--day-weekend-text) !important;}
+#planner .day .day-name{color:var(--text,#26364d) !important;}
+body[data-theme="blackwhite"] #planner .day:not(.weekend) .day-name{color:#f6f7fa !important;}
+body[data-theme="blackwhite"] #planner .day:not(.weekend) .day-month{color:#d1d5db !important;}
+/* Settings theme colors and readable navigation text */
+body[data-sidebar-color="bluegray"] .side-panel{background:rgba(220,230,242,.98) !important;color:#27384d !important;}
+body[data-sidebar-color="light"] .side-panel{background:rgba(250,252,255,.98) !important;color:#27384d !important;}
+body[data-sidebar-color="dark"] .side-panel{background:rgba(36,46,62,.98) !important;color:#fff !important;}
+.side-panel .side-nav-btn{font-weight:750 !important;line-height:1.25 !important;}
+body[data-sidebar-color="dark"] .side-nav-btn{background:rgba(255,255,255,.12) !important;color:#fff !important;border:1px solid rgba(255,255,255,.25) !important;text-shadow:0 1px 1px rgba(0,0,0,.25) !important;}
+body[data-sidebar-color="bluegray"] .side-nav-btn,body[data-sidebar-color="light"] .side-nav-btn{background:rgba(255,255,255,.72) !important;color:#26364d !important;border:1px solid rgba(90,110,140,.18) !important;}
+/* Reposition floating navigation so it does not cover bottom week label. */
+.side-toggle{bottom:calc(50px + env(safe-area-inset-bottom,0px)) !important;z-index:950 !important;}
+@media(max-height:760px){
+  #planner{padding:5px 8px !important;gap:4px !important;}
+  #planner .day{padding:3px 6px !important;}
+  #planner .day-title{min-height:20px !important;margin-bottom:2px !important;}
+  #planner .day-name,#planner .day-weekday{font-size:17px !important;}
+  body[data-task-view="list"] #planner .day.list-day .tasks{gap:2px !important;}
+}
