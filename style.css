@@ -3833,60 +3833,70 @@ body[data-task-font-size="xlarge"] #planner .task-time{font-size:clamp(10px,2.8v
   .day-popup-task-row .day-popup-task{gap:7px !important;padding:8px 9px !important}
 }
 
-
-/* MaDenFlow — исправление контрастности дат и задач в темах */
-body[data-theme="blackwhite"]{
-  --list-task-text:#f8fafc;
-  --text:#26364d;
-  --text2:#596579;
-}
-body[data-theme="blackwhite"] #planner .day:not(.weekend) .day-number,
-body[data-theme="blackwhite"] #planner .day:not(.weekend) .day-month{
-  color:#f8fafc !important;
-}
-body[data-theme="blackwhite"] #planner .day.weekend .day-number,
-body[data-theme="blackwhite"] #planner .day.weekend .day-month{
-  color:#26364d !important;
-}
-body[data-theme="blackwhite"] #planner .tasks > .task .task-text,
-body[data-theme="blackwhite"] #planner .tasks > .task .task-time{
-  color:#f8fafc !important;
-  text-shadow:0 1px 1px rgba(0,0,0,.22) !important;
-}
-body[data-theme="blackwhite"] #planner .day-weekday{
+/* MaDenFlow — contrast correction v2: task pills and date rail */
+#planner .day .day-date-side{position:relative;z-index:1}
+#planner .day .day-weekday,
+#planner .day .day-number,
+#planner .day .day-month,
+#planner .day .day-star{
+  opacity:1 !important;
   text-shadow:none !important;
 }
-body.dark{
-  --list-task-text:#f3f6ff;
-}
-body.dark #planner .day-number,
-body.dark #planner .day-month{
-  color:#f3f6ff !important;
-}
-body.dark #planner .day-weekday{
-  color:#e5ecff !important;
-}
-body.dark #planner .tasks > .task .task-text,
-body.dark #planner .tasks > .task .task-time{
-  color:#f3f6ff !important;
-  text-shadow:0 1px 1px rgba(0,0,0,.25) !important;
-}
-body.dark #weekTitle{
-  color:#e7edfa !important;
-  background:rgba(25,31,45,.94) !important;
-  border-top-color:rgba(255,255,255,.12) !important;
-}
-body.dark .side-panel .side-nav-btn,
-body.dark .month-screen-title,
-body.dark #calendarTitle{
-  color:#f3f6ff !important;
-}
-body.dark .month-day,
-body.dark .cal-day{
-  color:#f3f6ff !important;
-}
-body.dark .month-day.today,
-body.dark .cal-day.today{
-  background:#477fdb !important;
+
+/* Black-and-white theme: dark weekdays, light weekend cards */
+body[data-theme="blackwhite"]:not(.dark) #planner .day:not(.weekend) .day-weekday,
+body[data-theme="blackwhite"]:not(.dark) #planner .day:not(.weekend) .day-number,
+body[data-theme="blackwhite"]:not(.dark) #planner .day:not(.weekend) .day-month,
+body[data-theme="blackwhite"]:not(.dark) #planner .day:not(.weekend) .day-star{
   color:#fff !important;
 }
+body[data-theme="blackwhite"]:not(.dark) #planner .day.weekend .day-weekday,
+body[data-theme="blackwhite"]:not(.dark) #planner .day.weekend .day-number,
+body[data-theme="blackwhite"]:not(.dark) #planner .day.weekend .day-month,
+body[data-theme="blackwhite"]:not(.dark) #planner .day.weekend .day-star{
+  color:#273142 !important;
+}
+/* Task pills stay readable even when the surrounding day card is dark */
+body[data-theme="blackwhite"]:not(.dark) #planner .task{
+  background:#fff !important;
+  color:#202938 !important;
+  border:1px solid rgba(30,40,55,.12) !important;
+}
+body[data-theme="blackwhite"]:not(.dark) #planner .task .task-text,
+body[data-theme="blackwhite"]:not(.dark) #planner .task .task-time,
+body[data-theme="blackwhite"]:not(.dark) #planner .task .task-text-wrap{
+  color:#202938 !important;
+  text-shadow:none !important;
+}
+
+/* Dark mode: light date labels and dark task pills with light text */
+body.dark #planner .day .day-weekday,
+body.dark #planner .day .day-number,
+body.dark #planner .day .day-month,
+body.dark #planner .day .day-star{
+  color:#f4f7ff !important;
+  opacity:1 !important;
+}
+body.dark #planner .task{
+  background:#252d40 !important;
+  color:#f4f7ff !important;
+  border:1px solid rgba(255,255,255,.14) !important;
+}
+body.dark #planner .task .task-text,
+body.dark #planner .task .task-time,
+body.dark #planner .task .task-text-wrap{
+  color:#f4f7ff !important;
+  text-shadow:none !important;
+}
+body.dark #planner .task .checkmark{
+  background:#f8fbff !important;
+  border-color:#9bb9ee !important;
+}
+body.dark #planner .task input:checked + .checkmark{
+  background:#4dbb74 !important;
+  border-color:#4dbb74 !important;
+}
+
+/* Keep selected day distinct without fading its date rail */
+#planner .day.today .day-date-side,
+#planner .day.selected-day .day-date-side{opacity:1 !important;filter:none !important}
