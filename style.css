@@ -3494,3 +3494,37 @@ body[data-sidebar-color="light"] .side-panel{background:rgba(248,250,253,.97) !i
 body[data-sidebar-color="dark"] .side-panel{background:rgba(35,45,61,.97) !important;color:#f4f7fb !important}
 body[data-sidebar-color="dark"] .side-nav-btn{background:rgba(255,255,255,.10) !important;color:#f4f7fb !important;border-color:rgba(255,255,255,.14) !important}
 body[data-sidebar-color="dark"] .side-toggle{background:rgba(35,45,61,.85) !important;color:#f4f7fb !important;border-color:rgba(255,255,255,.18) !important}
+
+
+/* MaDenFlow 6.2 — финальная раскладка недели и 8 задач */
+:root{--header-space:42px !important;--bottom-space:48px !important;}
+.glass-header{height:40px !important;min-height:40px !important;padding:env(safe-area-inset-top,0px) 12px 0 !important;background:rgba(239,243,248,.72) !important;}
+.glass-header .logo{display:none !important;}
+#weekTitle{
+  position:fixed !important;left:0 !important;right:0 !important;top:auto !important;bottom:calc(env(safe-area-inset-bottom,0px) + 2px) !important;
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  min-height:42px !important;box-sizing:border-box !important;margin:0 !important;padding:8px 12px !important;
+  z-index:880 !important;background:rgba(230,236,245,.94) !important;border-top:1px solid rgba(255,255,255,.95) !important;
+  color:#61748d !important;font-size:14px !important;font-weight:800 !important;line-height:1.2 !important;
+  text-align:center !important;white-space:nowrap !important;backdrop-filter:blur(14px) !important;-webkit-backdrop-filter:blur(14px) !important;
+}
+#planner{height:calc(100dvh - var(--header-space) - var(--bottom-space) - env(safe-area-inset-top,0px)) !important;min-height:0 !important;padding:6px 10px !important;gap:6px !important;overflow:hidden !important;box-sizing:border-box !important;}
+#planner .day{display:flex !important;flex-direction:column !important;flex:1 1 0 !important;min-height:0 !important;overflow:hidden !important;padding:5px 8px !important;}
+#planner .day-title{flex:0 0 auto !important;min-height:22px !important;margin:0 2px 3px 0 !important;padding:0 !important;}
+#planner .day-content{display:flex !important;flex:1 1 auto !important;min-height:0 !important;height:auto !important;overflow:hidden !important;}
+#planner .tasks{min-height:0 !important;}
+body[data-task-view="list"] #planner .day.list-day .tasks{
+  display:grid !important;grid-template-columns:repeat(6,minmax(0,1fr)) !important;grid-template-rows:repeat(3,minmax(0,1fr)) !important;
+  grid-auto-flow:row !important;align-content:stretch !important;align-items:stretch !important;justify-items:stretch !important;
+  gap:3px !important;height:100% !important;max-height:100% !important;min-height:0 !important;overflow:hidden !important;
+}
+body[data-task-view="list"] #planner .day.list-day .tasks>.task{
+  min-width:0 !important;min-height:0 !important;height:100% !important;max-height:100% !important;
+  margin:0 !important;padding:3px 4px !important;gap:3px !important;overflow:hidden !important;box-sizing:border-box !important;
+}
+body[data-task-view="list"] #planner .day.list-day .tasks>.task:nth-child(1),
+body[data-task-view="list"] #planner .day.list-day .tasks>.task:nth-child(2){grid-column:span 3 !important;}
+body[data-task-view="list"] #planner .day.list-day .tasks>.task:nth-child(n+9){display:none !important;}
+body[data-task-view="list"] #planner .day.list-day .task-text{font-size:clamp(9px,2.6vw,14px) !important;line-height:1.05 !important;-webkit-line-clamp:2 !important;overflow:hidden !important;}
+body[data-task-view="list"] #planner .day.list-day .task-time{font-size:clamp(8px,2.2vw,11px) !important;min-width:0 !important;white-space:nowrap !important;}
+@media(max-width:640px){#weekTitle{font-size:13px !important;min-height:40px !important;}#planner .day-name,#planner .day-weekday{font-size:18px !important;}#planner .day-month{font-size:11px !important;}}
