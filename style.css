@@ -3401,3 +3401,9 @@ body > .day-popup-overlay .day-popup-head{display:flex !important;flex-direction
 body > .day-popup-overlay .day-popup-close{display:flex !important;align-items:center !important;justify-content:center !important;width:48px !important;min-width:48px !important;max-width:48px !important;height:48px !important;min-height:48px !important;max-height:48px !important;flex:0 0 48px !important;padding:0 !important;margin:0 !important;border-radius:16px !important;line-height:1 !important;}
 body > .day-popup-overlay{pointer-events:auto !important;}
 body > .day-popup-overlay .day-popup{pointer-events:auto !important;}
+
+
+/* FIX 4: форма задачи всегда выше всплывающих окон */
+#taskModal.modal{z-index:12000 !important; position:fixed !important;}
+#calendarModal.modal, #settingsModal.modal{z-index:11000 !important;}
+.day-popup-overlay{z-index:7000 !important;}

@@ -86,25 +86,26 @@ function openDayPopup(dateKey){
     e.preventDefault();
     e.stopPropagation();
     selectedDate=dateKey;
-    // Закрываем окно дня и открываем штатную форму добавления задачи.
+    // Открываем именно форму, а не функцию addTask(), которая может
+    // сразу сохранить задачу без показа формы.
+    selectedDate=dateKey;
     closeDayPopup();
-    if(typeof window.addTask === "function"){
-      window.addTask(dateKey);
-    }else if(typeof addTask === "function"){
-      addTask(dateKey);
-    }else{
-      // Fallback: если функция проекта не экспортирована в window,
-      // открываем форму и явно задаём выбранную дату.
-      const modal=document.getElementById("taskModal");
-      if(modal){
-        modal.dataset.editDate="";
-        modal.dataset.editIndex="";
-        selectedDate=dateKey;
-        document.getElementById("taskModalTitle").textContent="Новая задача";
-        document.getElementById("newTaskInput").value="";
-        document.getElementById("newTaskTime").value="";
-        modal.classList.remove("hidden");
-      }
+    const modal=document.getElementById("taskModal");
+    if(modal){
+      modal.dataset.editDate="";
+      modal.dataset.editIndex="";
+      modal.dataset.editChain="0";
+      document.getElementById("taskModalTitle").textContent="Новая задача";
+      document.getElementById("newTaskInput").value="";
+      document.getElementById("newTaskTime").value="";
+      document.getElementById("repeatTask").checked=false;
+      document.getElementById("repeatOptions").classList.add("hidden");
+      document.getElementById("recurrenceBox").classList.remove("hidden");
+      const until=new Date(dateKey+"T12:00:00");
+      until.setFullYear(until.getFullYear()+1);
+      document.getElementById("repeatUntil").value=localKey(until);
+      modal.classList.remove("hidden");
+      setTimeout(()=>document.getElementById("newTaskInput").focus(),50);
     }
   };
   overlay.querySelectorAll(".day-popup-task").forEach(row=>row.onclick=e=>{
