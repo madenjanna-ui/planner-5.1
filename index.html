@@ -57,6 +57,7 @@
     <button id="monthNext" aria-label="Следующий месяц">›</button>
   </div>
   <div id="monthScreenGrid" class="month-screen-grid"></div>
+  <section class="month-selected-tasks" aria-live="polite"><h3 id="monthSelectedTitle">Дела на выбранный день</h3><div id="monthSelectedTasks" class="month-selected-task-list"></div><button id="openSelectedWeek" type="button">Открыть недельный план</button></section>
 </section>
 <div id="taskModal" class="modal hidden"><div class="modal-box">
   <h3 id="taskModalTitle">Новая задача</h3>
@@ -64,9 +65,10 @@
   <label class="task-time-label">🕒 Время <input id="newTaskTime" type="time"></label>
   <div id="chainEditHint" class="chain-edit-hint hidden">🔁 Изменения будут применены ко всей цепочке повторяющихся задач.</div>
   <div id="recurrenceBox" class="recurrence-box">
-    <label class="switch-row"><input type="checkbox" id="repeatTask"><span>Повторять</span></label>
+    <label class="switch-row"><input type="checkbox" id="repeatTask"><span>🔁 Повторять задачу</span></label>
     <div id="repeatOptions" class="repeat-options hidden">
-      <select id="repeatType"><option value="daily">Каждый день</option><option value="weekly">Еженедельно</option><option value="weekdays">По будням</option><option value="monthly">Ежемесячно</option></select>
+      <label class="repeat-type-label">Периодичность<select id="repeatType"><option value="daily">Каждый день</option><option value="weekly">Еженедельно</option><option value="weekdays">По будням</option><option value="monthly">Ежемесячно</option><option value="customDays">Выбранные дни недели</option></select></label>
+      <div id="repeatWeekdays" class="repeat-weekdays hidden"><label><input type="checkbox" value="0" class="repeat-weekday">Пн</label><label><input type="checkbox" value="1" class="repeat-weekday">Вт</label><label><input type="checkbox" value="2" class="repeat-weekday">Ср</label><label><input type="checkbox" value="3" class="repeat-weekday">Чт</label><label><input type="checkbox" value="4" class="repeat-weekday">Пт</label><label><input type="checkbox" value="5" class="repeat-weekday">Сб</label><label><input type="checkbox" value="6" class="repeat-weekday">Вс</label></div>
       <label>До даты <input type="date" id="repeatUntil"></label>
     </div>
   </div>
@@ -149,7 +151,11 @@
 </div></div>
 
 <div id="appearanceModal" class="modal hidden"><div class="modal-content settings-window appearance-window">
-  <div class="appearance-head"><div><h3>🎨 Оформление</h3><p>Меняйте внешний вид и сразу смотрите результат.</p></div><button id="appearanceClose" class="appearance-x" aria-label="Закрыть">×</button></div>
+  <div class="appearance-head"><div><h3>🎨 Оформление</h3><p>Меняйте внешний вид и сразу смотрите результат.</p></div>
+  <div class="appearance-preview-wrap"><div class="appearance-preview-title"><strong>Предварительный просмотр</strong><span>Обновляется сразу</span></div>
+    <div id="appearancePreview" class="appearance-preview"><div class="appearance-preview-day"><div class="appearance-preview-date"><b>ПН</b><strong>12</strong><small>окт</small></div><div class="appearance-preview-tasks"><div>□ Важное дело</div><div>□ Запланированная встреча</div></div></div></div>
+  </div>
+<button id="appearanceClose" class="appearance-x" aria-label="Закрыть">×</button></div>
   <div class="settings-section settings-controls">
     <strong>Готовые темы</strong>
     <select id="themeSelect" class="settings-select">
@@ -168,9 +174,7 @@
       <button type="button" class="appearance-swatch" data-preset="pinkpurple"><i style="background:#f6d9e8"></i><i style="background:#e3d9fa"></i><span>Розово-фиолетовая</span></button>
     </div>
   </div>
-  <div class="appearance-preview-wrap"><div class="appearance-preview-title"><strong>Предварительный просмотр</strong><span>Обновляется сразу</span></div>
-    <div id="appearancePreview" class="appearance-preview"><div class="appearance-preview-day"><div class="appearance-preview-date"><b>ПН</b><strong>12</strong><small>окт</small></div><div class="appearance-preview-tasks"><div>□ Важное дело</div><div>□ Запланированная встреча</div></div></div></div>
-  </div>
+  <div class="settings-section settings-controls task-capacity-control"><strong>📋 Количество дел на день</strong><p>Настрой плотность карточек недельного планировщика.</p><select id="tasksPerDaySelect" class="settings-select"><option value="4">4 дела — крупные карточки</option><option value="6">6 дел — компактно</option><option value="9">9 дел — максимально компактно</option></select></div>
   <details class="appearance-details" open><summary>✏️ Ручная настройка</summary>
     <div class="appearance-controls-grid">
       <label class="appearance-color-row"><span>Фон приложения</span><input id="appearanceBg" type="color" value="#eef3fb"></label>
@@ -195,36 +199,6 @@
   </details>
   <div class="appearance-actions"><button id="appearanceReset" class="secondary">Сбросить</button><button id="appearanceDone" class="primary">Готово</button></div>
 </div></div>
-<!-- =====================================
-     ЭКРАН ВХОДА
-===================================== -->
-
-<div id="loginScreen" class="login-screen">
-
-    <div class="login-box">
-
-        <div class="login-logo">☁️</div>
-
-        <h2>MaDenFlow</h2>
-
-        <p>Введите пароль для входа</p>
-
-        <input
-            type="password"
-            id="loginPassword"
-            placeholder="Пароль"
-            autocomplete="off"
-        >
-
-        <button id="loginBtn">
-            Войти
-        </button>
-
-        <div id="loginError" class="login-error">
-            Неверный пароль
-        </div>
-
-    </div>
 <script src="cloud.js"></script><script src="storage.js"></script><script src="tasks.js"></script><script src="service.js"></script><script src="visits.js"></script><script src="app.js"></script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
 

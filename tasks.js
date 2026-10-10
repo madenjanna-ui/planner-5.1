@@ -33,14 +33,14 @@ function showTaskMenu(task,date,index){
   menu.className="task-menu";
   menu.innerHTML=`
     <div class="task-preview">${taskData.time?`<div class="task-preview-time">🕒 ${escapeHtml(taskData.time)}</div>`:""}${escapeHtml(taskData.text)}</div>
-    <button data-action="important">Важное</button>
-    <button data-action="urgent">Срочное</button>
-    <button data-action="normal">Обычное</button>
+    <button data-action="important">🟠 Важное</button>
+    <button data-action="urgent">🔴 Срочное</button>
+    <button data-action="normal">🟢 Обычное</button>
     ${listMode?`<div class="task-menu-line"></div><div class="task-menu-label">Цвет строки</div><div class="task-color-actions"><button data-action="list-green">🟢 Зелёная</button><button data-action="list-red">🔴 Красная</button><button data-action="list-black">⚫ Чёрная</button></div>`:""}
     <div class="task-menu-line"></div>
-    <button data-action="edit">Редактировать</button>
+    <button data-action="edit">✏️ Редактировать</button>
     ${recurring?`<button data-action="edit-chain">✏️ Редактировать всю цепочку</button>`:""}
-    <button data-action="delete">Удалить эту задачу</button>
+    <button data-action="delete">🗑 Удалить это дело</button>
     ${recurring?`<button data-action="delete-chain">🗑 Удалить всю цепочку</button>`:""}
   `;
   document.body.appendChild(menu);
@@ -72,7 +72,15 @@ function editTaskDialog(date,index,wholeChain=false){
   selectedDate=date;
   const modal=document.getElementById("taskModal"),input=document.getElementById("newTaskInput"),time=document.getElementById("newTaskTime"),title=document.getElementById("taskModalTitle"),repeat=document.getElementById("recurrenceBox"),chain=document.getElementById("chainEditHint");
   title.textContent=wholeChain?"Редактировать цепочку":"Редактировать задачу";
-  input.value=task.text;time.value=task.time||"";repeat.classList.add("hidden");
+  input.value=task.text;time.value=task.time||"";
+  const recurrence=task.recurrenceId&&typeof getRecurrence==="function"?getRecurrence(task.recurrenceId):null;
+  repeat.classList.remove("hidden");
+  document.getElementById("repeatTask").checked=!!recurrence;
+  document.getElementById("repeatOptions").classList.toggle("hidden",!recurrence);
+  document.getElementById("repeatType").value=recurrence?.type||"weekly";
+  document.getElementById("repeatUntil").value=recurrence?.until||"";
+  document.querySelectorAll(".repeat-weekday").forEach(x=>x.checked=!!recurrence?.weekdays?.includes(Number(x.value)));
+  document.getElementById("repeatWeekdays").classList.toggle("hidden",(recurrence?.type||"")!=="customDays");
   chain.classList.toggle("hidden",!wholeChain);modal.dataset.editDate=date;modal.dataset.editIndex=index;modal.dataset.editChain=wholeChain?"1":"0";modal.classList.remove("hidden");input.focus();
 }
 function refreshDay(date){const day=document.querySelector(`[data-date="${date}"]`);if(day){const c=day.querySelector(".tasks");if(c)loadTasks(date,c)}}

@@ -3924,3 +3924,85 @@ body[data-custom-appearance="on"] #planner .day .day-month{font-size:var(--custo
 #taskModal .modal-actions,#taskModal .task-actions,#taskModal .task-edit-actions{display:flex!important;flex-wrap:wrap!important;gap:6px!important;margin-top:8px!important}
 #taskModal button{min-height:36px!important;padding:7px 10px!important}
 @media(max-width:640px){#taskModal .modal-box{padding:13px!important;border-radius:18px!important}#taskModal button{font-size:13px!important}}
+
+/* Calendar task list and custom weekday recurrence */
+.month-selected-tasks{width:min(620px,100%);margin:14px auto 0;padding:14px;border-radius:20px;background:rgba(255,255,255,.72);box-shadow:0 8px 25px rgba(30,50,80,.07);box-sizing:border-box}
+.month-selected-tasks h3{margin:0 0 10px;font-size:17px;text-transform:capitalize;color:var(--text)}
+.month-selected-task-list{display:grid;gap:7px}
+.month-task-row{display:flex;align-items:center;gap:8px;min-height:36px;padding:7px 10px;border-radius:10px;background:rgba(240,246,252,.85);border:1px solid rgba(100,130,170,.16);color:var(--text)}
+.month-task-row.urgent{border-color:#d85b61}.month-task-row.important{border-color:#e5a23c}.month-task-row.normal{border-color:#63a982}
+.month-task-row time{font-size:12px;font-weight:750;white-space:nowrap}
+.month-tasks-empty{font-size:14px;color:var(--text2);padding:8px 0}
+.month-priority-dots{display:flex;justify-content:center;align-items:center;gap:3px;margin-top:3px;min-height:5px}
+.priority-dot{display:inline-block;flex:0 0 5px;width:5px;height:5px;border-radius:50%;background:#63a982}
+.priority-dot.urgent{background:#d85b61}.priority-dot.important{background:#e5a23c}.priority-dot.normal{background:#63a982}
+.month-day{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.month-day-number{line-height:1.1}
+#openSelectedWeek{margin-top:12px;width:100%;border:0;border-radius:12px;padding:11px;background:var(--primary);color:white;font-weight:750}
+.repeat-weekdays{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:8px 0}
+.repeat-weekdays label{display:flex;align-items:center;gap:5px;padding:7px;border-radius:9px;background:rgba(120,140,170,.1);font-size:13px}
+@media(max-width:640px){.month-selected-tasks{margin-top:10px;padding:12px}.month-screen{overflow-y:auto}.month-day{min-height:46px}.repeat-weekdays{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* MaDenFlow: плотность дел, управляется настройкой 4/6/9 */
+#planner.tasks-per-day-4 .task { min-height: 42px; padding-top: 9px; padding-bottom: 9px; }
+#planner.tasks-per-day-6 .task { min-height: 34px; padding-top: 6px; padding-bottom: 6px; }
+#planner.tasks-per-day-9 .task { min-height: 27px; padding-top: 3px; padding-bottom: 3px; font-size: .92em; }
+.task-capacity-control { margin-top: 12px; }
+.task-capacity-control p { margin: 5px 0 9px; font-size: .9em; opacity: .75; }
+#loginScreen { display:none !important; }
+
+/* Fixes: pinned appearance preview, recurrence controls, visible task density */
+.appearance-window{overflow-y:auto!important;overscroll-behavior:contain!important;position:relative!important;}
+.appearance-head{position:sticky;top:-18px;z-index:30;background:var(--glass,rgba(245,248,252,.97));padding:5px 0 10px;}
+.appearance-preview-wrap{position:sticky;top:48px;z-index:29;background:var(--glass,rgba(245,248,252,.97))!important;box-shadow:0 6px 16px rgba(25,40,70,.08);}
+.repeat-type-label{display:grid;gap:6px;margin-top:8px;font-size:13px;font-weight:700}
+.repeat-type-label select{width:100%;min-height:40px;border-radius:10px;padding:8px}
+#repeatOptions{padding:8px 0 2px}
+#repeatOptions label:not(.repeat-type-label){display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0}
+#repeatUntil{max-width:58%;min-height:38px;border-radius:9px;padding:6px}
+.task-menu button[data-action="edit"],.task-menu button[data-action="edit-chain"],.task-menu button[data-action="delete"],.task-menu button[data-action="delete-chain"]{display:flex;align-items:center;gap:9px}
+#planner.tasks-per-day-4 .tasks{gap:9px!important} #planner.tasks-per-day-4 .task{min-height:42px!important;font-size:1em!important;padding:9px 10px!important}
+#planner.tasks-per-day-6 .tasks{gap:5px!important} #planner.tasks-per-day-6 .task{min-height:32px!important;font-size:.95em!important;padding:5px 8px!important}
+#planner.tasks-per-day-9 .tasks{gap:2px!important} #planner.tasks-per-day-9 .task{min-height:24px!important;font-size:.84em!important;padding:2px 6px!important;line-height:1.05!important}
+@media(max-width:640px){.appearance-head{top:-14px}.appearance-preview-wrap{top:48px}.appearance-window{max-height:88dvh!important}}
+
+/* MaDenFlow: task capacity is a grid count per day, not merely card size. */
+#planner.tasks-per-day-4 .tasks {grid-template-columns:repeat(2,minmax(0,1fr)) !important;grid-template-rows:repeat(2,minmax(0,1fr)) !important;}
+#planner.tasks-per-day-4 .tasks>.task:nth-child(n+5){display:none!important;}
+#planner.tasks-per-day-6 .tasks {grid-template-columns:repeat(2,minmax(0,1fr)) !important;grid-template-rows:repeat(3,minmax(0,1fr)) !important;}
+#planner.tasks-per-day-6 .tasks>.task:nth-child(n+7){display:none!important;}
+#planner.tasks-per-day-9 .tasks {grid-template-columns:repeat(3,minmax(0,1fr)) !important;grid-template-rows:repeat(3,minmax(0,1fr)) !important;}
+#planner.tasks-per-day-9 .tasks>.task:nth-child(n+10){display:none!important;}
+
+
+/* Verified override: selected 4/6/9 capacity must win over older task-view rules. */
+body #planner.tasks-per-day-4 .day .day-content .tasks,
+body[data-task-view="cards"] #planner.tasks-per-day-4 .day .day-content .tasks,
+body[data-task-view="list"] #planner.tasks-per-day-4 .day .day-content .tasks {
+  display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-rows:repeat(2,minmax(0,1fr))!important; grid-auto-flow:row!important;
+  align-content:stretch!important; align-items:stretch!important; gap:4px!important;
+}
+body #planner.tasks-per-day-6 .day .day-content .tasks,
+body[data-task-view="cards"] #planner.tasks-per-day-6 .day .day-content .tasks,
+body[data-task-view="list"] #planner.tasks-per-day-6 .day .day-content .tasks {
+  display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-rows:repeat(3,minmax(0,1fr))!important; grid-auto-flow:row!important;
+  align-content:stretch!important; align-items:stretch!important; gap:3px!important;
+}
+body #planner.tasks-per-day-9 .day .day-content .tasks,
+body[data-task-view="cards"] #planner.tasks-per-day-9 .day .day-content .tasks,
+body[data-task-view="list"] #planner.tasks-per-day-9 .day .day-content .tasks {
+  display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:repeat(3,minmax(0,1fr))!important; grid-auto-flow:row!important;
+  align-content:stretch!important; align-items:stretch!important; gap:2px!important;
+}
+body #planner.tasks-per-day-4 .day .tasks>.task:nth-child(n+5),
+body #planner.tasks-per-day-6 .day .tasks>.task:nth-child(n+7),
+body #planner.tasks-per-day-9 .day .tasks>.task:nth-child(n+10) {display:none!important;}
+/* Priority is shown on each task itself: matching outline and left stripe. */
+body #planner .day .tasks>.task {border:1.5px solid var(--task-priority-color,#63a982)!important; border-left:5px solid var(--task-priority-color,#63a982)!important; box-sizing:border-box!important;}
+body #planner .day .tasks>.task.normal {--task-priority-color:#63a982!important; border-color:#63a982!important; border-left-color:#63a982!important;}
+body #planner .day .tasks>.task.important {--task-priority-color:#e5a23c!important; border-color:#e5a23c!important; border-left-color:#e5a23c!important;}
+body #planner .day .tasks>.task.urgent {--task-priority-color:#d85b61!important; border-color:#d85b61!important; border-left-color:#d85b61!important;}
+body #planner .day .tasks>.task.done {opacity:.62;}
