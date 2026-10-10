@@ -3907,3 +3907,20 @@ body[data-custom-appearance="on"][data-time-text-mode="auto"] #planner .task-tim
 #weekRange,#weekRangeLabel,.week-range,.week-range-label,#weekDateRange{
   display:flex;visibility:visible;opacity:1;
 }
+
+
+/* MaDenFlow fix: week range, task time color and compact task editor */
+.glass-header{display:none!important}
+#weekTitle{position:fixed!important;left:0!important;right:0!important;bottom:0!important;display:flex!important;visibility:visible!important;opacity:1!important;z-index:990!important;height:calc(32px + env(safe-area-inset-bottom,0px))!important;min-height:32px!important;margin:0!important;padding:5px 8px calc(5px + env(safe-area-inset-bottom,0px))!important;align-items:center!important;justify-content:center!important;box-sizing:border-box!important;font-size:13px!important;line-height:1.1!important;font-weight:800!important;color:var(--week-range-text,#34465c)!important;background:var(--week-range-bg,rgba(230,236,244,.96))!important;border-top:1px solid rgba(255,255,255,.75)!important;white-space:nowrap!important}
+#planner .task-time,#planner .day-popup-time,.day-modal-task-time{color:var(--task-time-color,#26364d)!important;font-weight:800!important}
+body[data-custom-appearance="on"][data-time-text-mode="custom"] #planner .task-time,body[data-custom-appearance="on"][data-time-text-mode="custom"] #planner .day-popup-time,body[data-custom-appearance="on"][data-time-text-mode="custom"] .day-modal-task-time{color:var(--custom-time-color,#26364d)!important}
+body[data-custom-appearance="on"][data-time-text-mode="system"] #planner .task-time,body[data-custom-appearance="on"][data-time-text-mode="system"] #planner .day-popup-time,body[data-custom-appearance="on"][data-time-text-mode="system"] .day-modal-task-time{color:var(--custom-text,#26364d)!important}
+body[data-custom-appearance="on"][data-week-text-mode="custom"] #planner .day-weekday,body[data-custom-appearance="on"][data-week-text-mode="custom"] #planner .day-name,body[data-custom-appearance="on"][data-week-text-mode="custom"] #planner .day-month{color:var(--custom-week-text-color,#26364d)!important}
+body[data-custom-appearance="on"] #planner .day .day-weekday{font-size:var(--custom-weekday-size,20px)!important}
+body[data-custom-appearance="on"] #planner .day .day-name{font-size:var(--custom-date-size,30px)!important}
+body[data-custom-appearance="on"] #planner .day .day-month{font-size:var(--custom-month-size,14px)!important}
+#taskModal .modal-box{max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;overflow-y:auto!important;padding:15px!important}
+#taskModal h3{margin:0 0 9px!important;font-size:19px!important}#taskModal label{margin-bottom:7px!important}
+#taskModal .modal-actions,#taskModal .task-actions,#taskModal .task-edit-actions{display:flex!important;flex-wrap:wrap!important;gap:6px!important;margin-top:8px!important}
+#taskModal button{min-height:36px!important;padding:7px 10px!important}
+@media(max-width:640px){#taskModal .modal-box{padding:13px!important;border-radius:18px!important}#taskModal button{font-size:13px!important}}

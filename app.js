@@ -262,6 +262,14 @@ function applySettings(){
   root.setProperty("--custom-card-alpha",String(Number(a.opacity??100))+"%");
   root.setProperty("--custom-card-radius",(a.radius||14)+"px");
   root.setProperty("--custom-task-font",(a.font||15)+"px");
+  root.setProperty("--custom-weekday-size",(a.weekdaySize||20)+"px");
+  root.setProperty("--custom-date-size",(a.dateSize||30)+"px");
+  root.setProperty("--custom-month-size",(a.monthSize||14)+"px");
+  root.setProperty("--custom-week-text-color",a.weekTextColor||"#26364d");
+  root.setProperty("--custom-time-color",a.timeColor||"#26364d");
+  document.body.dataset.weekTextMode=a.systemText||"system";
+  document.body.dataset.timeTextMode=a.timeMode||"auto";
+  root.setProperty("--task-time-color",a.timeMode==="custom"?(a.timeColor||"#26364d"):(a.timeMode==="system"?(a.text||"#26364d"):"#26364d"));
 }
 function updateNotificationStatus(){
   const el=document.getElementById("notificationStatus");
