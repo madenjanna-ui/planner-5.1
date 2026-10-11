@@ -73,6 +73,7 @@ function editTaskDialog(date,index,wholeChain=false){
   const modal=document.getElementById("taskModal"),input=document.getElementById("newTaskInput"),time=document.getElementById("newTaskTime"),title=document.getElementById("taskModalTitle"),repeat=document.getElementById("recurrenceBox"),chain=document.getElementById("chainEditHint");
   title.textContent=wholeChain?"Редактировать цепочку":"Редактировать задачу";
   input.value=task.text;time.value=task.time||"";
+  if(typeof setTaskEditorPriority==="function")setTaskEditorPriority(task.priority||"normal");
   const recurrence=task.recurrenceId&&typeof getRecurrence==="function"?getRecurrence(task.recurrenceId):null;
   repeat.classList.remove("hidden");
   document.getElementById("repeatTask").checked=!!recurrence;

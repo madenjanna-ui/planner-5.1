@@ -12,6 +12,14 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body id="appBody">
+<div id="startupSplash" class="startup-splash" aria-label="MaDenFlow запускается">
+  <div class="splash-cloud">☁️</div>
+  <div class="splash-brand">MaDenFlow</div>
+  <div class="splash-paper"><span class="splash-line"></span><span class="splash-line"></span><span class="splash-line short"></span><span class="splash-check">✓</span></div>
+  <div class="splash-caption">Записываем планы...</div>
+  <div class="splash-progress"><span></span></div>
+</div>
+
 <header class="glass-header">
   <div class="logo">☁️ MaDenFlow</div>
 </header>
@@ -59,13 +67,19 @@
   <div id="monthScreenGrid" class="month-screen-grid"></div>
   <section class="month-selected-tasks" aria-live="polite"><h3 id="monthSelectedTitle">Дела на выбранный день</h3><div id="monthSelectedTasks" class="month-selected-task-list"></div><button id="openSelectedWeek" type="button">Открыть недельный план</button></section>
 </section>
-<div id="taskModal" class="modal hidden"><div class="modal-box">
-  <h3 id="taskModalTitle">Новая задача</h3>
-  <input id="newTaskInput" placeholder="Введите задачу...">
-  <label class="task-time-label">🕒 Время <input id="newTaskTime" type="time"></label>
+<div id="taskModal" class="modal hidden"><div class="modal-box task-editor">
+  <div class="task-editor-head"><h3 id="taskModalTitle">Новая задача</h3><button id="closeTaskModal" type="button" aria-label="Закрыть">×</button></div>
+  <input id="newTaskInput" placeholder="Название задачи" aria-label="Название задачи">
+  <label class="task-time-label"><span>🕒 Время</span><input id="newTaskTime" type="time" aria-label="Время"></label>
+  <div class="priority-picker" role="group" aria-label="Приоритет">
+    <button type="button" class="priority-choice urgent" data-priority="urgent"><i></i>Срочное</button>
+    <button type="button" class="priority-choice important" data-priority="important"><i></i>Важное</button>
+    <button type="button" class="priority-choice normal selected" data-priority="normal"><i></i>Обычное</button>
+  </div>
   <div id="chainEditHint" class="chain-edit-hint hidden">🔁 Изменения будут применены ко всей цепочке повторяющихся задач.</div>
   <div id="recurrenceBox" class="recurrence-box">
-    <label class="switch-row"><input type="checkbox" id="repeatTask"><span>🔁 Повторять задачу</span></label>
+    <button type="button" id="repeatDisclosure" class="repeat-disclosure"><span>↻</span><span>Повторение</span><span class="repeat-chevron">›</span></button>
+    <label class="switch-row repeat-enable"><input type="checkbox" id="repeatTask"><span>Повторять задачу</span></label>
     <div id="repeatOptions" class="repeat-options hidden">
       <label class="repeat-type-label">Периодичность<select id="repeatType"><option value="daily">Каждый день</option><option value="weekly">Еженедельно</option><option value="weekdays">По будням</option><option value="monthly">Ежемесячно</option><option value="customDays">Выбранные дни недели</option></select></label>
       <div id="repeatWeekdays" class="repeat-weekdays hidden"><label><input type="checkbox" value="0" class="repeat-weekday">Пн</label><label><input type="checkbox" value="1" class="repeat-weekday">Вт</label><label><input type="checkbox" value="2" class="repeat-weekday">Ср</label><label><input type="checkbox" value="3" class="repeat-weekday">Чт</label><label><input type="checkbox" value="4" class="repeat-weekday">Пт</label><label><input type="checkbox" value="5" class="repeat-weekday">Сб</label><label><input type="checkbox" value="6" class="repeat-weekday">Вс</label></div>
@@ -200,6 +214,9 @@
   <div class="appearance-actions"><button id="appearanceReset" class="secondary">Сбросить</button><button id="appearanceDone" class="primary">Готово</button></div>
 </div></div>
 <script src="cloud.js"></script><script src="storage.js"></script><script src="tasks.js"></script><script src="service.js"></script><script src="visits.js"></script><script src="app.js"></script>
+<script>
+(()=>{const splash=document.getElementById('startupSplash');if(!splash)return;document.body.classList.add('splash-active');const finish=()=>{splash.classList.add('splash-leaving');document.body.classList.remove('splash-active');setTimeout(()=>splash.remove(),420)};window.addEventListener('load',()=>setTimeout(finish,2100),{once:true});setTimeout(finish,4200)})();
+</script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
 
   

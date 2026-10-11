@@ -106,6 +106,9 @@ function openDayPopup(dateKey){
       document.getElementById("taskModalTitle").textContent="Новая задача";
       document.getElementById("newTaskInput").value="";
       document.getElementById("newTaskTime").value="";
+      setTaskEditorPriority("normal");
+      document.getElementById("recurrenceBox").classList.remove("open");
+      document.getElementById("repeatOptions").classList.add("hidden");
       document.getElementById("repeatTask").checked=false;
       document.getElementById("repeatOptions").classList.add("hidden");
       document.getElementById("recurrenceBox").classList.remove("hidden");
@@ -151,6 +154,8 @@ function openTaskEditor(dateKey,index){
   document.getElementById("taskModalTitle").textContent="Изменить задачу";
   document.getElementById("newTaskInput").value=task.text||"";
   document.getElementById("newTaskTime").value=task.time||"";
+  setTaskEditorPriority(task.priority||"normal");
+  document.getElementById("recurrenceBox").classList.remove("open");
   const recurrence=task.recurrenceId&&typeof getRecurrence==="function"?getRecurrence(task.recurrenceId):null;
   document.getElementById("repeatTask").checked=!!recurrence;
   document.getElementById("recurrenceBox").classList.remove("hidden");
@@ -166,12 +171,38 @@ function openTaskEditor(dateKey,index){
 const repeatToggle=document.getElementById("repeatTask");
 const repeatTypeSelect=document.getElementById("repeatType");
 if(repeatToggle){repeatToggle.addEventListener("change",()=>{
+  const box=document.getElementById("recurrenceBox");
   document.getElementById("repeatOptions").classList.toggle("hidden",!repeatToggle.checked);
-  document.getElementById("recurrenceBox").classList.toggle("hidden",!repeatToggle.checked && !document.getElementById("taskModal").dataset.editDate);
+  box.classList.toggle("open",repeatToggle.checked);
 });}
 if(repeatTypeSelect){repeatTypeSelect.addEventListener("change",()=>{
   document.getElementById("repeatWeekdays").classList.toggle("hidden",repeatTypeSelect.value!=="customDays");
 });}
+
+// Compact editor controls: priority selection, recurrence disclosure and close button.
+function setTaskEditorPriority(value){
+  const modal=document.getElementById("taskModal");
+  if(!modal)return;
+  modal.dataset.priority=value||"normal";
+  document.querySelectorAll("#taskModal .priority-choice").forEach(btn=>{
+    btn.classList.toggle("selected",btn.dataset.priority===modal.dataset.priority);
+  });
+}
+document.querySelectorAll("#taskModal .priority-choice").forEach(btn=>{
+  btn.addEventListener("click",()=>setTaskEditorPriority(btn.dataset.priority));
+});
+const repeatDisclosure=document.getElementById("repeatDisclosure");
+if(repeatDisclosure)repeatDisclosure.addEventListener("click",()=>{
+  const box=document.getElementById("recurrenceBox");
+  const opts=document.getElementById("repeatOptions");
+  const toggle=document.getElementById("repeatTask");
+  const opening=opts.classList.contains("hidden");
+  box.classList.toggle("open",opening);
+  opts.classList.toggle("hidden",!opening);
+  if(toggle)toggle.checked=opening;
+});
+const closeTaskModal=document.getElementById("closeTaskModal");
+if(closeTaskModal)closeTaskModal.addEventListener("click",()=>document.getElementById("taskModal").classList.add("hidden"));
 
 // Сохранение и отмена задачи. Этот обработчик должен находиться в app.js,
 // потому что именно здесь открывается форма taskModal.
@@ -204,6 +235,7 @@ if(saveTaskButton){
           }
         }else if(typeof editTask==="function"){
           editTask(editDate,Number(editIndex),text,time.value);
+          const edited=getTasks(editDate)[Number(editIndex)]; if(edited)edited.priority=modal.dataset.priority||"normal"; if(typeof saveTasks==="function")saveTasks();
         }else{ alert("Не удалось найти функцию редактирования задачи."); return; }
       }else if(document.getElementById("repeatTask").checked){
         if(typeof addRecurringTask!=="function"){ alert("Функция повторяющихся задач недоступна."); return; }
@@ -213,7 +245,7 @@ if(saveTaskButton){
         addRecurringTask(selectedDate,text,repeatType,document.getElementById("repeatUntil").value,time.value,repeatDays);
       }else{
         if(typeof addTask!=="function"){ alert("Функция сохранения задач недоступна."); return; }
-        addTask(selectedDate,text,{time:time.value});
+        addTask(selectedDate,text,{time:time.value,priority:modal.dataset.priority||"normal"});
       }
       modal.classList.add("hidden");
       modal.dataset.editDate=""; modal.dataset.editIndex=""; modal.dataset.editChain="0";

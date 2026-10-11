@@ -4006,3 +4006,63 @@ body #planner .day .tasks>.task.normal {--task-priority-color:#63a982!important;
 body #planner .day .tasks>.task.important {--task-priority-color:#e5a23c!important; border-color:#e5a23c!important; border-left-color:#e5a23c!important;}
 body #planner .day .tasks>.task.urgent {--task-priority-color:#d85b61!important; border-color:#d85b61!important; border-left-color:#d85b61!important;}
 body #planner .day .tasks>.task.done {opacity:.62;}
+
+
+/* Animated startup splash: task-writing sequence */
+.startup-splash{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(145deg,#edf3fb 0%,#e1eaf6 52%,#f5f7fb 100%);color:#414956;opacity:1;transition:opacity .38s ease,visibility .38s ease;overflow:hidden}
+.startup-splash.splash-leaving{opacity:0;visibility:hidden;pointer-events:none}
+.splash-cloud{font-size:48px;animation:splashFloat 1.3s ease-in-out infinite alternate;filter:drop-shadow(0 7px 10px #aab8cb66)}
+.splash-brand{font-size:28px;font-weight:800;letter-spacing:.2px;animation:splashBrand .7s ease both}
+.splash-paper{position:relative;width:150px;height:100px;border-radius:18px;background:#fff;box-shadow:0 12px 30px #64748b2e;padding:22px 18px;box-sizing:border-box;display:flex;flex-direction:column;gap:10px;animation:splashPaper .8s .1s ease both}
+.splash-line{height:6px;width:100%;border-radius:8px;background:#dbe5f2;transform-origin:left;animation:splashWrite .65s .3s ease both}
+.splash-line:nth-child(2){animation-delay:.55s;width:84%}.splash-line.short{width:58%;animation-delay:.8s}
+.splash-check{position:absolute;right:12px;bottom:9px;color:#6a9e37;font-size:22px;font-weight:900;animation:splashCheck .4s 1.15s both}
+.splash-caption{font-size:14px;font-weight:600;color:#718096;animation:splashPulse 1s ease-in-out infinite alternate}
+.splash-progress{width:145px;height:4px;border-radius:5px;background:#d7e0ed;overflow:hidden;margin-top:3px}.splash-progress span{display:block;width:40%;height:100%;border-radius:5px;background:#6a9e37;animation:splashProgress 1.7s ease-in-out infinite}
+@keyframes splashFloat{to{transform:translateY(-7px) rotate(-3deg)}}@keyframes splashBrand{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes splashPaper{from{opacity:0;transform:translateY(12px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes splashWrite{from{transform:scaleX(0);opacity:.4}to{transform:scaleX(1);opacity:1}}@keyframes splashCheck{from{opacity:0;transform:scale(.3) rotate(-30deg)}to{opacity:1;transform:scale(1) rotate(0)}}@keyframes splashPulse{to{opacity:.55}}@keyframes splashProgress{from{transform:translateX(-110%)}to{transform:translateX(360%)}}
+@media(prefers-reduced-motion:reduce){.startup-splash *{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+
+/* Compact task editor refresh */
+#taskModal .task-editor{
+  width:min(390px,100%);
+  max-height:min(88dvh,720px);
+  overflow-y:auto;
+  padding:18px;
+  border-radius:20px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+#taskModal .task-editor-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#taskModal .task-editor-head h3{margin:0;text-align:left;font-size:19px;line-height:1.2}
+#closeTaskModal{width:34px;height:34px;border:0;border-radius:50%;background:#eef2f8;color:#4b5563;font-size:25px;line-height:1;flex:0 0 auto}
+#taskModal #newTaskInput{margin:0;padding:12px 13px;min-height:44px}
+#taskModal .task-time-label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;font-weight:600}
+#taskModal .task-time-label input{width:140px;margin:0;padding:9px 10px}
+#taskModal .priority-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#taskModal .priority-choice{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;padding:10px 4px;border:1px solid #e0e5ee;border-radius:11px;background:#fff;font-size:12px;font-weight:650;color:#394150}
+#taskModal .priority-choice i{width:9px;height:9px;border-radius:50%;background:#63a982;flex:0 0 auto}
+#taskModal .priority-choice.urgent i{background:#d85b61}
+#taskModal .priority-choice.important i{background:#e5a23c}
+#taskModal .priority-choice.selected{border-color:#7198d3;box-shadow:0 0 0 2px #7198d322;background:#f6f9ff}
+#taskModal .repeat-disclosure{width:100%;display:flex;align-items:center;gap:9px;padding:10px 2px;border:0;background:transparent;text-align:left;font-weight:650;color:inherit}
+#taskModal .repeat-disclosure>span:first-child{font-size:20px;color:var(--primary)}
+#taskModal .repeat-chevron{margin-left:auto;font-size:22px;color:#8791a2;transition:transform .15s}
+#taskModal .recurrence-box.open .repeat-chevron{transform:rotate(90deg)}
+#taskModal .switch-row{display:flex;align-items:center;gap:8px;margin:0;padding:7px 0;font-size:13px}
+#taskModal .switch-row input{width:17px;height:17px;margin:0}
+#taskModal .repeat-options{padding:8px 10px;background:#f5f7fb;border-radius:12px}
+#taskModal .repeat-options label{font-size:13px}
+#taskModal .repeat-options input,#taskModal .repeat-options select{margin:5px 0 8px;padding:9px 10px}
+#taskModal .repeat-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+#taskModal .repeat-weekdays label{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px}
+#taskModal .repeat-weekdays input{width:15px;height:15px;margin:0}
+#taskModal .modal-buttons{gap:8px;margin-top:2px}
+#taskModal .modal-buttons button{height:42px;border-radius:12px}
+#taskModal .chain-edit-hint{margin:0;padding:8px 10px;font-size:12px}
+@media(max-width:480px){
+ #taskModal.modal{padding:10px;align-items:center}
+ #taskModal .task-editor{padding:15px;gap:9px;max-height:88dvh}
+ #taskModal .priority-choice{font-size:11px}
+}
