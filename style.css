@@ -4273,3 +4273,57 @@ body[data-task-view="list"] #planner .day.list-day .tasks>.task,
   #planner.week-columns .week-column-stack>.day.week-column-day .task-text{font-size:15px!important}
   #planner.week-columns .week-column-stack>.day.week-column-day .task-time{font-size:12px!important}
 }
+
+
+/* MaDenFlow 7.0 — muted selected task colors, tighter cards, full weekly work area. */
+#planner.week-columns{
+  height:calc(100dvh - var(--header-space,40px) - 34px - env(safe-area-inset-bottom,0px))!important;
+  min-height:0!important;box-sizing:border-box!important;align-content:stretch!important;
+}
+#planner.week-columns>.week-column-stack{
+  height:100%!important;min-height:0!important;justify-content:stretch!important;align-content:stretch!important;
+}
+#planner.week-columns .week-column-right>.day:nth-child(4){flex:1 1 0!important}
+#planner.week-columns .week-column-stack>.day.week-column-day>.day-content{
+  flex:1 1 0!important;min-height:0!important;height:auto!important;padding:0!important;margin:0!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:repeat(var(--day-task-count,1),minmax(0,1fr))!important;
+  gap:2px!important;padding:0!important;margin:0!important;
+  flex:1 1 0!important;width:100%!important;height:100%!important;min-height:0!important;
+  align-content:stretch!important;overflow:hidden!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task{
+  min-height:0!important;height:100%!important;max-height:100%!important;
+  padding:0 4px!important;margin:0!important;gap:0!important;border-radius:9px!important;
+  border:1.5px solid #63a982!important;border-left:5px solid #63a982!important;
+  box-sizing:border-box!important;overflow:hidden!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .task-text-wrap{
+  gap:4px!important;margin:0!important;padding:0!important;min-width:0!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .task-text{
+  font-size:clamp(12px,3.5vw,15px)!important;line-height:1.05!important;font-weight:650!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .task-time{
+  font-size:clamp(11px,3vw,13px)!important;line-height:1.05!important;font-weight:650!important;
+}
+/* Keep the green priority edge and show the selected card color as a soft fill + inner stripe. */
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task.color-soft-blue{background:#e5efff!important;--task-tint:#e5efff;--task-accent:#5795ee;}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task.color-soft-green{background:#e2f5e9!important;--task-tint:#e2f5e9;--task-accent:#44ad78;}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task.color-soft-orange{background:#fff0dc!important;--task-tint:#fff0dc;--task-accent:#e99a37;}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task.color-soft-pink{background:#fde6ee!important;--task-tint:#fde6ee;--task-accent:#e96d91;}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task.color-soft-purple{background:#eee8ff!important;--task-tint:#eee8ff;--task-accent:#9272e8;}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task.color-soft-teal{background:#e0f6f4!important;--task-tint:#e0f6f4;--task-accent:#38a9a5;}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task::before{
+  content:""!important;position:absolute!important;left:0!important;top:0!important;bottom:0!important;
+  width:4px!important;background:var(--task-accent,#5795ee)!important;border-radius:8px 0 0 8px!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .task-check,
+#planner.week-columns .week-column-stack>.day.week-column-day .task-check input,
+#planner.week-columns .week-column-stack>.day.week-column-day .task-check .checkmark{display:none!important}
+@media(max-width:520px){
+  #planner.week-columns .week-column-stack>.day.week-column-day .tasks{gap:2px!important}
+  #planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task{padding:0 4px!important}
+}
