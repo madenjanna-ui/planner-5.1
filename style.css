@@ -4349,3 +4349,48 @@ body[data-task-view="list"] #planner .day.list-day .tasks>.task,
     flex-basis:36px!important;height:36px!important;min-height:36px!important;max-height:36px!important;
   }
 }
+
+/* MaDenFlow 7.2 — responsive one/two-column task density and typography. */
+body[data-custom-appearance="on"] #planner .task-text{
+  font-size:var(--custom-task-font,15px)!important;
+}
+body[data-custom-appearance="on"] #planner .task-time{
+  font-size:var(--week-task-time-font,12px)!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks{
+  display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;
+  justify-content:flex-start!important;align-items:stretch!important;align-content:flex-start!important;
+  gap:var(--week-task-gap,2px)!important;padding:0!important;margin:0!important;
+  min-height:0!important;overflow:hidden!important;box-sizing:border-box!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task{
+  display:flex!important;flex:0 0 var(--week-task-row-height,30px)!important;flex-shrink:0!important;
+  height:var(--week-task-row-height,30px)!important;min-height:var(--week-task-row-height,30px)!important;
+  max-height:var(--week-task-row-height,30px)!important;width:100%!important;min-width:0!important;
+  margin:0!important;padding:0 5px!important;gap:0!important;align-items:center!important;
+  box-sizing:border-box!important;overflow:hidden!important;border-radius:10px!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .task-text-wrap{
+  display:flex!important;align-items:center!important;gap:4px!important;width:100%!important;min-width:0!important;
+  margin:0!important;padding:0!important;line-height:1!important;overflow:hidden!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .task-text{
+  font-family:inherit!important;font-size:var(--week-task-font,15px)!important;font-weight:650!important;
+  line-height:1!important;min-width:0!important;white-space:nowrap!important;text-overflow:ellipsis!important;overflow:hidden!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .task-time{
+  flex:0 0 auto!important;font-family:inherit!important;font-size:var(--week-task-time-font,12px)!important;
+  font-weight:650!important;line-height:1!important;white-space:nowrap!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .task-check,
+#planner.week-columns .week-column-stack>.day.week-column-day .task-check input,
+#planner.week-columns .week-column-stack>.day.week-column-day .task-check .checkmark{
+  display:none!important;width:0!important;height:0!important;min-width:0!important;min-height:0!important;
+  margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;
+}
+
+/* Sunday is intentionally shorter; Thursday–Saturday remain equal height. */
+#planner.week-columns .week-column-right>.day:nth-child(1),
+#planner.week-columns .week-column-right>.day:nth-child(2),
+#planner.week-columns .week-column-right>.day:nth-child(3){flex:1 1 0!important}
+#planner.week-columns .week-column-right>.day:nth-child(4){flex:.58 1 0!important}

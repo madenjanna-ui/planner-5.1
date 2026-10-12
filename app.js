@@ -43,19 +43,21 @@ function renderWeek(){
     }
     planner.appendChild(section);
     const taskContainer=section.querySelector(".tasks");
-    const configuredTaskLimit=Math.max(4,Math.min(12,Number((appData.settings||{}).maxDayTasks)||6));
-    // В недельном виде воскресенье показываем компактно: максимум четыре дела.
-    const visibleTaskLimit=(taskView==="weekColumns" && i===6)?Math.min(4,configuredTaskLimit):configuredTaskLimit;
-    taskContainer.style.setProperty("--day-task-limit", visibleTaskLimit);
+    const settings=appData.settings||{};
+    const isTwoColumns=taskView==="weekColumns";
+    const savedLimit=isTwoColumns?(settings.maxDayTasksTwoColumns??settings.maxDayTasks):(settings.maxDayTasksOneColumn??settings.maxDayTasks);
+    const allowedLimits=isTwoColumns?[4,5,6,7,8,9,10,11,12]:[4,6,12];
+    const configuredTaskLimit=allowedLimits.includes(Number(savedLimit))?Number(savedLimit):(isTwoColumns?6:6);
+    // Sunday is fitted after layout measurement; other days follow the selected limit.
+    const visibleTaskLimit=(i===6 && isTwoColumns)?getTasks(key).length:configuredTaskLimit;
+    taskContainer.style.setProperty("--day-task-limit", configuredTaskLimit);
+    taskContainer.dataset.taskLimit=String(configuredTaskLimit);
     loadTasks(key,taskContainer);
     const actualVisibleCount=Math.min(getTasks(key).length,visibleTaskLimit);
     taskContainer.style.setProperty("--day-task-count", Math.max(1,actualVisibleCount));
-    // List/column layouts must not inherit old CSS rules that hide every task.
-    if(taskView==="list" || taskView==="weekColumns"){
-      [...taskContainer.children].forEach((task,idx)=>{
-        task.style.setProperty("display",idx<visibleTaskLimit?"flex":"none","important");
-      });
-    }
+    [...taskContainer.children].forEach((task,idx)=>{
+      task.style.setProperty("display",idx<visibleTaskLimit?"flex":"none","important");
+    });
     sections.push({section,count});
   }
   planner.classList.remove("week-normal","week-compact","week-ultra");
@@ -83,7 +85,37 @@ function renderWeek(){
     planner.replaceChildren(left,right);
   }
   updateDayStatus(); activateDays();
+  if(taskView==="weekColumns") requestAnimationFrame(applyTwoColumnTaskSizing);
 }
+function applyTwoColumnTaskSizing(){
+  if(!planner.classList.contains("week-columns"))return;
+  const settings=appData.settings||{};
+  const limit=Math.max(4,Math.min(12,Number(settings.maxDayTasksTwoColumns??settings.maxDayTasks)||6));
+  const days=[...planner.querySelectorAll(".week-column-stack>.day")];
+  if(!days.length)return;
+  const gap=2;
+  let sharedRowHeight=0;
+  // Use Thursday–Saturday as the reference: these three day cards have equal height.
+  const reference=days.find(day=>{const d=new Date(day.dataset.date+"T12:00:00");return d.getDay()===4;})||days[0];
+  const refTasks=reference.querySelector(".tasks");
+  const available=refTasks?refTasks.clientHeight:0;
+  sharedRowHeight=Math.max(18,Math.floor((available-gap*(limit-1))/limit));
+  planner.style.setProperty("--week-task-row-height",sharedRowHeight+"px");
+  planner.style.setProperty("--week-task-gap",gap+"px");
+  days.forEach(day=>{
+    const container=day.querySelector(".tasks");if(!container)return;
+    const isSunday=new Date(day.dataset.date+"T12:00:00").getDay()===0;
+    container.style.setProperty("--day-task-limit",String(limit));
+    container.querySelectorAll(".task").forEach((task,index)=>{
+      const fits=isSunday?index<Math.floor((container.clientHeight+gap)/(sharedRowHeight+gap)):index<limit;
+      task.style.setProperty("display",fits?"flex":"none","important");
+      task.style.setProperty("height",sharedRowHeight+"px","important");
+      task.style.setProperty("min-height",sharedRowHeight+"px","important");
+      task.style.setProperty("max-height",sharedRowHeight+"px","important");
+    });
+  });
+}
+
 function activateDays(){
   document.querySelectorAll(".day").forEach(day=>{
     day.onclick=e=>{
@@ -317,13 +349,16 @@ document.getElementById("calendarBtn").onclick=openCalendar;document.getElementB
 const settingsModal=document.getElementById("settingsModal");
 function applySettings(){
   const settings=appData.settings||{};
+  if(settings.taskView==="list") settings.taskView="cards";
   document.body.classList.toggle("dark",!!settings.darkMode);
   document.body.dataset.theme=settings.theme||"standard";
   document.body.dataset.fontSize=settings.fontSize||"medium";
   document.body.dataset.plannerFontSize=settings.plannerFontSize||settings.fontSize||"medium";
   document.body.dataset.taskFontSize=settings.taskFontSize||settings.fontSize||"medium";
   document.body.dataset.gradient=settings.gradientDays?"on":"off";
-  document.body.dataset.taskView=settings.taskView||"cards";
+  document.body.dataset.taskView=settings.taskView==="weekColumns"?"weekColumns":"cards";
+  const activeLimit=(settings.taskView==="weekColumns"?(settings.maxDayTasksTwoColumns??settings.maxDayTasks):(settings.maxDayTasksOneColumn??settings.maxDayTasks));
+  document.body.dataset.taskCapacity=String(Number(activeLimit)||6);
   document.body.dataset.listTextColor=settings.listTextColor||"navy";
   document.body.dataset.sidebarColor=settings.sidebarColor||"bluegray";
   const custom=settings.theme==="custom" && settings.appearance;
@@ -339,6 +374,8 @@ function applySettings(){
   root.setProperty("--custom-card-alpha",String(Number(a.opacity??100))+"%");
   root.setProperty("--custom-card-radius",(a.radius||14)+"px");
   root.setProperty("--custom-task-font",(a.font||15)+"px");
+  root.setProperty("--week-task-font",(a.font||15)+"px");
+  root.setProperty("--week-task-time-font",Math.max(10,Math.round((a.font||15)*0.82))+"px");
   root.setProperty("--custom-weekday-size",(a.weekdaySize||20)+"px");
   root.setProperty("--custom-date-size",(a.dateSize||30)+"px");
   root.setProperty("--custom-month-size",(a.monthSize||14)+"px");
@@ -361,8 +398,8 @@ function openSettings(){
   const sidebarColorSelect=document.getElementById("sidebarColorSelect");
   if(sidebarColorSelect) sidebarColorSelect.value=appData.settings.sidebarColor||"bluegray";
   document.getElementById("gradientDaysToggle").checked=!!appData.settings.gradientDays;
-  document.getElementById("taskViewSelect").value=appData.settings.taskView||"cards";
-  const maxDayTasksSelect=document.getElementById("maxDayTasksSelect"); if(maxDayTasksSelect) maxDayTasksSelect.value=String(Math.max(4,Math.min(12,Number(appData.settings.maxDayTasks)||6)));
+  document.getElementById("taskViewSelect").value=appData.settings.taskView==="weekColumns"?"weekColumns":"cards";
+  syncTaskCapacityOptions();
   const listColorSelect=document.getElementById("listTextColorSelect");
   if(listColorSelect) listColorSelect.value=appData.settings.listTextColor||"navy";
   document.getElementById("notificationsToggle").checked=!!appData.settings.notifications;
@@ -378,8 +415,34 @@ document.getElementById("gradientDaysToggle").onchange=e=>{appData.settings.grad
 document.getElementById("themeSelect").onchange=e=>{appData.settings.theme=e.target.value;if(e.target.value==="custom"){appData.settings.appearance=appData.settings.appearance||{bg:"#eef3fb",weekday:"#dce7fa",weekend:"#f5dce9",card:"#ffffff",text:"#26364d",sidebar:"#e0e8f2",font:15,opacity:100,radius:14,weekdaySize:20,dateSize:30,monthSize:14,systemText:"system",weekTextColor:"#26364d",timeMode:"auto",timeColor:"#26364d"};}applySettings();saveStorage();updateAppearancePreview();};
 const sidebarColorSelect=document.getElementById("sidebarColorSelect");
 if(sidebarColorSelect) sidebarColorSelect.onchange=e=>{appData.settings.sidebarColor=e.target.value;applySettings();saveStorage()};
-document.getElementById("taskViewSelect").onchange=e=>{appData.settings.taskView=e.target.value;applySettings();saveStorage();renderWeek()};
-const maxDayTasksSelect=document.getElementById("maxDayTasksSelect"); if(maxDayTasksSelect) maxDayTasksSelect.onchange=e=>{appData.settings.maxDayTasks=Math.max(4,Math.min(12,Number(e.target.value)||6));saveStorage();renderWeek()};
+function syncTaskCapacityOptions(){
+  const select=document.getElementById("maxDayTasksSelect");
+  if(!select)return;
+  const twoColumns=(appData.settings.taskView==="weekColumns");
+  const values=twoColumns?[4,5,6,7,8,9,10,11,12]:[4,6,12];
+  const key=twoColumns?"maxDayTasksTwoColumns":"maxDayTasksOneColumn";
+  const legacy=Number(appData.settings.maxDayTasks);
+  let selected=Number(appData.settings[key]);
+  if(!values.includes(selected)) selected=values.includes(legacy)?legacy:6;
+  if(!values.includes(selected)) selected=values[0];
+  appData.settings[key]=selected;
+  select.innerHTML=values.map(n=>`<option value="${n}">${n} дел</option>`).join("");
+  select.value=String(selected);
+  const hint=document.getElementById("maxDayTasksHint");
+  if(hint)hint.textContent=twoColumns
+    ?"В двух колонках доступны 4–12 дел. Высота записи зависит от выбранной плотности; воскресенье подстраивается автоматически."
+    :"В одной колонке доступны 4, 6 или 12 дел. Воскресенье показывает столько записей, сколько помещается.";
+}
+document.getElementById("taskViewSelect").onchange=e=>{
+  appData.settings.taskView=e.target.value==="weekColumns"?"weekColumns":"cards";
+  syncTaskCapacityOptions();applySettings();saveStorage();renderWeek();
+};
+const maxDayTasksSelect=document.getElementById("maxDayTasksSelect");
+if(maxDayTasksSelect) maxDayTasksSelect.onchange=e=>{
+  const twoColumns=appData.settings.taskView==="weekColumns";
+  appData.settings[twoColumns?"maxDayTasksTwoColumns":"maxDayTasksOneColumn"]=Number(e.target.value);
+  applySettings();saveStorage();renderWeek();
+};
 const listTextColorSelect=document.getElementById("listTextColorSelect");
 if(listTextColorSelect) listTextColorSelect.onchange=e=>{appData.settings.listTextColor=e.target.value;applySettings();saveStorage()};
 
@@ -410,18 +473,6 @@ function openAppearance(){
   document.getElementById("appearanceWeekdaySizeValue").textContent=a.weekdaySize+" px";document.getElementById("appearanceDateSizeValue").textContent=a.dateSize+" px";document.getElementById("appearanceMonthSizeValue").textContent=a.monthSize+" px";
   document.getElementById("themeSelect").value=appData.settings.theme||"standard";
   updateAppearancePreview();appearanceModal.classList.remove("hidden");
-}
-
-const tasksPerDaySelect=document.getElementById("tasksPerDaySelect");
-function applyTasksPerDay(){
-  const n=String([4,6,9].includes(Number(appData.settings.tasksPerDay))?appData.settings.tasksPerDay:6);
-  if(tasksPerDaySelect) tasksPerDaySelect.value=n;
-  planner.dataset.tasksPerDay=n;
-  planner.classList.remove("tasks-per-day-4","tasks-per-day-6","tasks-per-day-9");
-  planner.classList.add("tasks-per-day-"+n);
-}
-if(tasksPerDaySelect){
-  tasksPerDaySelect.addEventListener("change",()=>{appData.settings.tasksPerDay=Number(tasksPerDaySelect.value);applyTasksPerDay();applySettings();saveStorage();renderWeek();updateAppearancePreview();});
 }
 
 document.getElementById("appearanceBtn").onclick=openAppearance;
@@ -741,7 +792,6 @@ planner.addEventListener("touchend",e=>{
 
 // Экран входа удалён: приложение запускается без пароля.
 applySettings();
-if(typeof applyTasksPerDay==="function") applyTasksPerDay();
 document.body.classList.add("app-ready");
 renderWeek();
 checkTaskNotifications(true);

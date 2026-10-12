@@ -134,20 +134,16 @@
   <h3>⚙️ Настройки</h3>
   <label class="settings-row"><span>🌙 Тёмный стиль</span><input type="checkbox" id="darkModeToggle"></label>
   <div class="settings-section settings-controls">
-    <strong>📋 Вид задач</strong>
+    <strong>📋 Вид недели</strong>
     <select id="taskViewSelect" class="settings-select">
-      <option value="cards">Карточки</option>
-      <option value="list">Список дел</option>
+      <option value="cards">Неделя в одной колонке</option>
       <option value="weekColumns">Неделя в двух колонках</option>
     </select>
   </div>
   <div class="settings-section settings-controls">
-    <strong>📌 Количество дел в каждом дне</strong>
-    <select id="maxDayTasksSelect" class="settings-select">
-      <option value="4">4 дела</option><option value="5">5 дел</option><option value="6">6 дел</option><option value="7">7 дел</option><option value="8">8 дел</option>
-      <option value="9">9 дел</option><option value="10">10 дел</option><option value="11">11 дел</option><option value="12">12 дел</option>
-    </select>
-    <p>В режиме двух колонок карточки уменьшаются, чтобы поместиться в выбранное количество.</p>
+    <strong>📌 Количество дел на день</strong>
+    <select id="maxDayTasksSelect" class="settings-select"></select>
+    <p id="maxDayTasksHint">Количество определяет плотность размещения дел. Воскресенье подстраивается автоматически под доступную высоту.</p>
   </div>
   <label class="settings-row"><span>🌈 Градиент дней</span><input type="checkbox" id="gradientDaysToggle"></label>
   <div class="settings-section settings-controls">
@@ -184,7 +180,6 @@
       <button type="button" class="appearance-swatch" data-preset="pinkpurple"><i style="background:#f6d9e8"></i><i style="background:#e3d9fa"></i><span>Розово-фиолетовая</span></button>
     </div>
   </div>
-  <div class="settings-section settings-controls task-capacity-control"><strong>📋 Количество дел на день</strong><p>Настрой плотность карточек недельного планировщика.</p><select id="tasksPerDaySelect" class="settings-select"><option value="4">4 дела — крупные карточки</option><option value="6">6 дел — компактно</option><option value="9">9 дел — максимально компактно</option></select></div>
   <details class="appearance-details" open><summary>✏️ Ручная настройка</summary>
     <div class="appearance-controls-grid">
       <label class="appearance-color-row"><span>Фон приложения</span><input id="appearanceBg" type="color" value="#eef3fb"></label>
