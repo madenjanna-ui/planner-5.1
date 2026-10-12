@@ -4156,21 +4156,39 @@ body[data-task-view="list"] #planner .day.list-day .tasks>.task,
 #planner.week-columns .tasks>.task:nth-child(n+13){display:none!important}
 @media(max-width:520px){#planner.week-columns{height:calc(100dvh - var(--header-space,145px) - var(--bottom-space,60px))!important}}
 
-
-/* MaDenFlow 5.1.1 — stable two-column week layout (override conflicting legacy rules) */
-#planner.week-columns{
- display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
- grid-template-rows:minmax(0,1fr)!important;grid-auto-flow:initial!important;
- height:calc(100dvh - var(--header-space,40px) - var(--bottom-space,48px))!important;
- min-height:0!important;overflow:hidden!important;align-items:stretch!important;gap:6px!important;padding:5px!important;box-sizing:border-box!important;
+/* MaDenFlow 6.7 — definitive fix for weekColumns layout.
+   Earlier legacy rules gave .day-title height:100%, pushing its divider to the bottom
+   and leaving the task area with no usable height. Scope overrides to this view only. */
+#planner.week-columns .week-column-stack>.day.week-column-day{
+  display:flex!important;flex-direction:column!important;position:relative!important;
+  height:auto!important;min-height:0!important;min-width:0!important;
+  grid-template-columns:none!important;grid-template-rows:none!important;grid-template-areas:none!important;
+  padding:5px 7px!important;gap:3px!important;overflow:hidden!important;box-sizing:border-box!important;
 }
-#planner.week-columns>.week-column-stack{display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;gap:5px!important;height:100%!important;min-height:0!important;min-width:0!important;overflow:hidden!important}
-#planner.week-columns .week-column-stack>.day.week-column-day{display:flex!important;flex:1 1 0!important;flex-direction:column!important;min-height:0!important;min-width:0!important;height:auto!important;overflow:hidden!important;gap:0!important;padding:4px!important;box-sizing:border-box!important}
-#planner.week-columns .week-column-right>.day.week-column-day:nth-child(4){flex:.65 1 0!important}
-#planner.week-columns .day-title{order:0!important;display:block!important;flex:0 0 auto!important;width:100%!important;margin:0 0 3px!important;padding:2px 0 5px!important;border-bottom:2px solid rgba(75,95,125,.45)!important;box-sizing:border-box!important}
-#planner.week-columns .day-content{order:1!important;display:flex!important;flex:1 1 0!important;flex-direction:column!important;width:100%!important;height:auto!important;min-height:0!important;overflow:hidden!important;visibility:visible!important;opacity:1!important}
-#planner.week-columns .day-content>.tasks{display:flex!important;flex:1 1 0!important;flex-direction:column!important;flex-wrap:nowrap!important;justify-content:flex-start!important;align-items:stretch!important;gap:3px!important;width:100%!important;height:auto!important;min-height:0!important;overflow:hidden!important;visibility:visible!important;opacity:1!important}
-#planner.week-columns .day-content>.tasks>.task{display:flex!important;flex:0 1 auto!important;flex-shrink:1!important;width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;max-height:none!important;margin:0!important;padding:3px 5px 3px 7px!important;box-sizing:border-box!important;visibility:visible!important;opacity:1!important;overflow:hidden!important}
-#planner.week-columns .day-content>.tasks>.task:nth-child(n+13){display:none!important}
-#planner.week-columns .day-date-side{display:flex!important;flex-direction:row!important;align-items:baseline!important;gap:4px!important;white-space:nowrap!important}
-@media(max-width:520px){#planner.week-columns{gap:4px!important;padding:4px!important}#planner.week-columns .week-column-stack{gap:4px!important}#planner.week-columns .day.week-column-day{padding:3px!important}#planner.week-columns .day-title{padding-bottom:4px!important}#planner.week-columns .task-text{font-size:clamp(9px,2.4vw,12px)!important}}
+#planner.week-columns .week-column-stack>.day.week-column-day>.day-title{
+  order:0!important;display:flex!important;position:relative!important;flex:0 0 auto!important;
+  grid-area:auto!important;width:100%!important;height:auto!important;min-height:22px!important;
+  align-items:center!important;justify-content:center!important;margin:0 0 2px!important;
+  padding:2px 0 5px!important;border-left:0!important;border-bottom:1px solid rgba(90,110,140,.32)!important;
+  overflow:visible!important;box-sizing:border-box!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day>.day-title .day-date-side{
+  display:flex!important;flex-direction:row!important;align-items:baseline!important;justify-content:center!important;
+  gap:5px!important;width:auto!important;height:auto!important;white-space:nowrap!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day>.day-content{
+  order:1!important;grid-area:auto!important;position:relative!important;display:flex!important;
+  flex:1 1 0!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
+  padding:0!important;margin:0!important;overflow:hidden!important;box-sizing:border-box!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:repeat(var(--day-task-limit,6),minmax(0,1fr))!important;grid-auto-flow:row!important;
+  flex:1 1 0!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+  max-height:100%!important;gap:3px!important;overflow:hidden!important;visibility:visible!important;opacity:1!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task{
+  display:flex!important;visibility:visible!important;opacity:1!important;position:relative!important;
+  width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:100%!important;
+  align-self:stretch!important;overflow:hidden!important;box-sizing:border-box!important;
+}
