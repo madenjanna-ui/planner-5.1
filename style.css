@@ -4119,9 +4119,9 @@ body[data-task-view="list"] #planner .day.list-day .day-content,
 body[data-task-view="list"] #planner .day.list-day .tasks{display:grid!important;flex:1 1 auto!important;visibility:visible!important;opacity:1!important;min-height:0!important;height:100%!important;max-height:100%!important;overflow:hidden!important;}
 body[data-task-view="list"] #planner .day.list-day .tasks>.task,
 #planner.week-columns .tasks>.task{visibility:visible!important;opacity:1!important;min-width:0!important;}
-#planner.week-columns .day-content{display:flex!important;flex-direction:column!important;flex:1 1 0!important;height:0!important;}
-#planner.week-columns .tasks{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:repeat(var(--day-task-limit,6),minmax(0,1fr))!important;flex:1 1 0!important;height:100%!important;min-height:0!important;overflow:hidden!important;}
-#planner.week-columns .tasks>.task{display:flex!important;visibility:visible!important;opacity:1!important;min-height:0!important;height:100%!important;}
+#planner.week-columns .day-content{display:flex!important;flex-direction:column!important;flex:1 1 auto!important;height:auto!important;min-height:0!important;overflow:hidden!important;}
+#planner.week-columns .tasks{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:repeat(var(--day-task-limit,6),minmax(0,1fr))!important;flex:1 1 auto!important;height:auto!important;min-height:0!important;overflow:hidden!important;}
+#planner.week-columns .tasks>.task{display:flex!important;visibility:visible!important;opacity:1!important;min-height:0!important;height:auto!important;align-self:stretch!important;}
 
 
 /* Compact six-color picker inside the task create/edit modal */
@@ -4132,3 +4132,8 @@ body[data-task-view="list"] #planner .day.list-day .tasks>.task,
 #taskCardColorPicker .task-card-color i{display:block;width:18px;height:18px;border-radius:50%;background:var(--swatch);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
 #taskCardColorPicker .task-card-color.is-selected{border-color:var(--text,#26364d)!important;box-shadow:0 0 0 2px rgba(100,120,150,.16)!important}
 @media(max-width:420px){#taskCardColorPicker{gap:6px;padding:7px 8px}#taskCardColorPicker .task-card-color-options{gap:3px}#taskCardColorPicker .task-card-color{width:26px;height:26px;flex-basis:26px}#taskCardColorPicker .task-card-color i{width:17px;height:17px}}
+
+/* MaDenFlow: final fix for week-columns task visibility */
+#planner.week-columns .week-column-stack .day-content{display:flex!important;flex:1 1 auto!important;min-height:0!important;height:auto!important;visibility:visible!important;opacity:1!important;overflow:hidden!important}
+#planner.week-columns .week-column-stack .tasks{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:repeat(var(--day-task-limit,6),minmax(22px,1fr))!important;flex:1 1 auto!important;min-height:0!important;height:auto!important;visibility:visible!important;opacity:1!important;overflow:hidden!important}
+#planner.week-columns .week-column-stack .tasks>.task{display:flex!important;visibility:visible!important;opacity:1!important;min-height:22px!important;height:auto!important;align-self:stretch!important}
