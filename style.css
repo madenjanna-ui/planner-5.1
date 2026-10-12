@@ -4327,3 +4327,25 @@ body[data-task-view="list"] #planner .day.list-day .tasks>.task,
   #planner.week-columns .week-column-stack>.day.week-column-day .tasks{gap:2px!important}
   #planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task{padding:0 4px!important}
 }
+
+
+/* MaDenFlow 7.1 — task rows stay compact; only day cards stretch to fill the week. */
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks{
+  display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;
+  align-items:stretch!important;justify-content:flex-start!important;align-content:flex-start!important;
+  gap:4px!important;padding:0!important;margin:0!important;
+  flex:1 1 auto!important;width:100%!important;height:100%!important;min-height:0!important;
+  max-height:100%!important;overflow:hidden!important;box-sizing:border-box!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task{
+  display:flex!important;flex:0 0 36px!important;flex-shrink:0!important;
+  width:100%!important;height:36px!important;min-height:36px!important;max-height:36px!important;
+  align-self:stretch!important;box-sizing:border-box!important;margin:0!important;
+  padding:0 7px!important;overflow:hidden!important;align-items:center!important;
+}
+@media(max-width:520px){
+  #planner.week-columns .week-column-stack>.day.week-column-day .tasks{gap:4px!important}
+  #planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task{
+    flex-basis:36px!important;height:36px!important;min-height:36px!important;max-height:36px!important;
+  }
+}
