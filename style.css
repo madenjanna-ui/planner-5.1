@@ -4395,28 +4395,35 @@ body[data-custom-appearance="on"] #planner .task-time{
 #planner.week-columns .week-column-right>.day:nth-child(3){flex:1 1 0!important}
 #planner.week-columns .week-column-right>.day:nth-child(4){flex:.58 1 0!important}
 
-/* MaDenFlow 7.3 — unified date header controls and two-column radius support. */
-#planner .day-date-side{
-  display:flex!important;align-items:baseline!important;justify-content:space-between!important;
-  width:100%!important;gap:8px!important;min-width:0!important;
+/* MaDenFlow 7.4 — keep one-column date header untouched; adjust headers only in two-column mode. */
+#planner.week-columns .week-column-stack>.day.week-column-day>.day-title .day-date-side{
+  display:flex!important;flex-direction:row!important;align-items:baseline!important;justify-content:flex-start!important;
+  width:100%!important;min-width:0!important;gap:0!important;white-space:nowrap!important;line-height:1!important;
 }
-#planner .day-date-main{
-  display:flex!important;align-items:baseline!important;justify-content:flex-end!important;
-  gap:5px!important;white-space:nowrap!important;order:2!important;margin-left:auto!important;
-}
-#planner .day-date-side>.day-month{order:1!important;margin-right:auto!important;font-size:var(--custom-month-size,14px)!important;line-height:1!important;}
-#planner .day-date-main .day-weekday,
-#planner .day-date-main .day-number{
-  font-size:var(--custom-weekday-size,20px)!important;line-height:1.05!important;font-weight:800!important;
-}
-#planner .day-date-side .day-star{order:3!important;flex:0 0 auto!important;font-size:.8em!important}
-body[data-custom-appearance="on"] #planner .day-date-side .day-weekday,
-body[data-custom-appearance="on"] #planner .day-date-side .day-number,
-body[data-custom-appearance="on"] #planner .day-date-side .day-month{
+#planner.week-columns .week-column-stack>.day.week-column-day>.day-title .day-weekday{
+  order:0!important;flex:0 0 auto!important;margin:0 14px 0 0!important;
+  font-size:var(--custom-weekday-size,20px)!important;font-weight:800!important;line-height:1.05!important;
   color:var(--custom-date-color,#26364d)!important;
 }
+#planner.week-columns .week-column-stack>.day.week-column-day>.day-title .day-date-main{
+  order:1!important;display:flex!important;flex:0 0 auto!important;align-items:baseline!important;justify-content:flex-start!important;
+  gap:6px!important;margin:0!important;white-space:nowrap!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day>.day-title .day-number{
+  font-size:var(--custom-weekday-size,20px)!important;font-weight:800!important;line-height:1.05!important;
+  color:var(--custom-date-color,#26364d)!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day>.day-title .day-month{
+  display:inline-block!important;order:1!important;margin:0!important;padding:0!important;
+  font-size:var(--custom-month-size,14px)!important;font-weight:750!important;line-height:1!important;
+  color:var(--month-season-color,#7397c9)!important;
+}
+#planner.week-columns .week-column-stack>.day.week-column-day>.day-title .day-star{
+  order:2!important;margin-left:auto!important;flex:0 0 auto!important;font-size:.8em!important;
+}
+/* Radius control applies to both day cards and task cards in two-column view. */
 #planner.week-columns .week-column-stack>.day.week-column-day{
-  border-radius:var(--custom-card-radius,14px)!important;
+  border-radius:var(--custom-card-radius,14px)!important;overflow:hidden!important;
 }
 #planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task{
   border-radius:var(--custom-card-radius,14px)!important;

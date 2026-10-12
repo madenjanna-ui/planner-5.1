@@ -30,7 +30,9 @@ function renderWeek(){
     if(dayOnly.getTime()===today.getTime()) section.classList.add("today");
     if(dayOnly<today) section.classList.add("past-day");
     section.dataset.date=key; section.dataset.taskCount=count;
-    section.innerHTML=`<div class="day-content"><div class="tasks"></div></div><div class="day-title"><div class="day-date-side"><span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span><div class="day-date-main"><span class="day-weekday">${weekDays[i]}</span><span class="day-number">${date.getDate()}</span></div>${date.toDateString()===new Date().toDateString()?'<span class="day-star">★</span>':''}</div></div>`;
+    const monthColors=["#7397c9","#7194c9","#7d9fcb","#68a99a","#5da879","#579b62","#5e9b55","#7c9f54","#bd9252","#c17b55","#8d8fbd","#7e91bd"];
+    const monthLabel=date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","");
+    section.innerHTML=`<div class="day-content"><div class="tasks"></div></div><div class="day-title"><div class="day-date-side"><span class="day-weekday">${weekDays[i]}</span><div class="day-date-main"><span class="day-number">${date.getDate()}</span><span class="day-month" style="--month-season-color:${monthColors[date.getMonth()]}">${monthLabel}</span></div>${date.toDateString()===new Date().toDateString()?'<span class="day-star">★</span>':''}</div></div>`;
     if(taskView==="weekColumns"){
       // Левый столбец: Пн–Ср; правый: Чт–Вс.
       const positions=[ [1,1],[2,1],[3,1],[1,2],[2,2],[3,2],[4,2] ];
@@ -173,7 +175,7 @@ function openDayPopup(dateKey){
       document.getElementById("taskModalTitle").textContent="Новая задача";
       document.getElementById("newTaskInput").value="";
       document.getElementById("newTaskTime").value="";
-      setTaskCardColor("soft-blue");
+      setTaskCardColor(appData.settings.newTaskCardColor||getTaskCardColor()||"soft-blue");
       document.getElementById("repeatTask").checked=false;
       document.getElementById("repeatOptions").classList.add("hidden");
       document.getElementById("recurrenceBox").classList.remove("hidden");
@@ -246,7 +248,7 @@ if(repeatTypeSelect){repeatTypeSelect.addEventListener("change",()=>{
 const TASK_CARD_COLORS=["soft-blue","soft-green","soft-orange","soft-pink","soft-purple","soft-teal"];
 function getTaskCardColor(){const selected=document.querySelector("#taskCardColorPicker .task-card-color.is-selected");return selected?.dataset.cardColor||"soft-blue";}
 function setTaskCardColor(color){const safe=TASK_CARD_COLORS.includes(color)?color:"soft-blue";document.querySelectorAll("#taskCardColorPicker .task-card-color").forEach(btn=>{const active=btn.dataset.cardColor===safe;btn.classList.toggle("is-selected",active);btn.setAttribute("aria-pressed",active?"true":"false")});}
-document.querySelectorAll("#taskCardColorPicker .task-card-color").forEach(btn=>btn.addEventListener("click",()=>setTaskCardColor(btn.dataset.cardColor)));
+document.querySelectorAll("#taskCardColorPicker .task-card-color").forEach(btn=>btn.addEventListener("click",()=>{const color=btn.dataset.cardColor;setTaskCardColor(color);appData.settings.newTaskCardColor=color;saveStorage();}));
 
 // Сохранение и отмена задачи. Этот обработчик должен находиться в app.js,
 // потому что именно здесь открывается форма taskModal.
