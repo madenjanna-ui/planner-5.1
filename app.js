@@ -14,6 +14,7 @@ function renderWeek(){
   let maxTasks=0;
   const taskView=(appData.settings||{}).taskView||"cards";
   const listMode=taskView==="list";
+  document.body.dataset.taskView=taskView;
   planner.classList.toggle("week-columns",taskView==="weekColumns");
   const today=new Date(); today.setHours(0,0,0,0);
   const sections=[];
@@ -39,7 +40,15 @@ function renderWeek(){
       section.classList.remove("week-column-day");
     }
     planner.appendChild(section);
-    loadTasks(key,section.querySelector(".tasks"));
+    const taskContainer=section.querySelector(".tasks");
+    loadTasks(key,taskContainer);
+    // List/column layouts must not inherit old CSS rules that hide every task.
+    if(taskView==="list" || taskView==="weekColumns"){
+      const limit=Math.max(6,Math.min(12,Number((appData.settings||{}).maxDayTasks)||6));
+      [...taskContainer.children].forEach((task,idx)=>{
+        task.style.setProperty("display",idx<limit?"flex":"none","important");
+      });
+    }
     sections.push({section,count});
   }
   planner.classList.remove("week-normal","week-compact","week-ultra");
@@ -125,6 +134,7 @@ function openDayPopup(dateKey){
       document.getElementById("taskModalTitle").textContent="Новая задача";
       document.getElementById("newTaskInput").value="";
       document.getElementById("newTaskTime").value="";
+      setTaskCardColor("soft-blue");
       document.getElementById("repeatTask").checked=false;
       document.getElementById("repeatOptions").classList.add("hidden");
       document.getElementById("recurrenceBox").classList.remove("hidden");
@@ -170,6 +180,7 @@ function openTaskEditor(dateKey,index){
   document.getElementById("taskModalTitle").textContent="Изменить задачу";
   document.getElementById("newTaskInput").value=task.text||"";
   document.getElementById("newTaskTime").value=task.time||"";
+  setTaskCardColor(task.cardColor||"soft-blue");
   const recurrence=task.recurrenceId&&typeof getRecurrence==="function"?getRecurrence(task.recurrenceId):null;
   document.getElementById("repeatTask").checked=!!recurrence;
   document.getElementById("recurrenceBox").classList.remove("hidden");
@@ -191,6 +202,12 @@ if(repeatToggle){repeatToggle.addEventListener("change",()=>{
 if(repeatTypeSelect){repeatTypeSelect.addEventListener("change",()=>{
   document.getElementById("repeatWeekdays").classList.toggle("hidden",repeatTypeSelect.value!=="customDays");
 });}
+
+// Six soft card colors are selectable in the create/edit task form.
+const TASK_CARD_COLORS=["soft-blue","soft-green","soft-orange","soft-pink","soft-purple","soft-teal"];
+function getTaskCardColor(){const selected=document.querySelector("#taskCardColorPicker .task-card-color.is-selected");return selected?.dataset.cardColor||"soft-blue";}
+function setTaskCardColor(color){const safe=TASK_CARD_COLORS.includes(color)?color:"soft-blue";document.querySelectorAll("#taskCardColorPicker .task-card-color").forEach(btn=>{const active=btn.dataset.cardColor===safe;btn.classList.toggle("is-selected",active);btn.setAttribute("aria-pressed",active?"true":"false")});}
+document.querySelectorAll("#taskCardColorPicker .task-card-color").forEach(btn=>btn.addEventListener("click",()=>setTaskCardColor(btn.dataset.cardColor)));
 
 // Сохранение и отмена задачи. Этот обработчик должен находиться в app.js,
 // потому что именно здесь открывается форма taskModal.
@@ -229,10 +246,21 @@ if(saveTaskButton){
         const repeatType=document.getElementById("repeatType").value;
         const repeatDays=[...document.querySelectorAll(".repeat-weekday:checked")].map(x=>Number(x.value));
         if(repeatType==="customDays"&&!repeatDays.length){alert("Выберите хотя бы один день недели.");return;}
-        addRecurringTask(selectedDate,text,repeatType,document.getElementById("repeatUntil").value,time.value,repeatDays);
+        const recurrenceId=addRecurringTask(selectedDate,text,repeatType,document.getElementById("repeatUntil").value,time.value,repeatDays);
+        if(recurrenceId){Object.keys(tasks).forEach(dayKey=>(tasks[dayKey]||[]).forEach(item=>{if(item.recurrenceId===recurrenceId)item.cardColor=getTaskCardColor();}));if(typeof saveStorage==="function")saveStorage();}
       }else{
         if(typeof addTask!=="function"){ alert("Функция сохранения задач недоступна."); return; }
-        addTask(selectedDate,text,{time:time.value});
+        addTask(selectedDate,text,{time:time.value,cardColor:getTaskCardColor()});
+      }
+      if(editDate!=="" && editIndex!==""){
+        const edited=(getTasks(editDate)||[])[Number(editIndex)];
+        if(edited){
+          const cardColor=getTaskCardColor();
+          if(editChain && edited.recurrenceId){
+            Object.keys(tasks).forEach(dayKey=>(tasks[dayKey]||[]).forEach(item=>{if(item.recurrenceId===edited.recurrenceId)item.cardColor=cardColor;}));
+          }else edited.cardColor=cardColor;
+          if(typeof saveStorage==="function")saveStorage();
+        }
       }
       modal.classList.add("hidden");
       modal.dataset.editDate=""; modal.dataset.editIndex=""; modal.dataset.editChain="0";

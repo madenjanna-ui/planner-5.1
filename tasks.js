@@ -12,14 +12,17 @@ function loadTasks(date,container){
     task.className="task";
     if(taskData.done)task.classList.add("done");
     task.classList.add(taskData.priority||"normal");
+    if(taskData.cardColor && ["soft-blue","soft-green","soft-orange","soft-pink","soft-purple","soft-teal"].includes(taskData.cardColor)) task.classList.add("color-"+taskData.cardColor);
     if(list.length>=2)task.classList.add("grid-task");
+    const view=(appData.settings||{}).taskView||"cards";
+    if(view==="weekColumns") container.style.setProperty("--day-task-limit",String(Math.max(6,Math.min(12,Number(appData.settings.maxDayTasks)||6))));
     const listColor=taskData.listColor||"green";
     task.classList.add("list-"+listColor);
     const time=taskData.time||"";
     task.innerHTML=`<label class="task-check"><input type="checkbox" ${taskData.done?"checked":""}><span class="checkmark"></span></label><div class="task-text-wrap">${time?`<span class="task-time">${escapeHtml(time)}</span>`:""}<div class="task-text" title="${escapeHtml(taskData.text)}">${escapeHtml(taskData.text)}</div></div>`;
     const checkbox=task.querySelector("input");
     checkbox.addEventListener("change",()=>{toggleTask(date,index,checkbox.checked);renderWeek()});
-    task.addEventListener("click",e=>{if(e.target.tagName==="INPUT"||e.target.classList.contains("checkmark"))return;showTaskMenu(task,date,index)});
+    task.addEventListener("click",e=>{if(e.target.tagName==="INPUT"||e.target.classList.contains("checkmark"))return;if(typeof openDayPopup==="function")openDayPopup(date);else showTaskMenu(task,date,index)});
     container.appendChild(task);
   });
 }
@@ -36,6 +39,15 @@ function showTaskMenu(task,date,index){
     <button data-action="important">🟠 Важное</button>
     <button data-action="urgent">🔴 Срочное</button>
     <button data-action="normal">🟢 Обычное</button>
+    <div class="task-menu-line"></div><div class="task-menu-label">Цвет карточки</div>
+    <div class="task-color-actions">
+      <button data-action="color-soft-blue" aria-label="Голубой">🔵 Голубой</button>
+      <button data-action="color-soft-green" aria-label="Зелёный">🟢 Зелёный</button>
+      <button data-action="color-soft-orange" aria-label="Оранжевый">🟠 Оранжевый</button>
+      <button data-action="color-soft-pink" aria-label="Розовый">🌸 Розовый</button>
+      <button data-action="color-soft-purple" aria-label="Фиолетовый">🟣 Фиолетовый</button>
+      <button data-action="color-soft-teal" aria-label="Бирюзовый">🩵 Бирюзовый</button>
+    </div>
     ${listMode?`<div class="task-menu-line"></div><div class="task-menu-label">Цвет строки</div><div class="task-color-actions"><button data-action="list-green">🟢 Зелёная</button><button data-action="list-red">🔴 Красная</button><button data-action="list-black">⚫ Чёрная</button></div>`:""}
     <div class="task-menu-line"></div>
     <button data-action="edit">✏️ Редактировать</button>
@@ -51,6 +63,12 @@ function showTaskMenu(task,date,index){
   menu.querySelectorAll("button").forEach(button=>button.onclick=e=>{
     e.stopPropagation();
     const action=button.dataset.action;
+    if(action.startsWith("color-soft-")){
+      const color=action.slice(6);
+      const all=getTasks(date); if(all[index]) all[index].cardColor=color;
+      if(typeof saveStorage==="function") saveStorage();
+      closeTaskMenu(); renderWeek(); return;
+    }
     if(["important","urgent","normal"].includes(action)){changePriority(date,index,action);closeTaskMenu();renderWeek();return}
     if(action.startsWith("list-")){
       const color=action.slice(5); if(taskData.recurrenceId){if(confirm("Изменить цвет у всей повторяющейся цепочки?"))setRecurringChainListColor(taskData.recurrenceId,color);else setTaskListColor(date,index,color)}else setTaskListColor(date,index,color);closeTaskMenu();renderWeek();return
@@ -73,7 +91,7 @@ function editTaskDialog(date,index,wholeChain=false){
   const modal=document.getElementById("taskModal"),input=document.getElementById("newTaskInput"),time=document.getElementById("newTaskTime"),title=document.getElementById("taskModalTitle"),repeat=document.getElementById("recurrenceBox"),chain=document.getElementById("chainEditHint");
   title.textContent=wholeChain?"Редактировать цепочку":"Редактировать задачу";
   input.value=task.text;time.value=task.time||"";
-  if(typeof setTaskEditorPriority==="function")setTaskEditorPriority(task.priority||"normal");
+  if(typeof setTaskCardColor==="function")setTaskCardColor(task.cardColor||"soft-blue");
   const recurrence=task.recurrenceId&&typeof getRecurrence==="function"?getRecurrence(task.recurrenceId):null;
   repeat.classList.remove("hidden");
   document.getElementById("repeatTask").checked=!!recurrence;

@@ -71,6 +71,17 @@
   <h3 id="taskModalTitle">Новая задача</h3>
   <input id="newTaskInput" placeholder="Введите задачу...">
   <label class="task-time-label">🕒 Время <input id="newTaskTime" type="time"></label>
+  <div class="task-card-color-picker" id="taskCardColorPicker" role="group" aria-label="Цвет карточки дела">
+    <div class="task-card-color-title">Цвет дела</div>
+    <div class="task-card-color-options">
+      <button type="button" class="task-card-color is-selected" data-card-color="soft-blue" aria-label="Голубой" title="Голубой"><i style="--swatch:#5795ee"></i></button>
+      <button type="button" class="task-card-color" data-card-color="soft-green" aria-label="Зелёный" title="Зелёный"><i style="--swatch:#44ad78"></i></button>
+      <button type="button" class="task-card-color" data-card-color="soft-orange" aria-label="Оранжевый" title="Оранжевый"><i style="--swatch:#e99a37"></i></button>
+      <button type="button" class="task-card-color" data-card-color="soft-pink" aria-label="Розовый" title="Розовый"><i style="--swatch:#e96d91"></i></button>
+      <button type="button" class="task-card-color" data-card-color="soft-purple" aria-label="Фиолетовый" title="Фиолетовый"><i style="--swatch:#9272e8"></i></button>
+      <button type="button" class="task-card-color" data-card-color="soft-teal" aria-label="Бирюзовый" title="Бирюзовый"><i style="--swatch:#38a9a5"></i></button>
+    </div>
+  </div>
   <div id="chainEditHint" class="chain-edit-hint hidden">🔁 Изменения будут применены ко всей цепочке повторяющихся задач.</div>
   <div id="recurrenceBox" class="recurrence-box">
     <label class="switch-row"><input type="checkbox" id="repeatTask"><span>🔁 Повторять задачу</span></label>
