@@ -4137,3 +4137,21 @@ body[data-task-view="list"] #planner .day.list-day .tasks>.task,
 #planner.week-columns .week-column-stack .day-content{display:flex!important;flex:1 1 auto!important;min-height:0!important;height:auto!important;visibility:visible!important;opacity:1!important;overflow:hidden!important}
 #planner.week-columns .week-column-stack .tasks{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:repeat(var(--day-task-limit,6),minmax(22px,1fr))!important;flex:1 1 auto!important;min-height:0!important;height:auto!important;visibility:visible!important;opacity:1!important;overflow:hidden!important}
 #planner.week-columns .week-column-stack .tasks>.task{display:flex!important;visibility:visible!important;opacity:1!important;min-height:22px!important;height:auto!important;align-self:stretch!important}
+
+
+/* Final two-column week layout: fill available height up to the week-range footer. */
+#planner.week-columns{
+  height:calc(100dvh - var(--header-space,120px) - var(--bottom-space,55px))!important;
+  min-height:0!important; align-items:stretch!important;
+  grid-template-rows:minmax(0,1fr)!important; overflow:hidden!important;
+}
+#planner.week-columns>.week-column-stack{height:100%!important;min-height:0!important;align-self:stretch!important;justify-content:stretch!important;overflow:hidden!important}
+#planner.week-columns .week-column-stack>.day{flex:1 1 0!important;min-height:0!important;height:auto!important}
+#planner.week-columns .week-column-right>.day:nth-child(4){flex:.58 1 0!important}
+#planner.week-columns .day.week-column-day{display:flex!important;flex-direction:column!important;min-height:0!important}
+#planner.week-columns .day-title{order:0!important;flex:0 0 auto!important;border-bottom:2px solid rgba(75,95,125,.45)!important;padding:3px 0 7px!important;margin-bottom:3px!important}
+#planner.week-columns .day-content{order:1!important;display:flex!important;flex:1 1 0!important;min-height:0!important;height:0!important;overflow:hidden!important}
+#planner.week-columns .tasks{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:repeat(var(--day-task-limit,6),minmax(0,1fr))!important;grid-auto-flow:row!important;flex:1 1 0!important;width:100%!important;height:100%!important;min-height:0!important;align-content:stretch!important;overflow:hidden!important}
+#planner.week-columns .tasks>.task{display:flex!important;visibility:visible!important;opacity:1!important;width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;max-height:none!important;align-self:stretch!important;position:relative!important}
+#planner.week-columns .tasks>.task:nth-child(n+13){display:none!important}
+@media(max-width:520px){#planner.week-columns{height:calc(100dvh - var(--header-space,145px) - var(--bottom-space,60px))!important}}

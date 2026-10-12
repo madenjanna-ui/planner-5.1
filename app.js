@@ -10,9 +10,11 @@ function renderWeek(){
   const monday=getMonday(currentDate),sunday=new Date(monday);
   sunday.setDate(monday.getDate()+6);
   const fmt=d=>`${d.getDate()}.${String(d.getMonth()+1).padStart(2,"0")}.${d.getFullYear()}`;
-  weekTitle.textContent=`${fmt(monday)} – ${fmt(sunday)}`;
-  let maxTasks=0;
   const taskView=(appData.settings||{}).taskView||"cards";
+  weekTitle.textContent=taskView==="weekColumns"
+    ? `${String(monday.getDate()).padStart(2,"0")}.${String(monday.getMonth()+1).padStart(2,"0")}–${String(sunday.getDate()).padStart(2,"0")}.${String(sunday.getMonth()+1).padStart(2,"0")}.${String(sunday.getFullYear()).slice(-2)}`
+    : `${fmt(monday)} – ${fmt(sunday)}`;
+  let maxTasks=0;
   const listMode=taskView==="list";
   document.body.dataset.taskView=taskView;
   planner.classList.toggle("week-columns",taskView==="weekColumns");
@@ -350,8 +352,6 @@ function updateNotificationStatus(){
 }
 function openSettings(){
   document.getElementById("darkModeToggle").checked=!!appData.settings.darkMode;
-  document.getElementById("plannerFontSizeSelect").value=appData.settings.plannerFontSize||appData.settings.fontSize||"medium";
-  document.getElementById("taskFontSizeSelect").value=appData.settings.taskFontSize||appData.settings.fontSize||"medium";
   document.getElementById("themeSelect").value=appData.settings.theme||"standard";
   const sidebarColorSelect=document.getElementById("sidebarColorSelect");
   if(sidebarColorSelect) sidebarColorSelect.value=appData.settings.sidebarColor||"bluegray";
@@ -369,8 +369,6 @@ function openSettings(){
 document.getElementById("settingsBtn").onclick=openSettings;
 document.getElementById("settingsClose").onclick=()=>settingsModal.classList.add("hidden");
 document.getElementById("darkModeToggle").onchange=e=>{appData.settings.darkMode=e.target.checked;applySettings();saveStorage()};
-document.getElementById("plannerFontSizeSelect").onchange=e=>{appData.settings.plannerFontSize=e.target.value;applySettings();saveStorage()};
-document.getElementById("taskFontSizeSelect").onchange=e=>{appData.settings.taskFontSize=e.target.value;appData.settings.fontSize=e.target.value;applySettings();saveStorage();renderWeek()};
 document.getElementById("gradientDaysToggle").onchange=e=>{appData.settings.gradientDays=e.target.checked;applySettings();saveStorage()};
 document.getElementById("themeSelect").onchange=e=>{appData.settings.theme=e.target.value;if(e.target.value==="custom"){appData.settings.appearance=appData.settings.appearance||{bg:"#eef3fb",weekday:"#dce7fa",weekend:"#f5dce9",card:"#ffffff",text:"#26364d",sidebar:"#e0e8f2",font:15,opacity:100,radius:14,weekdaySize:20,dateSize:30,monthSize:14,systemText:"system",weekTextColor:"#26364d",timeMode:"auto",timeColor:"#26364d"};}applySettings();saveStorage();updateAppearancePreview();};
 const sidebarColorSelect=document.getElementById("sidebarColorSelect");
