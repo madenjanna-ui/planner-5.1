@@ -30,7 +30,7 @@ function renderWeek(){
     if(dayOnly.getTime()===today.getTime()) section.classList.add("today");
     if(dayOnly<today) section.classList.add("past-day");
     section.dataset.date=key; section.dataset.taskCount=count;
-    section.innerHTML=`<div class="day-content"><div class="tasks"></div></div><div class="day-title"><div class="day-date-side"><span class="day-weekday">${weekDays[i]}</span><span class="day-number">${date.getDate()}</span><span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span>${date.toDateString()===new Date().toDateString()?'<span class="day-star">★</span>':''}</div></div>`;
+    section.innerHTML=`<div class="day-content"><div class="tasks"></div></div><div class="day-title"><div class="day-date-side"><span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span><div class="day-date-main"><span class="day-weekday">${weekDays[i]}</span><span class="day-number">${date.getDate()}</span></div>${date.toDateString()===new Date().toDateString()?'<span class="day-star">★</span>':''}</div></div>`;
     if(taskView==="weekColumns"){
       // Левый столбец: Пн–Ср; правый: Чт–Вс.
       const positions=[ [1,1],[2,1],[3,1],[1,2],[2,2],[3,2],[4,2] ];
@@ -379,6 +379,7 @@ function applySettings(){
   root.setProperty("--custom-weekday-size",(a.weekdaySize||20)+"px");
   root.setProperty("--custom-date-size",(a.dateSize||30)+"px");
   root.setProperty("--custom-month-size",(a.monthSize||14)+"px");
+  root.setProperty("--custom-date-color",a.dateColor||a.text||"#26364d");
   root.setProperty("--custom-week-text-color",a.weekTextColor||"#26364d");
   root.setProperty("--custom-time-color",a.timeColor||"#26364d");
   document.body.dataset.weekTextMode=a.systemText||"system";
@@ -448,7 +449,7 @@ if(listTextColorSelect) listTextColorSelect.onchange=e=>{appData.settings.listTe
 
 // Оформление: ручные параметры применяются сразу и сохраняются локально.
 const appearanceModal=document.getElementById("appearanceModal");
-const appearanceDefaults={bg:"#eef3fb",weekday:"#dce7fa",weekend:"#f5dce9",card:"#ffffff",text:"#26364d",sidebar:"#e0e8f2",font:15,opacity:100,radius:14,weekdaySize:20,dateSize:30,monthSize:14,systemText:"system",weekTextColor:"#26364d",timeMode:"auto",timeColor:"#26364d"};
+const appearanceDefaults={bg:"#eef3fb",weekday:"#dce7fa",weekend:"#f5dce9",card:"#ffffff",text:"#26364d",sidebar:"#e0e8f2",font:15,opacity:100,radius:14,weekdaySize:20,dateSize:20,monthSize:14,dateColor:"#26364d",systemText:"system",weekTextColor:"#26364d",timeMode:"auto",timeColor:"#26364d"};
 function getAppearance(){return {...appearanceDefaults,...(appData.settings.appearance||{})};}
 function updateAppearancePreview(){
   const a=getAppearance();
@@ -464,13 +465,13 @@ function openAppearance(){
   const a=getAppearance();
   for(const key of ["bg","weekday","weekend","card","text","sidebar"])document.getElementById("appearance"+key[0].toUpperCase()+key.slice(1)).value=a[key];
   document.getElementById("appearanceFont").value=a.font;document.getElementById("appearanceOpacity").value=a.opacity;document.getElementById("appearanceRadius").value=a.radius;
-  document.getElementById("appearanceWeekdaySize").value=a.weekdaySize;document.getElementById("appearanceDateSize").value=a.dateSize;document.getElementById("appearanceMonthSize").value=a.monthSize;
+  document.getElementById("appearanceWeekdaySize").value=a.weekdaySize;document.getElementById("appearanceMonthSize").value=a.monthSize;document.getElementById("appearanceDateColor").value=a.dateColor||a.text;
   document.getElementById("appearanceSystemText").value=a.systemText;document.getElementById("appearanceWeekTextColor").value=a.weekTextColor;
   document.getElementById("appearanceTimeMode").value=a.timeMode;document.getElementById("appearanceTimeColor").value=a.timeColor;
   document.getElementById("appearanceWeekTextColorRow").style.display=a.systemText==="custom"?"flex":"none";
   document.getElementById("appearanceTimeColorRow").style.display=a.timeMode==="custom"?"flex":"none";
   document.getElementById("appearanceFontValue").textContent=a.font+" px";document.getElementById("appearanceOpacityValue").textContent=a.opacity+"%";document.getElementById("appearanceRadiusValue").textContent=a.radius+" px";
-  document.getElementById("appearanceWeekdaySizeValue").textContent=a.weekdaySize+" px";document.getElementById("appearanceDateSizeValue").textContent=a.dateSize+" px";document.getElementById("appearanceMonthSizeValue").textContent=a.monthSize+" px";
+  document.getElementById("appearanceWeekdaySizeValue").textContent=a.weekdaySize+" px";document.getElementById("appearanceMonthSizeValue").textContent=a.monthSize+" px";
   document.getElementById("themeSelect").value=appData.settings.theme||"standard";
   updateAppearancePreview();appearanceModal.classList.remove("hidden");
 }
@@ -480,15 +481,15 @@ document.getElementById("appearanceClose").onclick=()=>appearanceModal.classList
 document.getElementById("appearanceDone").onclick=()=>appearanceModal.classList.add("hidden");
 function changeAppearance(){
   const a={bg:document.getElementById("appearanceBg").value,weekday:document.getElementById("appearanceWeekday").value,weekend:document.getElementById("appearanceWeekend").value,card:document.getElementById("appearanceCard").value,text:document.getElementById("appearanceText").value,sidebar:document.getElementById("appearanceSidebar").value,font:Number(document.getElementById("appearanceFont").value),opacity:Number(document.getElementById("appearanceOpacity").value),radius:Number(document.getElementById("appearanceRadius").value),
-    weekdaySize:Number(document.getElementById("appearanceWeekdaySize").value),dateSize:Number(document.getElementById("appearanceDateSize").value),monthSize:Number(document.getElementById("appearanceMonthSize").value),
+    weekdaySize:Number(document.getElementById("appearanceWeekdaySize").value),dateSize:Number(document.getElementById("appearanceWeekdaySize").value),monthSize:Number(document.getElementById("appearanceMonthSize").value),dateColor:document.getElementById("appearanceDateColor").value,
     systemText:document.getElementById("appearanceSystemText").value,weekTextColor:document.getElementById("appearanceWeekTextColor").value,
     timeMode:document.getElementById("appearanceTimeMode").value,timeColor:document.getElementById("appearanceTimeColor").value};
   appData.settings.appearance=a;appData.settings.theme="custom";document.getElementById("themeSelect").value="custom";
   document.getElementById("appearanceFontValue").textContent=a.font+" px";document.getElementById("appearanceOpacityValue").textContent=a.opacity+"%";document.getElementById("appearanceRadiusValue").textContent=a.radius+" px";
-  document.getElementById("appearanceWeekdaySizeValue").textContent=a.weekdaySize+" px";document.getElementById("appearanceDateSizeValue").textContent=a.dateSize+" px";document.getElementById("appearanceMonthSizeValue").textContent=a.monthSize+" px";
+  document.getElementById("appearanceWeekdaySizeValue").textContent=a.weekdaySize+" px";document.getElementById("appearanceMonthSizeValue").textContent=a.monthSize+" px";
   applySettings();saveStorage();updateAppearancePreview();
 }
-["appearanceBg","appearanceWeekday","appearanceWeekend","appearanceCard","appearanceText","appearanceSidebar","appearanceFont","appearanceOpacity","appearanceRadius","appearanceWeekdaySize","appearanceDateSize","appearanceMonthSize","appearanceWeekTextColor","appearanceTimeColor"].forEach(id=>document.getElementById(id).addEventListener("input",changeAppearance));
+["appearanceBg","appearanceWeekday","appearanceWeekend","appearanceCard","appearanceText","appearanceSidebar","appearanceFont","appearanceOpacity","appearanceRadius","appearanceWeekdaySize","appearanceMonthSize","appearanceDateColor","appearanceWeekTextColor","appearanceTimeColor"].forEach(id=>document.getElementById(id).addEventListener("input",changeAppearance));
 document.querySelectorAll(".appearance-swatch").forEach(btn=>btn.addEventListener("click",()=>{appData.settings.theme=btn.dataset.preset;document.getElementById("themeSelect").value=btn.dataset.preset;applySettings();saveStorage();openAppearance();}));
 document.getElementById("appearanceReset").onclick=()=>{appData.settings.appearance={...appearanceDefaults};appData.settings.theme="standard";document.getElementById("themeSelect").value="standard";applySettings();saveStorage();openAppearance();};
 
