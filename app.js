@@ -43,6 +43,8 @@ function renderWeek(){
     }
     planner.appendChild(section);
     const taskContainer=section.querySelector(".tasks");
+    const visibleTaskLimit=Math.max(6,Math.min(12,Number((appData.settings||{}).maxDayTasks)||6));
+    taskContainer.style.setProperty("--day-task-limit", visibleTaskLimit);
     loadTasks(key,taskContainer);
     // List/column layouts must not inherit old CSS rules that hide every task.
     if(taskView==="list" || taskView==="weekColumns"){
