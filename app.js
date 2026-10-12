@@ -43,14 +43,15 @@ function renderWeek(){
     }
     planner.appendChild(section);
     const taskContainer=section.querySelector(".tasks");
-    const visibleTaskLimit=Math.max(6,Math.min(12,Number((appData.settings||{}).maxDayTasks)||6));
+    const configuredTaskLimit=Math.max(6,Math.min(12,Number((appData.settings||{}).maxDayTasks)||6));
+    // В недельном виде воскресенье показываем компактно: максимум четыре дела.
+    const visibleTaskLimit=(taskView==="weekColumns" && i===6)?Math.min(4,configuredTaskLimit):configuredTaskLimit;
     taskContainer.style.setProperty("--day-task-limit", visibleTaskLimit);
     loadTasks(key,taskContainer);
     // List/column layouts must not inherit old CSS rules that hide every task.
     if(taskView==="list" || taskView==="weekColumns"){
-      const limit=Math.max(6,Math.min(12,Number((appData.settings||{}).maxDayTasks)||6));
       [...taskContainer.children].forEach((task,idx)=>{
-        task.style.setProperty("display",idx<limit?"flex":"none","important");
+        task.style.setProperty("display",idx<visibleTaskLimit?"flex":"none","important");
       });
     }
     sections.push({section,count});
