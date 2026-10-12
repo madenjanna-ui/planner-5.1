@@ -4058,3 +4058,56 @@ body #planner .day .tasks>.task.done {opacity:.62;}
   #planner.week-columns .task{padding:4px!important;font-size:10px!important}
   #planner.week-columns .day-weekday{font-size:11px!important}
 }
+
+
+/* MaDenFlow 6.0 — responsive two-column week, 6–12 tasks and soft task colors */
+#planner.week-columns{
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  grid-template-rows:minmax(0,1fr)!important;grid-auto-flow:column!important;
+  align-items:stretch!important;gap:8px!important;height:calc(100dvh - var(--header-space,120px) - var(--bottom-space,55px))!important;
+  min-height:0!important;overflow:hidden!important;padding:8px!important;box-sizing:border-box!important;
+}
+#planner.week-columns .week-column-stack{display:flex!important;flex-direction:column!important;gap:8px!important;min-width:0!important;min-height:0!important;overflow:hidden!important}
+#planner.week-columns .week-column-left>.day{flex:1 1 0!important;min-height:0!important}
+#planner.week-columns .week-column-right>.day{flex:1 1 0!important;min-height:0!important}
+#planner.week-columns .week-column-right>.day:nth-child(4){flex:.72 1 0!important}
+#planner.week-columns .day.week-column-day{display:flex!important;flex-direction:column!important;min-width:0!important;height:auto!important;flex-basis:0!important;overflow:hidden!important;padding:7px!important;border:1px solid rgba(90,110,140,.32)!important;border-radius:12px!important;gap:4px!important}
+#planner.week-columns .day-content{flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
+#planner.week-columns .tasks{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:repeat(var(--day-task-limit,6),minmax(0,1fr))!important;gap:3px!important;min-height:0!important;height:100%!important;overflow:hidden!important}
+#planner.week-columns .task{display:flex!important;min-width:0!important;width:100%!important;min-height:0!important;height:100%!important;max-height:none!important;padding:3px 5px!important;margin:0!important;border-radius:8px!important;line-height:1.05!important;overflow:hidden!important;box-sizing:border-box!important;border:1px solid var(--task-tint,#dce6f7)!important;background:var(--task-tint,#f4f7fc)!important;position:relative!important}
+#planner.week-columns .task::before{content:""!important;position:absolute!important;left:0!important;top:0!important;bottom:0!important;width:4px!important;background:var(--task-accent,#71c88b)!important;border-radius:8px 0 0 8px!important}
+#planner.week-columns .task-text-wrap{min-width:0!important;overflow:hidden!important;gap:4px!important}
+#planner.week-columns .task-text{font-size:clamp(9px,1.05vw,13px)!important;line-height:1.1!important;white-space:nowrap!important;text-overflow:ellipsis!important;overflow:hidden!important}
+#planner.week-columns .task-time{font-size:clamp(8px,.85vw,11px)!important;min-width:0!important}
+#planner.week-columns .task-check,#planner.week-columns .checkmark{width:14px!important;height:14px!important;flex:0 0 14px!important;margin-right:4px!important}
+#planner.week-columns .task:nth-child(n+13){display:none!important}
+#planner.week-columns .day-title{flex:0 0 auto!important;margin:0!important;padding:3px 0 6px!important;border-bottom:1px solid rgba(90,110,140,.4)!important}
+#planner.week-columns .day-date-side{display:flex!important;flex-direction:row!important;align-items:baseline!important;gap:4px!important;white-space:nowrap!important}
+#planner.week-columns .day-weekday{font-size:clamp(10px,1vw,13px)!important}
+#planner.week-columns .day-number{font-size:clamp(14px,1.3vw,18px)!important}
+#planner.week-columns .day-month{font-size:10px!important;text-transform:lowercase!important}
+@media(max-width:520px){
+ #planner.week-columns{gap:5px!important;padding:5px!important}
+ #planner.week-columns .week-column-stack{gap:5px!important}
+ #planner.week-columns .day.week-column-day{padding:4px!important}
+ #planner.week-columns .task{padding:2px 3px 2px 5px!important}
+ #planner.week-columns .task-text{font-size:clamp(8px,2.1vw,11px)!important}
+ #planner.week-columns .task-time{font-size:8px!important}
+ #planner.week-columns .task-check,#planner.week-columns .checkmark{width:11px!important;height:11px!important;flex-basis:11px!important;margin-right:2px!important}
+}
+/* Six soft background colors for task cards */
+.task.color-soft-blue{--task-accent:#5795ee;--task-tint:#e5efff}
+.task.color-soft-green{--task-accent:#44ad78;--task-tint:#e2f5e9}
+.task.color-soft-orange{--task-accent:#e99a37;--task-tint:#fff0dc}
+.task.color-soft-pink{--task-accent:#e96d91;--task-tint:#fde6ee}
+.task.color-soft-purple{--task-accent:#9272e8;--task-tint:#eee8ff}
+.task.color-soft-teal{--task-accent:#38a9a5;--task-tint:#e0f6f4}
+
+/* Apply the six pastel task colors in all planner views, not only the two-column view */
+.task.color-soft-blue{background:#e5efff!important;border:1px solid #5795ee!important;--task-accent:#5795ee;--task-tint:#e5efff}
+.task.color-soft-green{background:#e2f5e9!important;border:1px solid #44ad78!important;--task-accent:#44ad78;--task-tint:#e2f5e9}
+.task.color-soft-orange{background:#fff0dc!important;border:1px solid #e99a37!important;--task-accent:#e99a37;--task-tint:#fff0dc}
+.task.color-soft-pink{background:#fde6ee!important;border:1px solid #e96d91!important;--task-accent:#e96d91;--task-tint:#fde6ee}
+.task.color-soft-purple{background:#eee8ff!important;border:1px solid #9272e8!important;--task-accent:#9272e8;--task-tint:#eee8ff}
+.task.color-soft-teal{background:#e0f6f4!important;border:1px solid #38a9a5!important;--task-accent:#38a9a5;--task-tint:#e0f6f4}
+.task.color-soft-blue::before,.task.color-soft-green::before,.task.color-soft-orange::before,.task.color-soft-pink::before,.task.color-soft-purple::before,.task.color-soft-teal::before{background:var(--task-accent)!important}

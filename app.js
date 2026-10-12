@@ -59,6 +59,13 @@ function renderWeek(){
       section.style.flex=""; section.style.removeProperty("--list-count");
     });
   }
+  if(taskView==="weekColumns"){
+    const days=Array.from(planner.querySelectorAll(":scope > .day"));
+    const left=document.createElement("div"); left.className="week-column-stack week-column-left";
+    const right=document.createElement("div"); right.className="week-column-stack week-column-right";
+    days.forEach((day,i)=>{ day.style.gridRow=""; day.style.gridColumn=""; day.classList.add("week-column-day"); (i<3?left:right).appendChild(day); });
+    planner.replaceChildren(left,right);
+  }
   updateDayStatus(); activateDays();
 }
 function activateDays(){
@@ -322,6 +329,7 @@ function openSettings(){
   if(sidebarColorSelect) sidebarColorSelect.value=appData.settings.sidebarColor||"bluegray";
   document.getElementById("gradientDaysToggle").checked=!!appData.settings.gradientDays;
   document.getElementById("taskViewSelect").value=appData.settings.taskView||"cards";
+  const maxDayTasksSelect=document.getElementById("maxDayTasksSelect"); if(maxDayTasksSelect) maxDayTasksSelect.value=String(appData.settings.maxDayTasks||6);
   const listColorSelect=document.getElementById("listTextColorSelect");
   if(listColorSelect) listColorSelect.value=appData.settings.listTextColor||"navy";
   document.getElementById("notificationsToggle").checked=!!appData.settings.notifications;
@@ -340,6 +348,7 @@ document.getElementById("themeSelect").onchange=e=>{appData.settings.theme=e.tar
 const sidebarColorSelect=document.getElementById("sidebarColorSelect");
 if(sidebarColorSelect) sidebarColorSelect.onchange=e=>{appData.settings.sidebarColor=e.target.value;applySettings();saveStorage()};
 document.getElementById("taskViewSelect").onchange=e=>{appData.settings.taskView=e.target.value;applySettings();saveStorage();renderWeek()};
+const maxDayTasksSelect=document.getElementById("maxDayTasksSelect"); if(maxDayTasksSelect) maxDayTasksSelect.onchange=e=>{appData.settings.maxDayTasks=Math.max(6,Math.min(12,Number(e.target.value)||6));saveStorage();renderWeek()};
 const listTextColorSelect=document.getElementById("listTextColorSelect");
 if(listTextColorSelect) listTextColorSelect.onchange=e=>{appData.settings.listTextColor=e.target.value;applySettings();saveStorage()};
 
