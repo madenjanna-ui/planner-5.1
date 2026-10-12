@@ -12,7 +12,9 @@ function renderWeek(){
   const fmt=d=>`${d.getDate()}.${String(d.getMonth()+1).padStart(2,"0")}.${d.getFullYear()}`;
   weekTitle.textContent=`${fmt(monday)} – ${fmt(sunday)}`;
   let maxTasks=0;
-  const listMode=(appData.settings||{}).taskView==="list";
+  const taskView=(appData.settings||{}).taskView||"cards";
+  const listMode=taskView==="list";
+  planner.classList.toggle("week-columns",taskView==="weekColumns");
   const today=new Date(); today.setHours(0,0,0,0);
   const sections=[];
   for(let i=0;i<7;i++){
@@ -26,6 +28,16 @@ function renderWeek(){
     if(dayOnly<today) section.classList.add("past-day");
     section.dataset.date=key; section.dataset.taskCount=count;
     section.innerHTML=`<div class="day-content"><div class="tasks"></div></div><div class="day-title"><div class="day-date-side"><span class="day-weekday">${weekDays[i]}</span><span class="day-number">${date.getDate()}</span><span class="day-month">${date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","")}</span>${date.toDateString()===new Date().toDateString()?'<span class="day-star">★</span>':''}</div></div>`;
+    if(taskView==="weekColumns"){
+      // Левый столбец: Пн–Ср; правый: Чт–Вс.
+      const positions=[ [1,1],[2,1],[3,1],[1,2],[2,2],[3,2],[4,2] ];
+      section.style.gridRow=String(positions[i][0]);
+      section.style.gridColumn=String(positions[i][1]);
+      section.classList.add("week-column-day");
+    }else{
+      section.style.gridRow=""; section.style.gridColumn="";
+      section.classList.remove("week-column-day");
+    }
     planner.appendChild(section);
     loadTasks(key,section.querySelector(".tasks"));
     sections.push({section,count});
@@ -106,9 +118,6 @@ function openDayPopup(dateKey){
       document.getElementById("taskModalTitle").textContent="Новая задача";
       document.getElementById("newTaskInput").value="";
       document.getElementById("newTaskTime").value="";
-      setTaskEditorPriority("normal");
-      document.getElementById("recurrenceBox").classList.remove("open");
-      document.getElementById("repeatOptions").classList.add("hidden");
       document.getElementById("repeatTask").checked=false;
       document.getElementById("repeatOptions").classList.add("hidden");
       document.getElementById("recurrenceBox").classList.remove("hidden");
@@ -154,8 +163,6 @@ function openTaskEditor(dateKey,index){
   document.getElementById("taskModalTitle").textContent="Изменить задачу";
   document.getElementById("newTaskInput").value=task.text||"";
   document.getElementById("newTaskTime").value=task.time||"";
-  setTaskEditorPriority(task.priority||"normal");
-  document.getElementById("recurrenceBox").classList.remove("open");
   const recurrence=task.recurrenceId&&typeof getRecurrence==="function"?getRecurrence(task.recurrenceId):null;
   document.getElementById("repeatTask").checked=!!recurrence;
   document.getElementById("recurrenceBox").classList.remove("hidden");
@@ -171,38 +178,12 @@ function openTaskEditor(dateKey,index){
 const repeatToggle=document.getElementById("repeatTask");
 const repeatTypeSelect=document.getElementById("repeatType");
 if(repeatToggle){repeatToggle.addEventListener("change",()=>{
-  const box=document.getElementById("recurrenceBox");
   document.getElementById("repeatOptions").classList.toggle("hidden",!repeatToggle.checked);
-  box.classList.toggle("open",repeatToggle.checked);
+  document.getElementById("recurrenceBox").classList.toggle("hidden",!repeatToggle.checked && !document.getElementById("taskModal").dataset.editDate);
 });}
 if(repeatTypeSelect){repeatTypeSelect.addEventListener("change",()=>{
   document.getElementById("repeatWeekdays").classList.toggle("hidden",repeatTypeSelect.value!=="customDays");
 });}
-
-// Compact editor controls: priority selection, recurrence disclosure and close button.
-function setTaskEditorPriority(value){
-  const modal=document.getElementById("taskModal");
-  if(!modal)return;
-  modal.dataset.priority=value||"normal";
-  document.querySelectorAll("#taskModal .priority-choice").forEach(btn=>{
-    btn.classList.toggle("selected",btn.dataset.priority===modal.dataset.priority);
-  });
-}
-document.querySelectorAll("#taskModal .priority-choice").forEach(btn=>{
-  btn.addEventListener("click",()=>setTaskEditorPriority(btn.dataset.priority));
-});
-const repeatDisclosure=document.getElementById("repeatDisclosure");
-if(repeatDisclosure)repeatDisclosure.addEventListener("click",()=>{
-  const box=document.getElementById("recurrenceBox");
-  const opts=document.getElementById("repeatOptions");
-  const toggle=document.getElementById("repeatTask");
-  const opening=opts.classList.contains("hidden");
-  box.classList.toggle("open",opening);
-  opts.classList.toggle("hidden",!opening);
-  if(toggle)toggle.checked=opening;
-});
-const closeTaskModal=document.getElementById("closeTaskModal");
-if(closeTaskModal)closeTaskModal.addEventListener("click",()=>document.getElementById("taskModal").classList.add("hidden"));
 
 // Сохранение и отмена задачи. Этот обработчик должен находиться в app.js,
 // потому что именно здесь открывается форма taskModal.
@@ -235,7 +216,6 @@ if(saveTaskButton){
           }
         }else if(typeof editTask==="function"){
           editTask(editDate,Number(editIndex),text,time.value);
-          const edited=getTasks(editDate)[Number(editIndex)]; if(edited)edited.priority=modal.dataset.priority||"normal"; if(typeof saveTasks==="function")saveTasks();
         }else{ alert("Не удалось найти функцию редактирования задачи."); return; }
       }else if(document.getElementById("repeatTask").checked){
         if(typeof addRecurringTask!=="function"){ alert("Функция повторяющихся задач недоступна."); return; }
@@ -245,7 +225,7 @@ if(saveTaskButton){
         addRecurringTask(selectedDate,text,repeatType,document.getElementById("repeatUntil").value,time.value,repeatDays);
       }else{
         if(typeof addTask!=="function"){ alert("Функция сохранения задач недоступна."); return; }
-        addTask(selectedDate,text,{time:time.value,priority:modal.dataset.priority||"normal"});
+        addTask(selectedDate,text,{time:time.value});
       }
       modal.classList.add("hidden");
       modal.dataset.editDate=""; modal.dataset.editIndex=""; modal.dataset.editChain="0";

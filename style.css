@@ -4023,46 +4023,38 @@ body #planner .day .tasks>.task.done {opacity:.62;}
 @media(prefers-reduced-motion:reduce){.startup-splash *{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 
 
-/* Compact task editor refresh */
-#taskModal .task-editor{
-  width:min(390px,100%);
-  max-height:min(88dvh,720px);
-  overflow-y:auto;
-  padding:18px;
-  border-radius:20px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+/* MaDenFlow: optional two-column week view. Days stack vertically; up to six task cards remain in one column. */
+#planner.week-columns{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  grid-template-rows:repeat(4,minmax(0,1fr))!important;
+  grid-auto-flow:row!important;
+  align-items:stretch!important;
+  gap:8px!important;
+  max-width:none!important;
+  height:calc(100dvh - var(--header-space) - var(--bottom-space))!important;
+  overflow-y:auto!important;
+  padding:8px!important;
 }
-#taskModal .task-editor-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-#taskModal .task-editor-head h3{margin:0;text-align:left;font-size:19px;line-height:1.2}
-#closeTaskModal{width:34px;height:34px;border:0;border-radius:50%;background:#eef2f8;color:#4b5563;font-size:25px;line-height:1;flex:0 0 auto}
-#taskModal #newTaskInput{margin:0;padding:12px 13px;min-height:44px}
-#taskModal .task-time-label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;font-weight:600}
-#taskModal .task-time-label input{width:140px;margin:0;padding:9px 10px}
-#taskModal .priority-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
-#taskModal .priority-choice{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;padding:10px 4px;border:1px solid #e0e5ee;border-radius:11px;background:#fff;font-size:12px;font-weight:650;color:#394150}
-#taskModal .priority-choice i{width:9px;height:9px;border-radius:50%;background:#63a982;flex:0 0 auto}
-#taskModal .priority-choice.urgent i{background:#d85b61}
-#taskModal .priority-choice.important i{background:#e5a23c}
-#taskModal .priority-choice.selected{border-color:#7198d3;box-shadow:0 0 0 2px #7198d322;background:#f6f9ff}
-#taskModal .repeat-disclosure{width:100%;display:flex;align-items:center;gap:9px;padding:10px 2px;border:0;background:transparent;text-align:left;font-weight:650;color:inherit}
-#taskModal .repeat-disclosure>span:first-child{font-size:20px;color:var(--primary)}
-#taskModal .repeat-chevron{margin-left:auto;font-size:22px;color:#8791a2;transition:transform .15s}
-#taskModal .recurrence-box.open .repeat-chevron{transform:rotate(90deg)}
-#taskModal .switch-row{display:flex;align-items:center;gap:8px;margin:0;padding:7px 0;font-size:13px}
-#taskModal .switch-row input{width:17px;height:17px;margin:0}
-#taskModal .repeat-options{padding:8px 10px;background:#f5f7fb;border-radius:12px}
-#taskModal .repeat-options label{font-size:13px}
-#taskModal .repeat-options input,#taskModal .repeat-options select{margin:5px 0 8px;padding:9px 10px}
-#taskModal .repeat-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-#taskModal .repeat-weekdays label{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px}
-#taskModal .repeat-weekdays input{width:15px;height:15px;margin:0}
-#taskModal .modal-buttons{gap:8px;margin-top:2px}
-#taskModal .modal-buttons button{height:42px;border-radius:12px}
-#taskModal .chain-edit-hint{margin:0;padding:8px 10px;font-size:12px}
-@media(max-width:480px){
- #taskModal.modal{padding:10px;align-items:center}
- #taskModal .task-editor{padding:15px;gap:9px;max-height:88dvh}
- #taskModal .priority-choice{font-size:11px}
+#planner.week-columns .day.week-column-day{
+  display:flex!important; flex-direction:column!important;
+  min-width:0!important; min-height:0!important; height:auto!important;
+  flex:none!important; overflow:hidden!important; padding:7px!important;
+  border:1px solid rgba(90,110,140,.32)!important;
+  border-radius:12px!important; gap:4px!important;
+}
+#planner.week-columns .day-content{flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}
+#planner.week-columns .tasks{display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;gap:3px!important;min-height:0!important;overflow:hidden!important}
+#planner.week-columns .task{flex:0 0 auto!important;min-height:0!important;height:auto!important;padding:4px 6px!important;border-radius:7px!important;font-size:clamp(10px,1.1vw,13px)!important;line-height:1.15!important;overflow:hidden!important}
+#planner.week-columns .task:nth-child(n+7){display:none!important}
+#planner.week-columns .day-title{flex:0 0 auto!important;margin:0!important;padding:3px 0!important;border-bottom:1px solid rgba(90,110,140,.35)!important}
+#planner.week-columns .day-date-side{display:flex!important;flex-direction:row!important;align-items:baseline!important;gap:4px!important;white-space:nowrap!important}
+#planner.week-columns .day-weekday{font-size:12px!important}
+#planner.week-columns .day-number{font-size:15px!important}
+#planner.week-columns .day-month{font-size:10px!important}
+@media(max-width:520px){
+  #planner.week-columns{gap:5px!important;padding:5px!important}
+  #planner.week-columns .day.week-column-day{padding:5px!important}
+  #planner.week-columns .task{padding:4px!important;font-size:10px!important}
+  #planner.week-columns .day-weekday{font-size:11px!important}
 }

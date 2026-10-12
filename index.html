@@ -67,19 +67,13 @@
   <div id="monthScreenGrid" class="month-screen-grid"></div>
   <section class="month-selected-tasks" aria-live="polite"><h3 id="monthSelectedTitle">Дела на выбранный день</h3><div id="monthSelectedTasks" class="month-selected-task-list"></div><button id="openSelectedWeek" type="button">Открыть недельный план</button></section>
 </section>
-<div id="taskModal" class="modal hidden"><div class="modal-box task-editor">
-  <div class="task-editor-head"><h3 id="taskModalTitle">Новая задача</h3><button id="closeTaskModal" type="button" aria-label="Закрыть">×</button></div>
-  <input id="newTaskInput" placeholder="Название задачи" aria-label="Название задачи">
-  <label class="task-time-label"><span>🕒 Время</span><input id="newTaskTime" type="time" aria-label="Время"></label>
-  <div class="priority-picker" role="group" aria-label="Приоритет">
-    <button type="button" class="priority-choice urgent" data-priority="urgent"><i></i>Срочное</button>
-    <button type="button" class="priority-choice important" data-priority="important"><i></i>Важное</button>
-    <button type="button" class="priority-choice normal selected" data-priority="normal"><i></i>Обычное</button>
-  </div>
+<div id="taskModal" class="modal hidden"><div class="modal-box">
+  <h3 id="taskModalTitle">Новая задача</h3>
+  <input id="newTaskInput" placeholder="Введите задачу...">
+  <label class="task-time-label">🕒 Время <input id="newTaskTime" type="time"></label>
   <div id="chainEditHint" class="chain-edit-hint hidden">🔁 Изменения будут применены ко всей цепочке повторяющихся задач.</div>
   <div id="recurrenceBox" class="recurrence-box">
-    <button type="button" id="repeatDisclosure" class="repeat-disclosure"><span>↻</span><span>Повторение</span><span class="repeat-chevron">›</span></button>
-    <label class="switch-row repeat-enable"><input type="checkbox" id="repeatTask"><span>Повторять задачу</span></label>
+    <label class="switch-row"><input type="checkbox" id="repeatTask"><span>🔁 Повторять задачу</span></label>
     <div id="repeatOptions" class="repeat-options hidden">
       <label class="repeat-type-label">Периодичность<select id="repeatType"><option value="daily">Каждый день</option><option value="weekly">Еженедельно</option><option value="weekdays">По будням</option><option value="monthly">Ежемесячно</option><option value="customDays">Выбранные дни недели</option></select></label>
       <div id="repeatWeekdays" class="repeat-weekdays hidden"><label><input type="checkbox" value="0" class="repeat-weekday">Пн</label><label><input type="checkbox" value="1" class="repeat-weekday">Вт</label><label><input type="checkbox" value="2" class="repeat-weekday">Ср</label><label><input type="checkbox" value="3" class="repeat-weekday">Чт</label><label><input type="checkbox" value="4" class="repeat-weekday">Пт</label><label><input type="checkbox" value="5" class="repeat-weekday">Сб</label><label><input type="checkbox" value="6" class="repeat-weekday">Вс</label></div>
@@ -151,6 +145,7 @@
     <select id="taskViewSelect" class="settings-select">
       <option value="cards">Карточки</option>
       <option value="list">Список дел</option>
+      <option value="weekColumns">Неделя в двух колонках</option>
     </select>
   </div>
   <label class="settings-row"><span>🌈 Градиент дней</span><input type="checkbox" id="gradientDaysToggle"></label>
