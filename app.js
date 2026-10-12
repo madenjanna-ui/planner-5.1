@@ -43,11 +43,13 @@ function renderWeek(){
     }
     planner.appendChild(section);
     const taskContainer=section.querySelector(".tasks");
-    const configuredTaskLimit=Math.max(6,Math.min(12,Number((appData.settings||{}).maxDayTasks)||6));
+    const configuredTaskLimit=Math.max(4,Math.min(12,Number((appData.settings||{}).maxDayTasks)||6));
     // В недельном виде воскресенье показываем компактно: максимум четыре дела.
     const visibleTaskLimit=(taskView==="weekColumns" && i===6)?Math.min(4,configuredTaskLimit):configuredTaskLimit;
     taskContainer.style.setProperty("--day-task-limit", visibleTaskLimit);
     loadTasks(key,taskContainer);
+    const actualVisibleCount=Math.min(getTasks(key).length,visibleTaskLimit);
+    taskContainer.style.setProperty("--day-task-count", Math.max(1,actualVisibleCount));
     // List/column layouts must not inherit old CSS rules that hide every task.
     if(taskView==="list" || taskView==="weekColumns"){
       [...taskContainer.children].forEach((task,idx)=>{
@@ -360,7 +362,7 @@ function openSettings(){
   if(sidebarColorSelect) sidebarColorSelect.value=appData.settings.sidebarColor||"bluegray";
   document.getElementById("gradientDaysToggle").checked=!!appData.settings.gradientDays;
   document.getElementById("taskViewSelect").value=appData.settings.taskView||"cards";
-  const maxDayTasksSelect=document.getElementById("maxDayTasksSelect"); if(maxDayTasksSelect) maxDayTasksSelect.value=String(appData.settings.maxDayTasks||6);
+  const maxDayTasksSelect=document.getElementById("maxDayTasksSelect"); if(maxDayTasksSelect) maxDayTasksSelect.value=String(Math.max(4,Math.min(12,Number(appData.settings.maxDayTasks)||6)));
   const listColorSelect=document.getElementById("listTextColorSelect");
   if(listColorSelect) listColorSelect.value=appData.settings.listTextColor||"navy";
   document.getElementById("notificationsToggle").checked=!!appData.settings.notifications;
@@ -377,7 +379,7 @@ document.getElementById("themeSelect").onchange=e=>{appData.settings.theme=e.tar
 const sidebarColorSelect=document.getElementById("sidebarColorSelect");
 if(sidebarColorSelect) sidebarColorSelect.onchange=e=>{appData.settings.sidebarColor=e.target.value;applySettings();saveStorage()};
 document.getElementById("taskViewSelect").onchange=e=>{appData.settings.taskView=e.target.value;applySettings();saveStorage();renderWeek()};
-const maxDayTasksSelect=document.getElementById("maxDayTasksSelect"); if(maxDayTasksSelect) maxDayTasksSelect.onchange=e=>{appData.settings.maxDayTasks=Math.max(6,Math.min(12,Number(e.target.value)||6));saveStorage();renderWeek()};
+const maxDayTasksSelect=document.getElementById("maxDayTasksSelect"); if(maxDayTasksSelect) maxDayTasksSelect.onchange=e=>{appData.settings.maxDayTasks=Math.max(4,Math.min(12,Number(e.target.value)||6));saveStorage();renderWeek()};
 const listTextColorSelect=document.getElementById("listTextColorSelect");
 if(listTextColorSelect) listTextColorSelect.onchange=e=>{appData.settings.listTextColor=e.target.value;applySettings();saveStorage()};
 
