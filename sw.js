@@ -1,7 +1,10 @@
 const CACHE_PREFIX = "madenflow-shell-";
-const CACHE_VERSION = "7.2.0";
+const CACHE_VERSION = "9.17.0";
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
-const SHELL_FILES = ["./", "./index.html", "./style.css", "./app.js", "./storage.js", "./tasks.js", "./service.js", "./visits.js", "./cloud.js", "./manifest.json", "./sw.js"];
+const SHELL_FILES = ["./", "./index.html", "./style.css", "./app.js", "./storage.js", "./tasks.js", "./service.js", "./visits.js", "./cloud.js", "./manifest.json", "./sw.js", "./icons/icon.svg", "./icons/icon-192.png", "./icons/icon-512.png",
+  "./month-backgrounds/month-01.jpg", "./month-backgrounds/month-02.jpg", "./month-backgrounds/month-03.jpg", "./month-backgrounds/month-04.jpg",
+  "./month-backgrounds/month-05.jpg", "./month-backgrounds/month-06.jpg", "./month-backgrounds/month-07.jpg", "./month-backgrounds/month-08.jpg",
+  "./month-backgrounds/month-09.jpg", "./month-backgrounds/month-10.jpg", "./month-backgrounds/month-11.jpg", "./month-backgrounds/month-12.jpg"];
 
 self.addEventListener("install", event => {
   event.waitUntil((async () => {

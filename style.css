@@ -2909,10 +2909,10 @@ body.madenflow-locked{
     content:"";
     position:absolute;
     inset:0;
-    background:rgba(255,255,255,.82);
-    box-shadow:12px 0 36px rgba(30,50,80,.16);
-    backdrop-filter:blur(22px) saturate(1.1);
-    -webkit-backdrop-filter:blur(22px) saturate(1.1);
+    background:rgba(235,242,251,.54);
+    box-shadow:12px 0 36px rgba(30,50,80,.18);
+    backdrop-filter:blur(26px) saturate(1.25);
+    -webkit-backdrop-filter:blur(26px) saturate(1.25);
     border-right:1px solid rgba(255,255,255,.65);
     z-index:-1;
 }
@@ -4431,3 +4431,1286 @@ body[data-custom-appearance="on"] #planner .task-time{
   border-left:5px solid var(--task-accent,#5795ee)!important;
 }
 #planner.week-columns .week-column-stack>.day.week-column-day .tasks>.task::before{display:none!important;content:none!important}
+
+
+/* MaDenFlow 7.5 — action to delete an entire recurring event chain in the day popup */
+.day-popup-delete-chain{font-size:16px!important;min-width:38px}
+.day-popup-delete-chain:active{transform:scale(.96)}
+
+/* MaDenFlow seasonal month palette (v7.6). Custom task colors always take precedence. */
+#planner .day-title{background:var(--season-tint,transparent);border-radius:10px 10px 5px 5px;}
+#planner .day-weekday{ text-decoration-color:var(--season-color,currentColor); }
+#planner .day-month{color:var(--season-color,var(--text2,#718096))!important;}
+#planner .day.today .day-title{box-shadow:inset 0 -2px 0 var(--season-color,transparent);}
+#planner .task.seasonal-task-default,
+#planner.week-columns .week-column-stack .task.seasonal-task-default{
+  background:var(--season-task-tint,rgba(100,130,160,.10))!important;
+  border-color:color-mix(in srgb,var(--season-task-accent,#789) 52%,transparent)!important;
+  --task-accent:var(--season-task-accent,#789);
+  --task-tint:var(--season-task-tint,rgba(100,130,160,.10));
+}
+#planner .task.seasonal-task-default::before{background:var(--season-task-accent,#789)!important;}
+.month-screen-title{transition:background .2s ease,color .2s ease;}
+.month-screen-grid .month-weekday{color:var(--season-color,var(--text2));background:var(--season-tint,transparent);border-radius:8px 8px 4px 4px;}
+.month-screen-grid .month-day{background:var(--season-tint,rgba(240,246,252,.8));}
+.month-screen-grid .month-day.today{box-shadow:inset 0 0 0 2px var(--season-color,var(--primary));}
+.month-screen-grid .month-day.selected{background:var(--season-color,var(--primary));color:#fff;}
+.month-screen-grid .month-day.has-tasks::after{background:var(--season-color,var(--primary));}
+
+/* MaDenFlow 7.7 — seasonal landscapes with frosted-glass surfaces */
+#planner .day{
+  position:relative;
+  isolation:isolate;
+  background-image:linear-gradient(145deg,rgba(18,32,52,.16),rgba(20,30,48,.30)),var(--month-landscape);
+  background-size:cover;
+  background-position:center;
+  border:1px solid rgba(255,255,255,.30);
+  box-shadow:0 8px 28px rgba(20,35,55,.16);
+}
+#planner .day-title,
+#planner .day-content{
+  position:relative;
+  z-index:1;
+}
+#planner .day-title{
+  background:rgba(255,255,255,.36);
+  -webkit-backdrop-filter:blur(14px) saturate(135%);
+  backdrop-filter:blur(14px) saturate(135%);
+  border:1px solid rgba(255,255,255,.32);
+  color:#15263a;
+}
+#planner .day-weekday,#planner .day-number{color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.38)}
+#planner .day-month{color:#fff!important;text-shadow:0 1px 5px rgba(0,0,0,.42)}
+#planner .task,
+#planner .task.seasonal-task-default,
+#planner.week-columns .week-column-stack .task.seasonal-task-default{
+  background:rgba(255,255,255,.78)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(145%);
+  backdrop-filter:blur(18px) saturate(145%);
+  border-color:rgba(255,255,255,.58)!important;
+  box-shadow:0 3px 12px rgba(15,30,50,.12);
+}
+#planner .task.seasonal-task-default{background:color-mix(in srgb,var(--season-task-tint) 42%,rgba(255,255,255,.78))!important;}
+#monthScreen{
+  background-image:linear-gradient(145deg,rgba(13,28,48,.32),rgba(20,30,48,.48)),var(--month-landscape);
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+}
+#monthScreen .month-screen-head .logo{color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.45)}
+#monthScreen .month-screen-title{color:#fff!important;background:rgba(255,255,255,.18)!important;border:1px solid rgba(255,255,255,.28);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);text-shadow:0 1px 8px rgba(0,0,0,.28)}
+#monthScreen .month-screen-nav button,
+#monthScreen .month-screen-grid,
+#monthScreen .month-selected-tasks{
+  background:rgba(245,249,255,.30);
+  border:1px solid rgba(255,255,255,.34);
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
+  backdrop-filter:blur(22px) saturate(145%);
+  box-shadow:0 12px 36px rgba(8,22,40,.18);
+}
+#monthScreen .month-weekday{color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.4)}
+#monthScreen .month-day{background:rgba(255,255,255,.40);border:1px solid rgba(255,255,255,.24);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#17263b}
+#monthScreen .month-day.selected{background:var(--season-color,#2878a5);color:#fff}
+#monthScreen .month-selected-tasks{border-radius:22px;padding:14px;color:#fff}
+#monthScreen .month-selected-tasks h3{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.35)}
+#monthScreen .month-task-row{background:rgba(255,255,255,.74);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#17263b;border:1px solid rgba(255,255,255,.45)}
+#monthScreen #openSelectedWeek{background:rgba(255,255,255,.82);color:#17263b}
+body.dark #planner .day-title{background:rgba(20,28,43,.40);color:#fff}
+body.dark #planner .task{background:rgba(25,34,51,.76)!important;color:#f4f7ff}
+body.dark #monthScreen .month-day{color:#fff;background:rgba(20,30,45,.42)}
+@media(prefers-reduced-transparency:reduce){#planner .task,#planner .day-title,#monthScreen .month-screen-grid,#monthScreen .month-day{backdrop-filter:none;-webkit-backdrop-filter:none;background-color:rgba(245,248,252,.92)}}
+
+
+/* MaDenFlow 7.8 — landscape stays visible across the full week; blur only glass surfaces. */
+#planner{
+  background-image:linear-gradient(145deg,rgba(15,30,48,.10),rgba(15,30,48,.18)),var(--week-landscape);
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+  background-attachment:local; border-radius:18px;
+}
+#planner .day,
+#planner .day.weekend,
+#planner .day.today,
+#planner .day:not(.weekend),
+body[data-custom-appearance="on"] #planner .day:not(.weekend),
+body[data-custom-appearance="on"] #planner .day.weekend{
+  background-color:rgba(255,255,255,.035)!important;
+  background-image:none!important;
+  border-color:rgba(255,255,255,.28)!important;
+  box-shadow:0 4px 18px rgba(12,25,42,.08)!important;
+}
+#planner .day-title{
+  background:rgba(255,255,255,.22)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(135%);
+  backdrop-filter:blur(12px) saturate(135%);
+  border:1px solid rgba(255,255,255,.30)!important;
+}
+#planner .day-content{background:transparent!important;}
+#planner .task,
+#planner .task.seasonal-task-default,
+#planner.week-columns .week-column-stack .task.seasonal-task-default{
+  background:rgba(245,250,255,.70)!important;
+  -webkit-backdrop-filter:blur(16px) saturate(145%);
+  backdrop-filter:blur(16px) saturate(145%);
+  border-color:rgba(255,255,255,.48)!important;
+}
+#planner .task.seasonal-task-default{
+  background:color-mix(in srgb,var(--season-task-tint,rgba(180,200,220,.2)) 35%,rgba(245,250,255,.68))!important;
+}
+body.dark #planner .day, body.dark #planner .day.weekend, body.dark #planner .day.today{background-color:rgba(10,20,35,.10)!important;}
+body.dark #planner .task{background:rgba(20,32,50,.64)!important;}
+
+/* MaDenFlow 7.9 — final glass layering fix: crisp scenery on the canvas, blur only windows. */
+#planner{
+  position:relative!important;
+  isolation:isolate!important;
+  background-color:transparent!important;
+  background-image:var(--week-landscape)!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-attachment:scroll!important;
+}
+#planner.week-columns{background-image:var(--week-landscape)!important;}
+#planner>.week-column-stack{background:transparent!important;}
+#planner .day,
+#planner .day.weekend,
+#planner .day.today,
+body[data-custom-appearance="on"] #planner .day:not(.weekend),
+body[data-custom-appearance="on"] #planner .day.weekend{
+  background-color:rgba(230,240,250,.055)!important;
+  background-image:none!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  border:1px solid rgba(255,255,255,.25)!important;
+  box-shadow:0 3px 14px rgba(15,30,50,.07)!important;
+}
+#planner .day-title{
+  background:rgba(235,244,255,.19)!important;
+  -webkit-backdrop-filter:blur(9px) saturate(125%)!important;
+  backdrop-filter:blur(9px) saturate(125%)!important;
+  border:1px solid rgba(255,255,255,.27)!important;
+  color:#fff!important;
+  text-shadow:0 1px 4px rgba(0,0,0,.32)!important;
+}
+#planner .day-content,#planner .tasks{background:transparent!important;}
+#planner .task,
+#planner .task.seasonal-task-default,
+#planner.week-columns .week-column-stack .task.seasonal-task-default{
+  background:rgba(245,250,255,.64)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(130%)!important;
+  backdrop-filter:blur(12px) saturate(130%)!important;
+  border-color:rgba(255,255,255,.48)!important;
+  box-shadow:0 2px 9px rgba(15,30,50,.09)!important;
+}
+#monthScreen{
+  background-color:transparent!important;
+  background-image:var(--month-landscape)!important;
+  background-size:cover!important;background-position:center center!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+}
+#monthScreen::before,#monthScreen::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+#monthScreen .month-screen-grid,
+#monthScreen .month-selected-tasks{
+  background:rgba(245,249,255,.20)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(130%)!important;
+  backdrop-filter:blur(14px) saturate(130%)!important;
+}
+#monthScreen .month-day{background:rgba(245,249,255,.30)!important;}
+#monthScreen .month-task-row{background:rgba(245,249,255,.62)!important;}
+
+
+/* MaDenFlow 8.0 — crisp seasonal landscape assets; blur only glass panels. */
+#planner, #monthScreen {
+  filter:none!important;
+  -webkit-filter:none!important;
+}
+#planner { background-color:transparent!important; }
+#planner .day-title { background:rgba(235,244,255,.20)!important; }
+#planner .task { background:rgba(245,250,255,.76)!important; color:#17263b!important; text-shadow:none!important; }
+#planner .task * { color:inherit; }
+#monthScreen .month-day { background:rgba(245,249,255,.43)!important; }
+#monthScreen .month-task-row { background:rgba(245,249,255,.78)!important; }
+
+
+/* MaDenFlow 8.1 — optional scenic glass effect */
+.appearance-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px;margin:10px 0;border:1px solid var(--line,rgba(120,140,170,.25));border-radius:12px;background:rgba(130,150,180,.08)}
+.appearance-toggle-row span{display:flex;flex-direction:column;gap:4px}.appearance-toggle-row strong{font-size:14px}.appearance-toggle-row small{font-size:12px;opacity:.72}.appearance-toggle-row input{width:20px;height:20px;accent-color:#1687a7;flex-shrink:0}
+body[data-scenic-glass="off"] #planner,body[data-scenic-glass="off"] #monthScreen{background-image:none!important}
+body[data-scenic-glass="off"] #planner .day-title,body[data-scenic-glass="off"] #planner .task,body[data-scenic-glass="off"] #monthScreen .month-screen-grid,body[data-scenic-glass="off"] #monthScreen .month-selected-tasks,body[data-scenic-glass="off"] #monthScreen .month-day,body[data-scenic-glass="off"] #monthScreen .month-task-row{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body[data-scenic-glass="off"] #planner .day-title{background:var(--custom-weekday,#dce7fa)!important;color:var(--custom-text,#26364d)!important;text-shadow:none!important}
+body[data-scenic-glass="off"] #planner .task{background:var(--custom-card,#fff)!important}
+body[data-scenic-glass="off"] #monthScreen .month-screen-grid,body[data-scenic-glass="off"] #monthScreen .month-selected-tasks{background:var(--custom-bg,#eef3fb)!important}
+body[data-scenic-glass="off"] #monthScreen .month-day{background:var(--custom-weekday,#dce7fa)!important}
+body[data-scenic-glass="off"] #monthScreen .month-task-row{background:var(--custom-card,#fff)!important}
+
+/* MaDenFlow 8.2 — stronger matte day panels, crisp landscape remains visible between them */
+body[data-scenic-glass="on"] #planner .day,
+body:not([data-scenic-glass="off"]) #planner .day {
+  background: rgba(224, 234, 246, .22) !important;
+  border: 1px solid rgba(255,255,255,.34) !important;
+  -webkit-backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(112%) !important;
+  backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(112%) !important;
+}
+body[data-scenic-glass="on"] #planner .day-title,
+body:not([data-scenic-glass="off"]) #planner .day-title {
+  background: rgba(226, 235, 248, .46) !important;
+  border: 1px solid rgba(255,255,255,.48) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(125%) !important;
+  backdrop-filter: blur(28px) saturate(125%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 3px 12px rgba(18,32,52,.10) !important;
+}
+body[data-scenic-glass="on"] #planner .task,
+body:not([data-scenic-glass="off"]) #planner .task {
+  background: rgba(235, 242, 251, .78) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+  backdrop-filter: blur(16px) saturate(120%) !important;
+  border-color: rgba(255,255,255,.64) !important;
+  box-shadow: 0 3px 10px rgba(15,30,50,.10) !important;
+}
+body[data-scenic-glass="on"] #planner .task.seasonal-task-default,
+body:not([data-scenic-glass="off"]) #planner .task.seasonal-task-default {
+  background: color-mix(in srgb, var(--season-task-tint, #c7d9ec) 28%, rgba(235,242,251,.80)) !important;
+}
+body.dark[data-scenic-glass="on"] #planner .day { background:rgba(22,32,48,.28)!important; }
+body.dark[data-scenic-glass="on"] #planner .day-title { background:rgba(22,32,48,.58)!important; }
+body.dark[data-scenic-glass="on"] #planner .task { background:rgba(22,32,48,.78)!important;color:#f4f7ff!important; }
+
+/* MaDenFlow 8.3: live blur slider and frosted side navigation */
+body[data-scenic-glass="on"] #planner .day { -webkit-backdrop-filter: blur(var(--day-card-blur,12px)) saturate(112%) !important; backdrop-filter: blur(var(--day-card-blur,12px)) saturate(112%) !important; }
+body[data-scenic-glass="on"] .side-panel::after { background:rgba(230,239,250,.48) !important; -webkit-backdrop-filter:blur(26px) saturate(1.25) !important; backdrop-filter:blur(26px) saturate(1.25) !important; border-right:1px solid rgba(255,255,255,.62) !important; }
+body[data-scenic-glass="off"] .side-panel::after { -webkit-backdrop-filter:none !important; backdrop-filter:none !important; background:var(--custom-sidebar,#e0e8f2) !important; }
+
+
+/* MaDenFlow 8.4 — visible glass panels and menu. Keep the scenery crisp outside surfaces. */
+body[data-scenic-glass="on"] #planner .day,
+body:not([data-scenic-glass="off"]) #planner .day {
+  background: rgba(222, 233, 247, .20) !important;
+  -webkit-backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(118%) !important;
+  backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(118%) !important;
+  border: 1px solid rgba(255,255,255,.48) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 5px 18px rgba(20,35,55,.12) !important;
+}
+body[data-scenic-glass="on"] #planner .day-title,
+body:not([data-scenic-glass="off"]) #planner .day-title {
+  background: rgba(226, 237, 250, .34) !important;
+  -webkit-backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(120%) !important;
+  backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(120%) !important;
+  border: 1px solid rgba(255,255,255,.58) !important;
+}
+body[data-scenic-glass="on"] #sidePanel,
+body:not([data-scenic-glass="off"]) #sidePanel {
+  background: rgba(228, 237, 249, .18) !important;
+  isolation: isolate;
+}
+body[data-scenic-glass="on"] #sidePanel::after,
+body:not([data-scenic-glass="off"]) #sidePanel::after {
+  background: rgba(222, 234, 249, .30) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(135%) !important;
+  backdrop-filter: blur(30px) saturate(135%) !important;
+  border-right: 1px solid rgba(255,255,255,.72) !important;
+  box-shadow: 12px 0 36px rgba(22,38,62,.20) !important;
+}
+body[data-scenic-glass="on"] #sidePanel .side-nav-btn,
+body:not([data-scenic-glass="off"]) #sidePanel .side-nav-btn {
+  background: rgba(255,255,255,.48) !important;
+  border: 1px solid rgba(255,255,255,.56) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 3px 12px rgba(24,42,66,.08) !important;
+}
+body[data-scenic-glass="off"] #planner .day,
+body[data-scenic-glass="off"] #planner .day-title {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+body.dark[data-scenic-glass="on"] #planner .day { background: rgba(20,31,48,.34) !important; }
+body.dark[data-scenic-glass="on"] #planner .day-title { background: rgba(20,31,48,.50) !important; }
+body.dark[data-scenic-glass="on"] #sidePanel::after { background: rgba(19,29,45,.54) !important; }
+body.dark[data-scenic-glass="on"] #sidePanel .side-nav-btn { background: rgba(34,47,66,.72) !important; color: #f4f7ff !important; }
+
+
+/* MaDenFlow 8.5 — white frosted week cards with a readable month/date header */
+body:not([data-scenic-glass="off"]) #planner .day {
+  background: rgba(248, 251, 255, .48) !important;
+  border: 1px solid rgba(255, 255, 255, .78) !important;
+  -webkit-backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(108%) !important;
+  backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(108%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.58), 0 5px 18px rgba(28,43,63,.10) !important;
+}
+body:not([data-scenic-glass="off"]) #planner .day-title {
+  background: rgba(250, 252, 255, .84) !important;
+  color: #24364c !important;
+  text-shadow: none !important;
+  border: 1px solid rgba(255,255,255,.94) !important;
+  -webkit-backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(105%) !important;
+  backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(105%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 2px 8px rgba(25,42,62,.08) !important;
+}
+body:not([data-scenic-glass="off"]) #planner .day-title :is(span, strong, small, time, .month, .weekday, .day-number) {
+  color: #24364c !important;
+  text-shadow: none !important;
+}
+body:not([data-scenic-glass="off"]) #planner .task {
+  background: rgba(255,255,255,.91) !important;
+  color: #26364d !important;
+  border-color: rgba(255,255,255,.96) !important;
+}
+body:not([data-scenic-glass="off"]) #sidePanel {
+  background: transparent !important;
+  isolation: isolate;
+}
+body:not([data-scenic-glass="off"]) #sidePanel::after {
+  background: rgba(246, 250, 255, .78) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(112%) !important;
+  backdrop-filter: blur(30px) saturate(112%) !important;
+  border-right: 1px solid rgba(255,255,255,.92) !important;
+  box-shadow: 12px 0 36px rgba(22,38,62,.14) !important;
+}
+body:not([data-scenic-glass="off"]) #sidePanel .side-panel-inner { position:relative; z-index:1; }
+body:not([data-scenic-glass="off"]) #sidePanel .side-nav-btn {
+  background: rgba(255,255,255,.72) !important;
+  color: #26364d !important;
+  border: 1px solid rgba(255,255,255,.94) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 3px 10px rgba(22,38,62,.07) !important;
+}
+body.dark:not([data-scenic-glass="off"]) #planner .day { background:rgba(23,35,52,.48)!important; }
+body.dark:not([data-scenic-glass="off"]) #planner .day-title { background:rgba(242,247,255,.90)!important;color:#24364c!important; }
+body.dark:not([data-scenic-glass="off"]) #planner .task { background:rgba(25,37,55,.91)!important;color:#f4f7ff!important; }
+body.dark:not([data-scenic-glass="off"]) #sidePanel::after { background:rgba(25,37,55,.84)!important; }
+body.dark:not([data-scenic-glass="off"]) #sidePanel .side-nav-btn { background:rgba(42,56,76,.84)!important;color:#f4f7ff!important; }
+
+
+/* MaDenFlow 8.7 - stronger matte cards, crisp headings; preserve layout */
+body:not([data-scenic-glass="off"]) #planner .day {
+  background: rgba(248, 251, 255, .88) !important;
+  border: 1px solid rgba(255,255,255,.96) !important;
+  -webkit-backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(105%) !important;
+  backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(105%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 3px 12px rgba(28,43,63,.09) !important;
+}
+body:not([data-scenic-glass="off"]) #planner .day-title {
+  background: rgba(250,252,255,.96) !important;
+  color: #24364c !important;
+  text-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  box-shadow: 0 1px 4px rgba(25,42,62,.06) !important;
+}
+body:not([data-scenic-glass="off"]) #planner .task {
+  background: rgba(255,255,255,.97) !important;
+  color: #26364d !important;
+  text-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border-color: rgba(255,255,255,.98) !important;
+}
+body.dark:not([data-scenic-glass="off"]) #planner .day { background: rgba(23,35,52,.84) !important; }
+body.dark:not([data-scenic-glass="off"]) #planner .day-title { background: rgba(242,247,255,.97) !important; color:#24364c !important; }
+body.dark:not([data-scenic-glass="off"]) #planner .task { background: rgba(25,37,55,.96) !important; color:#f4f7ff !important; }
+
+
+/* MaDenFlow 8.8 — stable opaque matte week cards; no layout changes */
+body[data-scenic-glass="on"] #planner .day,
+body:not([data-scenic-glass="off"]) #planner .day {
+  background-color: rgba(248, 251, 255, .94) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255,255,255,.98) !important;
+  -webkit-backdrop-filter: blur(var(--day-card-blur, 10px)) saturate(103%) !important;
+  backdrop-filter: blur(var(--day-card-blur, 10px)) saturate(103%) !important;
+  color: #24364c !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.96), 0 2px 8px rgba(28,43,63,.08) !important;
+}
+body[data-scenic-glass="on"] #planner .day-title,
+body:not([data-scenic-glass="off"]) #planner .day-title {
+  background: rgba(250,252,255,.98) !important;
+  color: #24364c !important;
+  text-shadow: none !important;
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
+body[data-scenic-glass="on"] #planner .task,
+body:not([data-scenic-glass="off"]) #planner .task {
+  background: rgba(255,255,255,.99) !important; color:#24364c !important;
+  text-shadow:none !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+}
+/* Keep month view cards separate from the weekly planner styles */
+body:not([data-scenic-glass="off"]) #monthScreen .month-screen-grid {
+  background: rgba(248,251,255,.94) !important;
+  -webkit-backdrop-filter: blur(10px) !important; backdrop-filter: blur(10px) !important;
+}
+body:not([data-scenic-glass="off"]) #monthScreen .month-selected-tasks {
+  background: rgba(248,251,255,.96) !important; color:#24364c !important;
+  -webkit-backdrop-filter: blur(8px) !important; backdrop-filter: blur(8px) !important;
+}
+body:not([data-scenic-glass="off"]) #monthScreen .month-day {
+  background: rgba(239,245,255,.96) !important; color:#24364c !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+}
+body:not([data-scenic-glass="off"]) #monthScreen .month-task-row {
+  background: rgba(255,255,255,.98) !important; color:#24364c !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+}
+
+
+/* MaDenFlow 8.9 — visible backdrop blur on weekly day cards only */
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  body:not([data-scenic-glass="off"]) #planner .day {
+    background: rgba(246, 250, 255, .76) !important;
+    background-color: rgba(246, 250, 255, .76) !important;
+    -webkit-backdrop-filter: blur(var(--day-card-blur, 16px)) saturate(112%) !important;
+    backdrop-filter: blur(var(--day-card-blur, 16px)) saturate(112%) !important;
+    isolation: isolate;
+  }
+  body:not([data-scenic-glass="off"]) #planner .day-title {
+    background: rgba(250, 252, 255, .97) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  body:not([data-scenic-glass="off"]) #planner .task {
+    background: rgba(255, 255, 255, .98) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+body[data-scenic-glass="off"] #planner .day {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+body.dark:not([data-scenic-glass="off"]) #planner .day {
+  background: rgba(23, 35, 52, .78) !important;
+}
+
+
+/* MaDenFlow 9.0 — single authoritative matte-glass treatment for weekly day cards.
+   Keep month calendar styling independent. The blur belongs to the day panel, not its header/text. */
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  body:not([data-scenic-glass="off"]) #planner .day {
+    background: rgba(247, 250, 255, .68) !important;
+    border: 1px solid rgba(255, 255, 255, .76) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.42), 0 5px 18px rgba(24,38,58,.12) !important;
+    -webkit-backdrop-filter: blur(var(--day-card-blur, 16px)) saturate(112%) !important;
+    backdrop-filter: blur(var(--day-card-blur, 16px)) saturate(112%) !important;
+  }
+  body:not([data-scenic-glass="off"]) #planner .day-title {
+    background: rgba(248, 251, 255, .94) !important;
+    color: #26364d !important;
+    text-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255,255,255,.96) !important;
+  }
+  body:not([data-scenic-glass="off"]) #planner .day-content,
+  body:not([data-scenic-glass="off"]) #planner .tasks { background: transparent !important; }
+  body:not([data-scenic-glass="off"]) #planner .task {
+    background: rgba(250,252,255,.92) !important;
+    color: #26364d !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+body[data-scenic-glass="off"] #planner .day {
+  background: var(--custom-bg, #eef3fb) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+body.dark:not([data-scenic-glass="off"]) #planner .day {
+  background: rgba(25, 38, 56, .70) !important;
+  border-color: rgba(255,255,255,.24) !important;
+}
+body.dark:not([data-scenic-glass="off"]) #planner .day-title {
+  background: rgba(248,251,255,.94) !important;
+  color: #26364d !important;
+}
+
+
+/* MaDenFlow 9.1 — adjustable matte glass shared by week cards and month surfaces */
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  body:not([data-scenic-glass="off"]) #planner .day {
+    background: rgba(246, 249, 255, var(--glass-matte-alpha, .6025)) !important;
+    background-color: rgba(246, 249, 255, var(--glass-matte-alpha, .6025)) !important;
+    border: 1px solid rgba(255,255,255,.72) !important;
+    -webkit-backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(115%) !important;
+    backdrop-filter: blur(var(--day-card-blur, 12px)) saturate(115%) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.34), 0 4px 14px rgba(22,34,52,.10) !important;
+  }
+  body:not([data-scenic-glass="off"]) #monthScreen .month-screen-grid,
+  body:not([data-scenic-glass="off"]) #monthScreen .month-selected-tasks {
+    background: rgba(246,249,255,var(--glass-matte-alpha,.6025)) !important;
+    -webkit-backdrop-filter: blur(var(--day-card-blur,12px)) saturate(115%) !important;
+    backdrop-filter: blur(var(--day-card-blur,12px)) saturate(115%) !important;
+  }
+}
+body:not([data-scenic-glass="off"]) #planner .day-title {
+  padding-left: 12px !important;
+  background: rgba(250,252,255,.96) !important;
+  color: #26364d !important;
+  text-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border: 1px solid rgba(255,255,255,.92) !important;
+}
+body:not([data-scenic-glass="off"]) #planner .day-title .day-date-side { padding-left: 2px !important; }
+body:not([data-scenic-glass="off"]) #planner .day-title .day-weekday,
+body:not([data-scenic-glass="off"]) #planner .day-title .day-number { color:#26364d !important; font-weight:750 !important; }
+body:not([data-scenic-glass="off"]) #planner .day-title .day-month { color:#1685a1 !important; font-weight:750 !important; }
+body[data-scenic-glass="off"] { --glass-matte-alpha: 0; }
+body.dark:not([data-scenic-glass="off"]) #planner .day { background: rgba(33,45,63,var(--glass-matte-alpha,.6025)) !important; }
+
+/* MaDenFlow 9.2 — reliable matte layer on the whole weekly day card.
+   Use a dedicated pseudo-element so later background rules cannot make the card body transparent. */
+body:not([data-scenic-glass="off"]) #planner .day {
+  position: relative !important;
+  isolation: isolate !important;
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,.48) !important;
+  overflow: hidden !important;
+}
+body:not([data-scenic-glass="off"]) #planner .day::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  border-radius: inherit !important;
+  background: rgba(246,249,255,var(--glass-matte-alpha,.6025)) !important;
+  -webkit-backdrop-filter: blur(var(--day-card-blur,16px)) saturate(115%) !important;
+  backdrop-filter: blur(var(--day-card-blur,16px)) saturate(115%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.36) !important;
+}
+body:not([data-scenic-glass="off"]) #planner .day > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+body[data-scenic-glass="off"] #planner .day::before { display: none !important; }
+/* Keep the date label crisp and inset from the left edge. */
+body:not([data-scenic-glass="off"]) #planner .day-title {
+  padding: 4px 10px !important;
+  background: rgba(250,252,255,.96) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border-radius: 9px !important;
+}
+
+
+/* MaDenFlow 9.3 — final glass controls: live matte strength, scenery toggle does not erase card surfaces. */
+body {
+  --glass-matte-alpha: .72;
+  --day-card-blur: 16px;
+}
+body:not([data-scenic-glass="off"]) #planner .day,
+body[data-scenic-glass="off"] #planner .day {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,.55) !important;
+}
+body:not([data-scenic-glass="off"]) #planner .day::before,
+body[data-scenic-glass="off"] #planner .day::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  border-radius: inherit !important;
+  background: rgba(239,246,255,var(--glass-matte-alpha,.72)) !important;
+  -webkit-backdrop-filter: blur(var(--day-card-blur,16px)) saturate(118%) !important;
+  backdrop-filter: blur(var(--day-card-blur,16px)) saturate(118%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.42) !important;
+}
+body:not([data-scenic-glass="off"]) #planner .day > *,
+body[data-scenic-glass="off"] #planner .day > * { position: relative !important; z-index: 1 !important; }
+/* Toggle off means no scenery-specific effects; cards remain distinct and readable. */
+body[data-scenic-glass="off"] #planner .day::before {
+  background: rgba(239,246,255, .84) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+body:not([data-scenic-glass="off"]) #planner .day-title,
+body[data-scenic-glass="off"] #planner .day-title {
+  padding: 4px 12px !important;
+  background: rgba(250,252,255,.97) !important;
+  color: #26364d !important;
+  text-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+body:not([data-scenic-glass="off"]) #planner .task,
+body[data-scenic-glass="off"] #planner .task {
+  background: rgba(250,252,255,.94) !important;
+  color: #26364d !important;
+}
+/* Month screen keeps its seasonal landscape regardless of the week-card glass toggle. */
+body #monthScreen { background-image: var(--seasonal-landscape-image, var(--month-background-image, none)); background-size: cover; background-position: center; }
+
+
+/* MaDenFlow 9.4 — consolidated weekly glass surface and appearance preview layout. */
+.appearance-head { display:block !important; position:relative !important; padding-right:0 !important; }
+.appearance-head > .appearance-preview-wrap {
+  width:100% !important; max-width:none !important; margin:0 !important;
+  box-sizing:border-box !important; position:relative !important; inset:auto !important;
+}
+.appearance-head > .appearance-preview-wrap .appearance-preview {
+  min-height:150px !important;
+}
+.appearance-x { position:absolute !important; top:8px !important; right:8px !important; z-index:5 !important; }
+body {
+  --glass-matte-alpha: .56;
+  --day-card-blur: 16px;
+}
+/* Remove legacy pseudo glass layers: the real card itself receives the filter,
+   preventing narrow pseudo-strips and preserving one-column sizing. */
+#planner .day::before {
+  content:none !important;
+  display:none !important;
+}
+#planner .day {
+  position:relative !important;
+  isolation:auto !important;
+  overflow:hidden !important;
+  background-color:rgba(238,244,252,var(--glass-matte-alpha,.56)) !important;
+  -webkit-backdrop-filter:blur(var(--day-card-blur,16px)) saturate(118%) !important;
+  backdrop-filter:blur(var(--day-card-blur,16px)) saturate(118%) !important;
+  border:1px solid rgba(255,255,255,.56) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.38), 0 2px 8px rgba(20,35,55,.08) !important;
+}
+#planner .day > * {
+  position:relative !important;
+  z-index:auto !important;
+}
+#planner .day-title {
+  margin-left:2px !important;
+  margin-right:2px !important;
+  padding:4px 12px !important;
+  background:rgba(250,252,255,.96) !important;
+  color:#26364d !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  text-shadow:none !important;
+}
+#planner .day-title .day-date-side { padding-left:3px !important; }
+#planner .day-title .day-weekday,
+#planner .day-title .day-number { color:#26364d !important; font-weight:750 !important; }
+#planner .day-title .day-month { color:#1685a1 !important; font-weight:750 !important; }
+#planner .day .task {
+  background:rgba(250,252,255,.94) !important;
+  color:#26364d !important;
+}
+/* Landscape toggle controls the scenery layer, not the existence of the glass card. */
+body[data-scenic-glass="off"] #planner .day {
+  background-color:rgba(238,244,252,.82) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+body[data-scenic-glass="off"] #planner .day::before { display:none !important; content:none !important; }
+@media (max-width:640px) {
+  .appearance-head > .appearance-preview-wrap { width:100% !important; }
+}
+
+
+/* MaDenFlow 9.5 — fix settings preview stacking and one-column week layout */
+.appearance-window .appearance-head,
+.appearance-window .appearance-preview-wrap {
+  position:relative !important;
+  top:auto !important;
+  inset:auto !important;
+  transform:none !important;
+  float:none !important;
+}
+.appearance-window .appearance-head {
+  display:block !important;
+  flex:none !important;
+  min-height:0 !important;
+  height:auto !important;
+  padding:0 0 12px !important;
+  margin:0 !important;
+  background:transparent !important;
+  overflow:visible !important;
+}
+.appearance-window .appearance-preview-wrap {
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:12px !important;
+  box-sizing:border-box !important;
+  z-index:auto !important;
+  background:rgba(245,248,252,.94) !important;
+  box-shadow:none !important;
+}
+.appearance-window .appearance-preview-title { position:static !important; margin:0 0 10px !important; }
+.appearance-window #appearancePreview {
+  position:relative !important;
+  display:block !important;
+  width:100% !important;
+  min-height:160px !important;
+  height:auto !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+}
+.appearance-window .appearance-preview-day { min-height:128px !important; }
+.appearance-window .settings-controls { position:relative !important; clear:both !important; width:100% !important; }
+/* Real one-column task-view: each day occupies a full row and has content-driven height. */
+#planner:not(.week-columns) .week-column-stack,
+#planner:not(.week-columns) > .week-column-stack,
+#planner:not(.week-columns) .week-column-left,
+#planner:not(.week-columns) .week-column-right {
+  display:contents !important;
+}
+#planner:not(.week-columns) .day {
+  min-width:0 !important;
+  height:auto !important;
+  min-height:110px !important;
+  max-height:none !important;
+  flex:0 0 auto !important;
+  align-self:stretch !important;
+}
+#planner:not(.week-columns) .day .tasks {
+  min-height:0 !important;
+  height:auto !important;
+  grid-auto-rows:minmax(28px,auto) !important;
+  align-content:start !important;
+}
+#planner:not(.week-columns) .day .day-content { min-height:0 !important; height:auto !important; }
+/* Glass-off turns off backdrop blur, not card surfaces or legibility. */
+body[data-scenic-glass="off"] #planner .day {
+  background-color:rgba(235,241,249,.88) !important;
+  border-color:rgba(120,137,160,.26) !important;
+  box-shadow:0 2px 8px rgba(25,40,60,.08) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+body[data-scenic-glass="off"] #planner .day-title { background:#f8faff !important; color:#26364d !important; }
+body[data-scenic-glass="off"] #planner .task { background:#f8faff !important; color:#26364d !important; }
+
+/* MaDenFlow 9.6 — always-visible appearance preview, no overlap with settings */
+.appearance-head {
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:stretch !important;
+  gap:14px !important;
+  position:relative !important;
+  padding:0 !important;
+  margin:0 0 18px !important;
+  height:auto !important;
+  min-height:0 !important;
+  overflow:visible !important;
+}
+.appearance-head > div:first-child { display:none !important; }
+.appearance-head > .appearance-preview-wrap {
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  position:relative !important;
+  inset:auto !important;
+  float:none !important;
+  transform:none !important;
+  width:100% !important;
+  max-width:none !important;
+  height:auto !important;
+  max-height:none !important;
+  margin:0 !important;
+  padding:14px !important;
+  box-sizing:border-box !important;
+  z-index:1 !important;
+  flex:0 0 auto !important;
+  order:0 !important;
+}
+.appearance-head > .appearance-preview-wrap .appearance-preview {
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  width:100% !important;
+  min-height:168px !important;
+  height:auto !important;
+  max-height:none !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+}
+.appearance-head > .appearance-preview-wrap + * { margin-top:0 !important; }
+.appearance-head ~ .appearance-settings,
+.appearance-head ~ .settings-group,
+.appearance-head ~ .setting-row { position:relative; }
+
+
+/* MaDenFlow 9.7 — fix the actual single-column structure and keep preview visible. */
+/* The legacy 6.5 rail layout was being applied to every view. Only weekColumns uses a right-side date rail. */
+#planner:not(.week-columns) > .day {
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 1 auto !important;
+  width:100% !important;
+  min-width:0 !important;
+  min-height:112px !important;
+  height:auto !important;
+  max-height:none !important;
+  grid-template-columns:none !important;
+  grid-template-rows:none !important;
+  grid-template-areas:none !important;
+  overflow:hidden !important;
+  padding:7px 9px !important;
+  gap:5px !important;
+}
+#planner:not(.week-columns) > .day > .day-title {
+  order:0 !important;
+  display:flex !important;
+  flex:0 0 auto !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:36px !important;
+  margin:0 0 2px !important;
+  padding:5px 12px !important;
+  border:0 !important;
+  border-radius:10px !important;
+  box-sizing:border-box !important;
+}
+#planner:not(.week-columns) > .day > .day-title .day-date-side {
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:8px !important;
+  width:100% !important;
+  min-width:0 !important;
+}
+#planner:not(.week-columns) > .day > .day-title .day-date-main {
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:baseline !important;
+  gap:6px !important;
+}
+#planner:not(.week-columns) > .day > .day-content {
+  order:1 !important;
+  display:flex !important;
+  flex:1 1 auto !important;
+  width:100% !important;
+  height:auto !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  overflow:visible !important;
+}
+#planner:not(.week-columns) > .day > .day-content > .tasks {
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 1 auto !important;
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  overflow:visible !important;
+  gap:4px !important;
+}
+#planner:not(.week-columns) > .day .tasks > .task {
+  flex:0 0 auto !important;
+  width:100% !important;
+  min-height:30px !important;
+  height:auto !important;
+  max-height:none !important;
+  grid-column:auto !important;
+  margin:0 !important;
+}
+/* The preview wrapper is the first child now; never hide it. */
+.appearance-window .appearance-head > .appearance-preview-wrap {
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  position:relative !important;
+  inset:auto !important;
+  transform:none !important;
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  height:auto !important;
+  max-height:none !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+  order:0 !important;
+}
+.appearance-window .appearance-head > div:first-child { display:block !important; }
+.appearance-window #appearancePreview {
+  position:relative !important;
+  width:100% !important;
+  min-height:168px !important;
+  height:auto !important;
+  overflow:hidden !important;
+}
+/* Card glass is applied to the complete card body. Off mode keeps an opaque card surface. */
+body:not([data-scenic-glass="off"]) #planner .day {
+  background-color:rgba(238,244,252,var(--glass-matte-alpha,.56)) !important;
+  -webkit-backdrop-filter:blur(var(--day-card-blur,16px)) saturate(118%) !important;
+  backdrop-filter:blur(var(--day-card-blur,16px)) saturate(118%) !important;
+}
+body[data-scenic-glass="off"] #planner .day {
+  background-color:rgba(238,244,252,.90) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  border:1px solid rgba(100,120,145,.30) !important;
+}
+body[data-scenic-glass="off"] #planner .day::before { content:none !important; display:none !important; }
+
+/* MaDenFlow 9.8 repair: single-column days use a compact date rail on the right. */
+#planner:not(.week-columns) > .day {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) 72px !important;
+  grid-template-rows:minmax(0,1fr) !important;
+  align-items:stretch !important;
+  gap:7px !important;
+  min-width:0 !important;
+}
+#planner:not(.week-columns) > .day > .day-content {
+  grid-column:1 !important; grid-row:1 !important;
+  order:0 !important; width:100% !important; min-width:0 !important;
+  align-self:stretch !important; margin:0 !important;
+}
+#planner:not(.week-columns) > .day > .day-title {
+  grid-column:2 !important; grid-row:1 !important;
+  order:1 !important; width:72px !important; min-width:72px !important;
+  max-width:72px !important; height:100% !important; min-height:0 !important;
+  margin:0 !important; padding:7px 3px !important;
+  align-self:stretch !important; justify-content:center !important;
+  border-left:1px solid rgba(95,115,140,.18) !important;
+  background:rgba(245,248,252,.28) !important;
+}
+#planner:not(.week-columns) > .day > .day-title .day-date-side {
+  width:100% !important; min-width:0 !important; padding:0 !important;
+  display:flex !important; flex-direction:column !important;
+  justify-content:center !important; align-items:center !important; gap:4px !important;
+}
+#planner:not(.week-columns) > .day > .day-title .day-date-main {
+  display:flex !important; flex-direction:column !important; align-items:center !important;
+  justify-content:center !important; gap:0 !important;
+}
+#planner:not(.week-columns) > .day > .day-title .day-weekday { font-size:12px !important; line-height:1.1 !important; }
+#planner:not(.week-columns) > .day > .day-title .day-number { font-size:26px !important; line-height:1.05 !important; }
+#planner:not(.week-columns) > .day > .day-title .day-month { font-size:11px !important; }
+#planner:not(.week-columns) > .day > .day-title .day-star { font-size:10px !important; }
+
+/* Month and week are separate screens, never stacked visually. */
+#planner.month-covered { display:none !important; }
+#monthScreen:not(.hidden) { display:block !important; z-index:9000 !important; }
+#monthScreen.hidden { display:none !important; }
+
+/* The appearance preview stays in normal flow and previews translucent glass over scenery. */
+.appearance-window .appearance-head { display:block !important; position:relative !important; height:auto !important; min-height:0 !important; overflow:visible !important; padding:0 42px 0 0 !important; }
+.appearance-window .appearance-head > .appearance-preview-wrap { display:block !important; position:relative !important; inset:auto !important; transform:none !important; float:none !important; width:100% !important; max-width:none !important; height:auto !important; min-height:0 !important; margin:0 !important; padding:12px !important; box-sizing:border-box !important; }
+.appearance-window .appearance-head > .appearance-preview-wrap .appearance-preview { display:block !important; position:relative !important; width:100% !important; min-height:168px !important; height:auto !important; overflow:hidden !important; box-sizing:border-box !important; }
+.appearance-window .appearance-preview-day { position:relative !important; display:grid !important; grid-template-columns:48px minmax(0,1fr) !important; align-items:stretch !important; min-height:132px !important; background-color:rgba(238,244,252,var(--glass-matte-alpha,.56)) !important; background-image:none !important; -webkit-backdrop-filter:blur(var(--day-card-blur,16px)) saturate(118%) !important; backdrop-filter:blur(var(--day-card-blur,16px)) saturate(118%) !important; border:1px solid rgba(255,255,255,.68) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 3px 12px rgba(20,35,55,.12) !important; }
+.appearance-window .appearance-preview-date { background:rgba(245,248,252,.24) !important; border-right:1px solid rgba(90,110,140,.2) !important; }
+.appearance-window .appearance-preview-tasks > div { background:rgba(255,255,255,var(--glass-matte-alpha,.56)) !important; border:1px solid rgba(255,255,255,.62) !important; }
+.appearance-window .appearance-x { position:absolute !important; top:0 !important; right:0 !important; }
+body[data-scenic-glass="off"] #planner .day { background-color:rgba(238,244,252,.90) !important; border:1px solid rgba(100,120,145,.34) !important; }
+body[data-scenic-glass="off"] #planner .day-title { background:rgba(220,231,250,.86) !important; }
+@media(max-width:420px) {
+  #planner:not(.week-columns) > .day { grid-template-columns:minmax(0,1fr) 62px !important; gap:4px !important; }
+  #planner:not(.week-columns) > .day > .day-title { width:62px !important; min-width:62px !important; max-width:62px !important; }
+}
+
+/* Appearance editor: stable in-flow preview and mutually exclusive theme palettes. */
+.appearance-window .appearance-head,
+.appearance-window .appearance-head > .appearance-preview-wrap {
+  position:relative !important; inset:auto !important; top:auto !important; transform:none !important;
+  float:none !important; overflow:visible !important; height:auto !important; min-height:0 !important;
+}
+.appearance-window .appearance-head { display:block !important; padding:0 42px 0 0 !important; margin:0 !important; }
+.appearance-window .appearance-head > .appearance-preview-wrap { width:100% !important; max-width:none !important; margin:0 0 12px !important; }
+.appearance-window #appearancePreview { position:relative !important; width:100% !important; min-height:168px !important; }
+.appearance-window .appearance-swatches[hidden] { display:none !important; }
+
+/* Appearance editor v9.10: keep the preview docked to the modal viewport while settings scroll. */
+#appearanceModal .appearance-window {
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  position: relative !important;
+}
+#appearanceModal .appearance-window .appearance-head {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 40 !important;
+  display: block !important;
+  padding: 8px 42px 10px 0 !important;
+  margin: -8px 0 12px !important;
+  background: var(--glass, rgba(245,248,252,.97)) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 0 0 14px 14px;
+}
+#appearanceModal .appearance-window .appearance-head > .appearance-preview-wrap {
+  position: relative !important;
+  top: auto !important;
+  inset: auto !important;
+  transform: none !important;
+  float: none !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: auto !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+#appearanceModal .appearance-window .appearance-preview-day {
+  background-color: rgba(238,244,252,var(--glass-matte-alpha,.56)) !important;
+  -webkit-backdrop-filter: blur(var(--day-card-blur,16px)) saturate(118%) !important;
+  backdrop-filter: blur(var(--day-card-blur,16px)) saturate(118%) !important;
+}
+#appearanceModal .appearance-window .appearance-preview-tasks > div {
+  background: rgba(255,255,255,var(--glass-matte-alpha,.56));
+}
+#appearanceModal .appearance-window .appearance-swatches[hidden] { display: none !important; }
+
+
+/* MaDenFlow 9.11: app version/update controls and crisp date labels in color themes */
+.app-version-section{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center}
+.app-version-line{font-size:13px;color:var(--text2);margin-top:4px}
+#appUpdateBtn{border:0;border-radius:12px;padding:10px 13px;background:var(--primary,#4f8cff);color:#fff;font-weight:800;cursor:pointer;max-width:180px}
+#appUpdateBtn:disabled{opacity:.6;cursor:wait}
+#appUpdateStatus{grid-column:1/-1;margin:0;font-size:12px;line-height:1.4}
+.task-chain-edit{border-left:3px solid #4f8cff!important}
+.task-chain-delete{border-left:3px solid #e36b75!important}
+body[data-color-theme="on"] #planner .day-title,
+body[data-color-theme="on"] #planner .day-title *,
+body[data-color-theme="on"] #planner .day-date-side,
+body[data-color-theme="on"] #planner .day-date-side *,
+body[data-color-theme="on"] #planner .day-date-main,
+body[data-color-theme="on"] #planner .day-date-main *{filter:none!important;-webkit-filter:none!important;text-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+@media(max-width:520px){.app-version-section{grid-template-columns:1fr}.app-version-section #appUpdateBtn{max-width:none;width:100%}}
+
+/* MaDenFlow 9.12: explicit edit-chain action in the day popup */
+.day-popup-edit-chain{border-color:rgba(76,139,245,.28);background:rgba(76,139,245,.10)}
+.day-popup-edit-chain:focus-visible{outline:2px solid var(--accent,#4c8bf5);outline-offset:2px}
+
+
+/* MaDenFlow 9.13 — cleaner recurrence controls and task modal */
+#taskModal .modal-box{display:flex;flex-direction:column;gap:12px;padding:22px 20px!important;width:min(590px,100%)!important}
+#taskModal h3{margin:0 0 2px!important}
+#taskModal #newTaskInput{margin:0!important}
+#taskModal .task-time-label{display:flex;flex-direction:column;gap:5px;font-weight:700}
+#taskModal .task-time-label input{margin:0!important}
+#taskModal .task-card-color-picker{margin:0!important}
+#taskModal .switch-row{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:10px 13px;border:1px solid rgba(100,120,145,.2);border-radius:14px;background:rgba(225,233,246,.55);cursor:pointer;position:relative;margin:0!important}
+#taskModal .switch-row input#repeatTask{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;margin:0!important}
+#taskModal .repeat-row-icon{font-size:21px;line-height:1;color:var(--primary);font-weight:700}
+#taskModal .repeat-row-label{font-weight:700;flex:1}
+#taskModal .repeat-switch-track{width:42px;height:24px;border-radius:20px;background:#c4ccd8;position:relative;flex:0 0 auto;transition:background .18s}
+#taskModal .repeat-switch-track:after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0002;transition:transform .18s}
+#taskModal #repeatTask:checked+.repeat-switch-track{background:var(--primary)}
+#taskModal #repeatTask:checked+.repeat-switch-track:after{transform:translateX(18px)}
+#taskModal .repeat-options{padding:12px;border-radius:14px;background:rgba(225,233,246,.38);display:grid;gap:10px}
+#taskModal .repeat-options.hidden{display:none!important}
+#taskModal .repeat-options label{margin:0!important;display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:650}
+#taskModal .repeat-options input,#taskModal .repeat-options select{margin:0!important;width:100%}
+#taskModal .repeat-weekdays{display:flex;flex-wrap:wrap;gap:6px}
+#taskModal .repeat-weekdays label{display:flex;flex-direction:row;align-items:center;gap:4px;padding:7px 9px;background:#fff9;border-radius:9px}
+#taskModal .repeat-weekdays input{width:auto!important;margin:0!important}
+#taskModal .modal-buttons{margin-top:2px}
+.day-popup-action svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.day-popup-chain{color:#477fe0!important}
+.chain-action-menu{position:absolute;z-index:20;right:0;top:calc(100% + 6px);width:min(260px,calc(100vw - 48px));padding:6px;background:rgba(250,252,255,.97);border:1px solid rgba(115,135,165,.22);border-radius:15px;box-shadow:0 12px 32px rgba(25,42,70,.20);display:grid;gap:3px;backdrop-filter:blur(16px)}
+.day-popup-task-row{position:relative!important}
+.chain-action-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 11px;border:0;border-radius:10px;background:transparent;text-align:left;color:#26364d;font-size:13px;font-weight:650}
+.chain-action-menu button:hover{background:rgba(80,130,220,.12)}
+.chain-action-menu button>span:first-child{width:22px;text-align:center;font-size:17px;color:#477fe0}
+.chain-action-menu button.danger,.chain-action-menu button.danger>span:first-child{color:#d94b64}
+@media(max-width:480px){#taskModal .modal-box{gap:10px;padding:15px!important}#taskModal .modal-buttons{gap:8px}.day-popup-action{width:38px!important;min-width:38px!important}}
+
+/* MaDenFlow 9.14: recurrence menu floats above the day popup scroll area */
+.chain-action-menu{position:fixed!important;z-index:100000!important;max-height:min(70vh,320px);overflow:auto;overscroll-behavior:contain;box-sizing:border-box;transform:none!important}
+.chain-action-menu button{min-height:42px;white-space:normal;line-height:1.25}
+/* Appearance dialog follows the selected preset palette instead of staying neutral. */
+#appearanceModal[data-active-theme="standard"] .appearance-window{background:linear-gradient(145deg,#edf3ff,#f8e9f1)!important;color:#26364d}
+#appearanceModal[data-active-theme="blackwhite"] .appearance-window{background:linear-gradient(145deg,#f0f1f3,#dfe2e7)!important;color:#252a32}
+#appearanceModal[data-active-theme="yellowgreen"] .appearance-window{background:linear-gradient(145deg,#fff7d8,#e7f3df)!important;color:#35432f}
+#appearanceModal[data-active-theme="pinkpurple"] .appearance-window{background:linear-gradient(145deg,#fbe8f1,#eee5ff)!important;color:#433454}
+#appearanceModal[data-active-theme="glass"] .appearance-window{background:rgba(229,236,247,.88)!important;color:#26364d;backdrop-filter:blur(var(--day-card-blur,16px)) saturate(125%);-webkit-backdrop-filter:blur(var(--day-card-blur,16px)) saturate(125%)}
+#appearanceModal[data-active-theme="custom"] .appearance-window{background:var(--custom-bg,#eef3fb)!important;color:var(--custom-text,#26364d)}
+
+#appearanceModal[data-active-theme="skyblue"] .appearance-window{background:linear-gradient(145deg,#e5f5ff,#dce7ff)!important;color:#26364d}
+#appearanceModal[data-active-theme="mintpistachio"] .appearance-window{background:linear-gradient(145deg,#e1f5ed,#e8f0d8)!important;color:#2e493f}
+
+/* MaDenFlow 9.15: color themes tint the complete day cards, not only their headers. */
+body[data-theme]:not([data-theme="glass"]):not([data-theme="custom"]) #planner .day:not(.weekend),
+body[data-theme]:not([data-theme="glass"]):not([data-theme="custom"]) #planner .day:not(.weekend).today {
+  background: color-mix(in srgb, var(--weekday, #eef6ff) 86%, transparent) !important;
+  border-color: color-mix(in srgb, var(--weekday, #eef6ff) 70%, #8295ad) !important;
+}
+body[data-theme]:not([data-theme="glass"]):not([data-theme="custom"]) #planner .day.weekend,
+body[data-theme]:not([data-theme="glass"]):not([data-theme="custom"]) #planner .day.weekend.today {
+  background: color-mix(in srgb, var(--weekend, #ffe8ee) 86%, transparent) !important;
+  border-color: color-mix(in srgb, var(--weekend, #ffe8ee) 70%, #b88d9b) !important;
+}
+body[data-custom-appearance="on"] #planner .day:not(.weekend),
+body[data-custom-appearance="on"] #planner .day:not(.weekend).today {
+  background: color-mix(in srgb, var(--custom-weekday, #dce7fa) 88%, transparent) !important;
+  border-color: color-mix(in srgb, var(--custom-weekday, #dce7fa) 75%, #879bb5) !important;
+}
+body[data-custom-appearance="on"] #planner .day.weekend,
+body[data-custom-appearance="on"] #planner .day.weekend.today {
+  background: color-mix(in srgb, var(--custom-weekend, #f5dce9) 88%, transparent) !important;
+  border-color: color-mix(in srgb, var(--custom-weekend, #f5dce9) 75%, #b58e9e) !important;
+}
+body[data-custom-appearance="on"] #planner .day .day-title {
+  background: color-mix(in srgb, var(--custom-weekday, #dce7fa) 82%, transparent) !important;
+  color: var(--custom-text, #26364d) !important;
+  text-shadow: none !important;
+}
+body[data-custom-appearance="on"] #planner .day.weekend .day-title {
+  background: color-mix(in srgb, var(--custom-weekend, #f5dce9) 82%, transparent) !important;
+}
+
+/* MaDenFlow 9.16: the month calendar keeps its scenic glass identity in every color theme. */
+#calendarModal .calendar-window {
+  background: linear-gradient(145deg, rgba(248,251,255,.72), rgba(225,235,248,.52)) !important;
+  color: #26364d !important;
+  border: 1px solid rgba(255,255,255,.72) !important;
+  box-shadow: 0 24px 60px rgba(20,32,52,.22), inset 0 1px 0 rgba(255,255,255,.62) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(125%) !important;
+  backdrop-filter: blur(22px) saturate(125%) !important;
+}
+#calendarModal .calendar-head button,
+#calendarModal .wide-btn {
+  background: rgba(255,255,255,.64) !important;
+  color: #26364d !important;
+  border: 1px solid rgba(255,255,255,.68) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(120%) !important;
+  backdrop-filter: blur(12px) saturate(120%) !important;
+}
+#calendarModal .cal-day {
+  background: rgba(248,251,255,.60) !important;
+  color: #26364d !important;
+  border: 1px solid rgba(255,255,255,.46) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.34) !important;
+}
+#calendarModal .cal-day.today {
+  background: rgba(79,140,255,.88) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.72) !important;
+}
+#calendarModal .cal-day.in-week { box-shadow: inset 0 0 0 2px rgba(79,140,255,.42) !important; }
+#calendarModal .cal-weekday, #calendarModal #calendarTitle { color: #26364d !important; }
+
+/* MaDenFlow 9.17 — fixed preset palettes with only the requested fine controls. */
+.appearance-controls-grid label:has(#appearanceBg),
+.appearance-controls-grid label:has(#appearanceWeekday),
+.appearance-controls-grid label:has(#appearanceWeekend),
+.appearance-controls-grid label:has(#appearanceCard),
+.appearance-controls-grid label:has(#appearanceText),
+.appearance-details > label:has(#appearanceOpacity),
+.appearance-details > label:has(#appearanceRadius),
+.appearance-details > label:has(#appearanceSystemText),
+.appearance-details > label:has(#appearanceWeekTextColor) { display:none !important; }
+/* Blur and matte are glass-only controls; color presets never blur day headers or text. */
+#appearanceModal:not([data-active-theme="glass"]) .appearance-details > label:has(#appearanceDayBlur),
+#appearanceModal:not([data-active-theme="glass"]) .appearance-details > label:has(#appearanceMatte) { display:none !important; }
+#appearanceModal[data-active-theme="glass"] .appearance-details > label:has(#appearanceDayBlur),
+#appearanceModal[data-active-theme="glass"] .appearance-details > label:has(#appearanceMatte) { display:flex !important; }
+body[data-theme]:not([data-theme="glass"]) #planner .day,
+body[data-theme]:not([data-theme="glass"]) #planner .day-title,
+body[data-theme]:not([data-theme="glass"]) #planner .day-date-side,
+body[data-theme]:not([data-theme="glass"]) #planner .day-date-side * {
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important; filter:none !important;
+}
+body[data-custom-appearance="on"] #planner .day-title,
+body[data-custom-appearance="on"] #planner .day.weekend .day-title {
+  background:var(--custom-header-color,#dce7fa) !important;
+}
+body[data-custom-appearance="on"] #planner .day-weekday,
+body[data-custom-appearance="on"] #planner .day-number,
+body[data-custom-appearance="on"] #planner .day-month { color:var(--custom-date-color,#26364d) !important; }
+body[data-custom-appearance="on"] #planner .task time,
+body[data-custom-appearance="on"] #planner .task .task-time { color:var(--custom-time-color,var(--task-time-color,#26364d)) !important; }
+body[data-custom-appearance="on"] #planner .day-weekday { font-size:var(--custom-weekday-size,20px) !important; }
+body[data-custom-appearance="on"] #planner .day-number { font-size:var(--custom-date-size,30px) !important; }
+body[data-custom-appearance="on"] #planner .day-month { font-size:var(--custom-month-size,14px) !important; }
+body[data-custom-appearance="on"] #planner .task { font-size:var(--custom-task-font,15px) !important; }
+body[data-custom-appearance="on"] #planner .day-title { color:var(--custom-date-color,#26364d) !important; }
+body[data-custom-appearance="on"] #planner .day-title { border-color:color-mix(in srgb,var(--custom-header-color,#dce7fa) 80%,white) !important; }
+#monthScreen { isolation:isolate; background:transparent !important; }
+#monthScreen::before {
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image:linear-gradient(145deg,rgba(13,28,48,.30),rgba(20,30,48,.38)),var(--month-landscape);
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+}
+#monthScreen .month-screen-grid, #monthScreen .month-selected-tasks,
+#monthScreen .month-screen-nav button, #monthScreen .month-day {
+  -webkit-backdrop-filter:blur(20px) saturate(135%) !important;
+  backdrop-filter:blur(20px) saturate(135%) !important;
+}
+#monthScreen .month-day-number, #monthScreen .month-weekday { font-size:var(--custom-calendar-font,16px); }
+#monthScreen .month-screen-grid { background:rgba(245,249,255,.28) !important; }
+body { --custom-sidebar:var(--custom-sidebar,#e0e8f2); }
+body[data-custom-appearance="on"] #sidebar,
+body[data-custom-appearance="on"] .sidebar,
+body[data-custom-appearance="on"] #sidePanel { background:var(--custom-sidebar,#e0e8f2) !important; }
+body[data-appearance-overrides="on"] #planner .day-title { background:var(--custom-header-color,rgba(255,255,255,.42)) !important; }
+body[data-appearance-overrides="on"] #planner .day-weekday,
+body[data-appearance-overrides="on"] #planner .day-number,
+body[data-appearance-overrides="on"] #planner .day-month { color:var(--custom-date-color,inherit) !important; }
+body[data-appearance-overrides="on"] #planner .task time,
+body[data-appearance-overrides="on"] #planner .task .task-time { color:var(--custom-time-color,var(--task-time-color,#4b8cff)) !important; }
+body[data-appearance-overrides="on"] #planner .day-weekday { font-size:var(--custom-weekday-size,20px) !important; }
+body[data-appearance-overrides="on"] #planner .day-number { font-size:var(--custom-date-size,30px) !important; }
+body[data-appearance-overrides="on"] #planner .day-month { font-size:var(--custom-month-size,14px) !important; }
+#sidePanel { background:var(--custom-sidebar,#e0e8f2) !important; }
+.appearance-preview-date b { font-size:var(--custom-weekday-size,20px); }
+.appearance-preview-date strong { font-size:var(--custom-date-size,30px); }
+.appearance-preview-date small { font-size:var(--custom-month-size,14px); }
+#appearancePreview .appearance-preview-day { -webkit-backdrop-filter:blur(var(--day-card-blur,0px)); backdrop-filter:blur(var(--day-card-blur,0px)); }
+
+
+/* MaDenFlow 9.18 — one continuous seasonal canvas behind the entire viewport.
+   Keep the landscape visible behind the bottom range bar and iOS safe areas. */
+html, body#appBody {
+  background: transparent !important;
+  min-height: 100% !important;
+}
+body#appBody {
+  position: relative !important;
+  isolation: isolate !important;
+}
+body#appBody::before {
+  content: "" !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  background-image: var(--week-landscape, var(--month-landscape, none)) !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: scroll !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+#planner {
+  background: transparent !important;
+  background-image: none !important;
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+#planner .day-title,
+#planner .day-title * {
+  filter: none !important;
+  -webkit-filter: none !important;
+  text-shadow: none !important;
+}
+#planner .day-title {
+  /* Crisp date labels: translucent surface, but no heavy backdrop blur. */
+  background: rgba(242, 247, 255, .78) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border: 1px solid rgba(255,255,255,.78) !important;
+  color: #26364d !important;
+}
+#planner .day-title .day-weekday,
+#planner .day-title .day-number { color: #26364d !important; }
+#planner .day-title .day-month { color: #9a4b60 !important; }
+#weekTitle {
+  background: rgba(230, 238, 249, .38) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(115%) !important;
+  backdrop-filter: blur(8px) saturate(115%) !important;
+  border-top: 1px solid rgba(255,255,255,.46) !important;
+  box-shadow: 0 -2px 14px rgba(18,32,52,.06) !important;
+}

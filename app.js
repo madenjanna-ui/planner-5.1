@@ -5,10 +5,30 @@ const weekDays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
 let currentDate=new Date(),selectedDate=null,calendarCursor=new Date();
 function getMonday(date){const d=new Date(date);let day=d.getDay()||7;d.setDate(d.getDate()-day+1);return d}
 function localKey(d){return localDateKey(d)}
+// Seasonal palette: muted colors are used for the date context, not to replace task-specific colors.
+const SEASONAL_MONTHS=[
+  {name:"Карамельный",base:"#B87333",tint:"rgba(184,115,51,.14)"},
+  {name:"Сиреневый",base:"#B99AD8",tint:"rgba(185,154,216,.17)"},
+  {name:"Аква",base:"#62BDB8",tint:"rgba(98,189,184,.17)"},
+  {name:"Кайенский",base:"#B94E57",tint:"rgba(185,78,87,.13)"},
+  {name:"Зелёный",base:"#83A94C",tint:"rgba(131,169,76,.16)"},
+  {name:"Золотой",base:"#D5A52D",tint:"rgba(213,165,45,.17)"},
+  {name:"Коралловый",base:"#E58C85",tint:"rgba(229,140,133,.17)"},
+  {name:"Солнечный",base:"#E98B2A",tint:"rgba(233,139,42,.16)"},
+  {name:"Баха-блю",base:"#3C8DB6",tint:"rgba(60,141,182,.15)"},
+  {name:"Лазурный",base:"#1687A7",tint:"rgba(22,135,167,.15)"},
+  {name:"Бордовый",base:"#8B3D52",tint:"rgba(139,61,82,.14)"},
+  {name:"Пагода",base:"#286D82",tint:"rgba(40,109,130,.15)"}
+];
+function seasonForDate(date){return SEASONAL_MONTHS[(date instanceof Date?date:new Date(date)).getMonth()]||SEASONAL_MONTHS[0]}
 function renderWeek(){
   planner.innerHTML="";
   const monday=getMonday(currentDate),sunday=new Date(monday);
   sunday.setDate(monday.getDate()+6);
+  // Keep one crisp landscape behind the entire weekly canvas; blur only glass panels.
+  planner.style.setProperty("--week-landscape", `url("month-backgrounds/month-${String(monday.getMonth()+1).padStart(2,"0")}.jpg")`);
+  // Share the current landscape with the fixed viewport canvas, so it continues behind the bottom week bar and safe areas.
+  document.body.style.setProperty("--week-landscape", `url("month-backgrounds/month-${String(monday.getMonth()+1).padStart(2,"0")}.jpg")`);
   const fmt=d=>`${d.getDate()}.${String(d.getMonth()+1).padStart(2,"0")}.${d.getFullYear()}`;
   const taskView=(appData.settings||{}).taskView||"cards";
   weekTitle.textContent=taskView==="weekColumns"
@@ -30,9 +50,12 @@ function renderWeek(){
     if(dayOnly.getTime()===today.getTime()) section.classList.add("today");
     if(dayOnly<today) section.classList.add("past-day");
     section.dataset.date=key; section.dataset.taskCount=count;
-    const monthColors=["#7397c9","#7194c9","#7d9fcb","#68a99a","#5da879","#579b62","#5e9b55","#7c9f54","#bd9252","#c17b55","#8d8fbd","#7e91bd"];
+    const season=seasonForDate(date);
+    section.style.setProperty("--season-color",season.base);
+    section.style.setProperty("--season-tint",season.tint);
+    section.style.setProperty("--month-landscape", `url("month-backgrounds/month-${String(date.getMonth()+1).padStart(2,"0")}.jpg")`);
     const monthLabel=date.toLocaleDateString("ru-RU",{month:"short"}).replace(".","");
-    section.innerHTML=`<div class="day-content"><div class="tasks"></div></div><div class="day-title"><div class="day-date-side"><span class="day-weekday">${weekDays[i]}</span><div class="day-date-main"><span class="day-number">${date.getDate()}</span><span class="day-month" style="--month-season-color:${monthColors[date.getMonth()]}">${monthLabel}</span></div>${date.toDateString()===new Date().toDateString()?'<span class="day-star">★</span>':''}</div></div>`;
+    section.innerHTML=`<div class="day-content"><div class="tasks"></div></div><div class="day-title"><div class="day-date-side"><span class="day-weekday">${weekDays[i]}</span><div class="day-date-main"><span class="day-number">${date.getDate()}</span><span class="day-month" style="--month-season-color:${season.base}">${monthLabel}</span></div>${date.toDateString()===new Date().toDateString()?'<span class="day-star">★</span>':''}</div></div>`;
     if(taskView==="weekColumns"){
       // Левый столбец: Пн–Ср; правый: Чт–Вс.
       const positions=[ [1,1],[2,1],[3,1],[1,2],[2,2],[3,2],[4,2] ];
@@ -55,6 +78,11 @@ function renderWeek(){
     taskContainer.style.setProperty("--day-task-limit", configuredTaskLimit);
     taskContainer.dataset.taskLimit=String(configuredTaskLimit);
     loadTasks(key,taskContainer);
+    // Only uncolored tasks inherit the month's soft tint. Explicit user colors remain untouched.
+    [...taskContainer.children].forEach((task,idx)=>{
+      const item=getTasks(key)[idx];
+      if(!item?.cardColor){task.classList.add("seasonal-task-default");task.style.setProperty("--season-task-tint",season.tint);task.style.setProperty("--season-task-accent",season.base);}
+    });
     const actualVisibleCount=Math.min(getTasks(key).length,visibleTaskLimit);
     taskContainer.style.setProperty("--day-task-count", Math.max(1,actualVisibleCount));
     [...taskContainer.children].forEach((task,idx)=>{
@@ -129,6 +157,7 @@ function activateDays(){
     };
   });
 }
+function getRussianTaskWord(n){const n10=n%10,n100=n%100;if(n10===1&&n100!==11)return "дело";if(n10>=2&&n10<=4&&(n100<12||n100>14))return "дела";return "дел";}
 function openDayPopup(dateKey){
   closeDayPopup();
   const list=getTasks(dateKey)||[];
@@ -147,13 +176,13 @@ function openDayPopup(dateKey){
         ${time}<span class="day-popup-text">${escapeHtml(t.text||"")}</span>
       </button>
       <div class="day-popup-actions">
-        <button type="button" class="day-popup-action day-popup-edit" data-action="edit" data-index="${index}" aria-label="Редактировать задачу" title="Редактировать">✏️</button>
-        <button type="button" class="day-popup-action day-popup-delete" data-action="delete" data-index="${index}" aria-label="Удалить задачу" title="Удалить">❌</button>
+        <button type="button" class="day-popup-action day-popup-edit" data-action="edit" data-index="${index}" aria-label="Редактировать только это событие" title="Редактировать это событие">✏️</button>
+        ${t.recurrenceId ? `<button type="button" class="day-popup-action day-popup-chain" data-action="chain-menu" data-index="${index}" aria-label="Действия с цепочкой повторений" title="Действия с повторениями"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l2-2a5 5 0 0 0-7.07-7.07l-1.15 1.15"/><path d="M14 11a5 5 0 0 0-7.07 0l-2 2A5 5 0 0 0 12 20.07l1.15-1.15"/></svg></button>` : `<button type="button" class="day-popup-action day-popup-delete" data-action="delete" data-index="${index}" aria-label="Удалить это событие" title="Удалить событие"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 11v5m4-5v5"/></svg></button>`}
       </div>
     </div>`;
   }).join("");
   overlay.innerHTML=`<div class="day-popup" role="dialog" aria-modal="true">
-    <div class="day-popup-head"><div><div class="day-popup-title">${title}</div><div class="day-popup-subtitle">${list.length?list.length+" дел на этот день":"День свободен"}</div></div><button class="day-popup-close" type="button" aria-label="Закрыть">×</button></div>
+    <div class="day-popup-head"><div><div class="day-popup-title">${title}</div><div class="day-popup-subtitle">${list.length?list.length+" "+getRussianTaskWord(list.length)+" на этот день":"День свободен"}</div></div><button class="day-popup-close" type="button" aria-label="Закрыть">×</button></div>
     <div class="day-popup-list">${rows||'<div class="day-popup-empty">Пока нет задач ✨</div>'}</div>
     <button class="day-popup-add" type="button">＋ Добавить задачу</button>
   </div>`;
@@ -193,19 +222,92 @@ function openDayPopup(dateKey){
     const index=Number(button.dataset.index);
     const task=(getTasks(dateKey)||[])[index];
     if(!task) return;
-    if(button.dataset.action === "delete"){
-      const label=task.text ? `«${task.text}»` : "эту задачу";
-      if(!confirm(`Удалить ${label}?`)) return;
+    if(button.dataset.action === "chain-menu"){
+      const row=button.closest(".day-popup-task-row");
+      const existing=row.querySelector(".chain-action-menu");
+      if(existing){existing.remove();return;}
+      overlay.querySelectorAll(".chain-action-menu").forEach(x=>x.remove());
+      const menu=document.createElement("div");
+      menu.className="chain-action-menu";
+      menu.innerHTML=`<button type="button" data-chain-action="edit-one"><span>✎</span><span>Изменить это событие</span></button><button type="button" data-chain-action="edit-all"><span>⛓</span><span>Изменить всю цепочку</span></button><button type="button" data-chain-action="delete-one"><span>⌫</span><span>Удалить это событие</span></button><button type="button" data-chain-action="delete-all" class="danger"><span>⛓</span><span>Удалить всю цепочку</span></button>`;
+      menu.style.position="fixed";
+      menu.style.zIndex="100000";
+      document.body.appendChild(menu);
+      const placeChainMenu=()=>{
+        const r=button.getBoundingClientRect();
+        const mw=Math.min(270,window.innerWidth-24), mh=menu.offsetHeight||180;
+        let left=Math.max(12,Math.min(window.innerWidth-mw-12,r.right-mw));
+        let top=r.bottom+8;
+        if(top+mh>window.innerHeight-12)top=Math.max(12,r.top-mh-8);
+        menu.style.width=mw+"px";menu.style.left=left+"px";menu.style.top=top+"px";
+      };
+      placeChainMenu();
+      const dismissMenu=ev=>{if(!menu.contains(ev.target)&&ev.target!==button){menu.remove();document.removeEventListener("pointerdown",dismissMenu,true);window.removeEventListener("resize",placeChainMenu);overlay.removeEventListener("scroll",placeChainMenu,true);}};
+      setTimeout(()=>document.addEventListener("pointerdown",dismissMenu,true),0);
+      window.addEventListener("resize",placeChainMenu);overlay.addEventListener("scroll",placeChainMenu,true);
+      menu.querySelectorAll("button").forEach(item=>item.addEventListener("click",ev=>{
+        ev.preventDefault();ev.stopPropagation();
+        const choice=item.dataset.chainAction;menu.remove();
+        if(choice==="edit-one"){closeDayPopup();openTaskEditor(dateKey,index);return;}
+        if(choice==="edit-all"){
+          if(!task.recurrenceId||typeof getRecurrence!=="function"){alert("Не удалось определить цепочку повторений.");return;}
+          closeDayPopup();openTaskEditor(dateKey,index);const modal=document.getElementById("taskModal");modal.dataset.editChain="1";document.getElementById("taskModalTitle").textContent="Изменить цепочку";document.getElementById("chainEditHint").classList.remove("hidden");return;
+        }
+        if(choice==="delete-one"){
+          if(!confirm("Удалить только это событие? Остальные повторения останутся."))return;
+          const dayTasks=getTasks(dateKey)||[];dayTasks.splice(index,1);if(!dayTasks.length&&tasks[dateKey])delete tasks[dateKey];if(typeof saveStorage==="function")saveStorage();if(typeof renderWeek==="function")renderWeek();openDayPopup(dateKey);return;
+        }
+        if(choice==="delete-all"){
+          if(!confirm("Удалить всю цепочку повторений? Это действие нельзя отменить."))return;
+          if(typeof deleteRecurringChain==="function")deleteRecurringChain(task.recurrenceId);if(typeof renderWeek==="function")renderWeek();openDayPopup(dateKey);
+        }
+      }));
+      return;
+    }
+    if(button.dataset.action === "edit-chain"){
+      if(!task.recurrenceId || typeof getRecurrence !== "function"){
+        alert("Не удалось определить цепочку повторений. Обновите страницу и попробуйте ещё раз.");
+        return;
+      }
+      closeDayPopup();
+      openTaskEditor(dateKey,index);
+      const modal=document.getElementById("taskModal");
+      modal.dataset.editChain="1";
+      document.getElementById("taskModalTitle").textContent="Редактировать цепочку повторений";
+      document.getElementById("chainEditHint").classList.remove("hidden");
+      return;
+    }
+    if(button.dataset.action === "delete-chain"){
+      if(!task.recurrenceId || typeof deleteRecurringChain !== "function"){
+        alert("Не удалось определить цепочку этого события. Обновите страницу и попробуйте ещё раз.");
+        return;
+      }
+      const label=task.text ? `«${task.text}»` : "эту цепочку событий";
+      if(!confirm(`Удалить ВСЕ события цепочки ${label}? Это действие нельзя отменить.`)) return;
       try{
-        const tasks=getTasks(dateKey);
-        if(!Array.isArray(tasks)) throw new Error("Список задач дня недоступен");
-        tasks.splice(index,1);
+        deleteRecurringChain(task.recurrenceId);
+        if(typeof renderWeek === "function") renderWeek();
+        openDayPopup(dateKey);
+      }catch(err){
+        console.error("MaDenFlow: ошибка удаления цепочки событий",err);
+        alert("Не удалось удалить цепочку событий. Попробуйте ещё раз.");
+      }
+      return;
+    }
+    if(button.dataset.action === "delete"){
+      const label=task.text ? `«${task.text}»` : "это событие";
+      if(!confirm(`Удалить только ${label}? Остальные события цепочки останутся.`)) return;
+      try{
+        const dayTasks=getTasks(dateKey);
+        if(!Array.isArray(dayTasks)) throw new Error("Список задач дня недоступен");
+        dayTasks.splice(index,1);
+        if(!dayTasks.length && tasks[dateKey]) delete tasks[dateKey];
         if(typeof saveStorage === "function") saveStorage();
         if(typeof renderWeek === "function") renderWeek();
         openDayPopup(dateKey);
       }catch(err){
-        console.error("MaDenFlow: ошибка удаления задачи",err);
-        alert("Не удалось удалить задачу. Попробуйте ещё раз.");
+        console.error("MaDenFlow: ошибка удаления события",err);
+        alert("Не удалось удалить событие. Попробуйте ещё раз.");
       }
       return;
     }
@@ -230,6 +332,7 @@ function openTaskEditor(dateKey,index){
   document.getElementById("repeatUntil").value=recurrence?.until||"";
   document.querySelectorAll(".repeat-weekday").forEach(x=>x.checked=!!recurrence?.weekdays?.includes(Number(x.value)));
   document.getElementById("repeatWeekdays").classList.toggle("hidden",(recurrence?.type||"")!=="customDays");
+  document.getElementById("chainEditHint").classList.add("hidden");
   modal.classList.remove("hidden");
   setTimeout(()=>document.getElementById("newTaskInput").focus(),50);
 }
@@ -238,7 +341,6 @@ const repeatToggle=document.getElementById("repeatTask");
 const repeatTypeSelect=document.getElementById("repeatType");
 if(repeatToggle){repeatToggle.addEventListener("change",()=>{
   document.getElementById("repeatOptions").classList.toggle("hidden",!repeatToggle.checked);
-  document.getElementById("recurrenceBox").classList.toggle("hidden",!repeatToggle.checked && !document.getElementById("taskModal").dataset.editDate);
 });}
 if(repeatTypeSelect){repeatTypeSelect.addEventListener("change",()=>{
   document.getElementById("repeatWeekdays").classList.toggle("hidden",repeatTypeSelect.value!=="customDays");
@@ -274,11 +376,12 @@ if(saveTaskButton){
       if(editDate!=="" && editIndex!==""){
         const task=(getTasks(editDate)||[])[Number(editIndex)];
         if(editChain && task && task.recurrenceId && typeof editRecurringChain==="function"){
+          if(!document.getElementById("repeatTask").checked){alert("Чтобы изменить всю цепочку, оставьте включённым «Повторять задачу». Для изменения только одного события используйте «Редактировать». ");return;}
+          const repeatType=document.getElementById("repeatType").value;
+          const days=[...document.querySelectorAll(".repeat-weekday:checked")].map(x=>Number(x.value));
+          if(repeatType==="customDays"&&!days.length){alert("Выберите хотя бы один день недели.");return;}
           editRecurringChain(task.recurrenceId,text,time.value);
-          if(document.getElementById("repeatTask").checked && typeof updateRecurringChain==="function"){
-            const days=[...document.querySelectorAll(".repeat-weekday:checked")].map(x=>Number(x.value));
-            updateRecurringChain(task.recurrenceId,document.getElementById("repeatType").value,days,document.getElementById("repeatUntil").value);
-          }
+          if(typeof updateRecurringChain==="function") updateRecurringChain(task.recurrenceId,repeatType,days,document.getElementById("repeatUntil").value);
         }else if(typeof editTask==="function"){
           editTask(editDate,Number(editIndex),text,time.value);
         }else{ alert("Не удалось найти функцию редактирования задачи."); return; }
@@ -354,6 +457,12 @@ function applySettings(){
   if(settings.taskView==="list") settings.taskView="cards";
   document.body.classList.toggle("dark",!!settings.darkMode);
   document.body.dataset.theme=settings.theme||"standard";
+  document.body.dataset.glassTheme=settings.theme==="glass"?"on":"off";
+  document.body.dataset.colorTheme=settings.theme!=="glass"?"on":"off";
+  document.body.dataset.scenicGlass=settings.scenicGlass===false?"off":"on";
+  document.body.style.setProperty("--day-card-blur",(settings.theme==="glass"?Number(settings.dayCardBlur ?? 16):0)+"px");
+  const matteLevel=Math.max(0,Math.min(100,Number(settings.glassMatte ?? 65)));
+  document.body.style.setProperty("--glass-matte-alpha",(0.12+(matteLevel/100)*0.68).toFixed(3));
   document.body.dataset.fontSize=settings.fontSize||"medium";
   document.body.dataset.plannerFontSize=settings.plannerFontSize||settings.fontSize||"medium";
   document.body.dataset.taskFontSize=settings.taskFontSize||settings.fontSize||"medium";
@@ -365,6 +474,7 @@ function applySettings(){
   document.body.dataset.sidebarColor=settings.sidebarColor||"bluegray";
   const custom=settings.theme==="custom" && settings.appearance;
   document.body.dataset.customAppearance=custom?"on":"off";
+  document.body.dataset.appearanceOverrides="on";
   const a=settings.appearance||{};
   const root=document.documentElement.style;
   root.setProperty("--custom-bg",a.bg||"#eef3fb");
@@ -381,9 +491,11 @@ function applySettings(){
   root.setProperty("--custom-weekday-size",(a.weekdaySize||20)+"px");
   root.setProperty("--custom-date-size",(a.dateSize||30)+"px");
   root.setProperty("--custom-month-size",(a.monthSize||14)+"px");
-  root.setProperty("--custom-date-color",a.dateColor||a.text||"#26364d");
+  if(settings.appearance?.dateColor) root.setProperty("--custom-date-color",a.dateColor); else root.removeProperty("--custom-date-color");
   root.setProperty("--custom-week-text-color",a.weekTextColor||"#26364d");
   root.setProperty("--custom-time-color",a.timeColor||"#26364d");
+  if(settings.appearance?.headerColor) root.setProperty("--custom-header-color",a.headerColor); else root.removeProperty("--custom-header-color");
+  if(settings.appearance?.calendarSize) root.setProperty("--custom-calendar-font",a.calendarSize+"px"); else root.removeProperty("--custom-calendar-font");
   document.body.dataset.weekTextMode=a.systemText||"system";
   document.body.dataset.timeTextMode=a.timeMode||"auto";
   root.setProperty("--task-time-color",a.timeMode==="custom"?(a.timeColor||"#26364d"):(a.timeMode==="system"?(a.text||"#26364d"):"#26364d"));
@@ -415,7 +527,7 @@ document.getElementById("settingsBtn").onclick=openSettings;
 document.getElementById("settingsClose").onclick=()=>settingsModal.classList.add("hidden");
 document.getElementById("darkModeToggle").onchange=e=>{appData.settings.darkMode=e.target.checked;applySettings();saveStorage()};
 document.getElementById("gradientDaysToggle").onchange=e=>{appData.settings.gradientDays=e.target.checked;applySettings();saveStorage()};
-document.getElementById("themeSelect").onchange=e=>{appData.settings.theme=e.target.value;if(e.target.value==="custom"){appData.settings.appearance=appData.settings.appearance||{bg:"#eef3fb",weekday:"#dce7fa",weekend:"#f5dce9",card:"#ffffff",text:"#26364d",sidebar:"#e0e8f2",font:15,opacity:100,radius:14,weekdaySize:20,dateSize:30,monthSize:14,systemText:"system",weekTextColor:"#26364d",timeMode:"auto",timeColor:"#26364d"};}applySettings();saveStorage();updateAppearancePreview();};
+document.getElementById("themeSelect").onchange=e=>{document.getElementById("appearanceModal").dataset.activeTheme=e.target.value;appData.settings.theme=e.target.value;appData.settings.scenicGlass=e.target.value==="glass";if(e.target.value==="custom"){appData.settings.appearance=appData.settings.appearance||{bg:"#eef3fb",weekday:"#dce7fa",weekend:"#f5dce9",card:"#ffffff",text:"#26364d",sidebar:"#e0e8f2",font:15,opacity:100,radius:14,weekdaySize:20,dateSize:30,monthSize:14,systemText:"system",weekTextColor:"#26364d",timeMode:"auto",timeColor:"#26364d"};}applySettings();saveStorage();updateAppearancePreview();};
 const sidebarColorSelect=document.getElementById("sidebarColorSelect");
 if(sidebarColorSelect) sidebarColorSelect.onchange=e=>{appData.settings.sidebarColor=e.target.value;applySettings();saveStorage()};
 function syncTaskCapacityOptions(){
@@ -455,50 +567,103 @@ const appearanceDefaults={bg:"#eef3fb",weekday:"#dce7fa",weekend:"#f5dce9",card:
 function getAppearance(){return {...appearanceDefaults,...(appData.settings.appearance||{})};}
 function updateAppearancePreview(){
   const a=getAppearance();
+  const glassOn=appData.settings?.theme==="glass";
+  document.getElementById("appearanceModal").dataset.activeTheme=appData.settings?.theme||"standard";
+  const swatches=document.querySelector(".appearance-swatches");
+  if(swatches) swatches.hidden=glassOn;
+  const themeSelect=document.getElementById("themeSelect");
+  if(themeSelect && appData.settings?.theme) themeSelect.value=appData.settings.theme;
+  const matte=Math.max(0,Math.min(100,Number(appData.settings?.glassMatte ?? 65)));
+  const blur=Math.max(0,Math.min(32,Number(appData.settings?.dayCardBlur ?? 16)));
+  const alpha=0.12+(matte/100)*0.68;
+  document.documentElement.style.setProperty("--glass-matte-alpha", alpha.toFixed(3));
+  document.documentElement.style.setProperty("--day-card-blur", blur+"px");
   const preview=document.getElementById("appearancePreview");
   if(!preview)return;
-  preview.style.background=a.bg;preview.style.color=a.text;
-  const day=preview.querySelector(".appearance-preview-day");if(day)day.style.background=a.weekday;
-  const date=preview.querySelector(".appearance-preview-date");if(date)date.style.color=a.text;
-  const tasks=preview.querySelectorAll(".appearance-preview-tasks > div");tasks.forEach(el=>{el.style.background=a.card;el.style.color=a.text;el.style.opacity=Number(a.opacity)/100;el.style.borderRadius=a.radius+"px";el.style.fontSize=a.font+"px";});
+  const landscape=`url("month-backgrounds/month-${String((currentDate||new Date()).getMonth()+1).padStart(2,"0")}.jpg")`;
+  preview.style.backgroundImage=`linear-gradient(rgba(238,244,252,.08),rgba(238,244,252,.08)), ${landscape}`;
+  preview.style.backgroundSize="cover";
+  preview.style.backgroundPosition="center";
+  preview.style.color=a.text;
   preview.style.borderRadius=a.radius+"px";
+  preview.style.setProperty("--glass-matte-alpha", alpha.toFixed(3));
+  preview.style.setProperty("--day-card-blur", blur+"px");
+  const day=preview.querySelector(".appearance-preview-day");
+  const isGlass=appData.settings?.theme==="glass";
+  preview.style.setProperty("--custom-header-color",a.headerColor||"rgba(255,255,255,.48)");
+  preview.style.setProperty("--custom-calendar-font",(a.calendarSize||16)+"px");
+  const customTheme=appData.settings?.theme==="custom";
+  const weekdayColor=customTheme?a.weekday:(getComputedStyle(document.body).getPropertyValue("--weekday").trim()||a.weekday);
+  const weekendColor=customTheme?a.weekend:(getComputedStyle(document.body).getPropertyValue("--weekend").trim()||a.weekend);
+  const cardColor=customTheme?a.card:(getComputedStyle(document.body).getPropertyValue("--custom-card").trim()||a.card);
+  if(day){
+    day.style.background=customTheme?(a.headerColor||weekdayColor):(isGlass?`rgba(238,244,252,${alpha.toFixed(3)})`:weekdayColor);
+    day.style.backgroundImage="none";
+    day.style.backdropFilter=isGlass?`blur(${blur}px) saturate(118%)`:`none`;
+    day.style.webkitBackdropFilter=isGlass?`blur(${blur}px) saturate(118%)`:`none`;
+    day.style.border=customTheme?`1px solid ${weekdayColor}`:"1px solid rgba(255,255,255,.72)";
+    day.style.boxShadow="inset 0 1px 0 rgba(255,255,255,.5)";
+    day.style.borderRadius=Math.max(8,a.radius)+"px";
+  }
+  const date=preview.querySelector(".appearance-preview-date");
+  if(date){date.style.color=a.dateColor||a.text;date.style.background=customTheme?weekendColor:(isGlass?`rgba(245,248,252,${Math.max(.2,alpha*.55).toFixed(3)})`:weekendColor);}
+  const previewWeekday=preview.querySelector(".appearance-preview-date b");
+  const previewNumber=preview.querySelector(".appearance-preview-date strong");
+  const previewMonth=preview.querySelector(".appearance-preview-date small");
+  if(previewWeekday)previewWeekday.style.fontSize=(a.weekdaySize||20)+"px";
+  if(previewNumber)previewNumber.style.fontSize=(a.dateSize||30)+"px";
+  if(previewMonth)previewMonth.style.fontSize=(a.monthSize||14)+"px";
+  const tasks=preview.querySelectorAll(".appearance-preview-tasks > div");
+  tasks.forEach((el,i)=>{el.style.background=customTheme?cardColor:(isGlass?`rgba(255,255,255,${alpha.toFixed(3)})`:cardColor);el.style.color=a.text;el.style.opacity=String(Number(a.opacity)/100);el.style.borderRadius=a.radius+"px";el.style.fontSize=a.font+"px";});
 }
+
 function openAppearance(){
+  updateAppearancePreview();
   const a=getAppearance();
   for(const key of ["bg","weekday","weekend","card","text","sidebar"])document.getElementById("appearance"+key[0].toUpperCase()+key.slice(1)).value=a[key];
   document.getElementById("appearanceFont").value=a.font;document.getElementById("appearanceOpacity").value=a.opacity;document.getElementById("appearanceRadius").value=a.radius;
+  document.getElementById("appearanceDayBlur").value=Number(appData.settings.dayCardBlur ?? 16);document.getElementById("appearanceDayBlurValue").textContent=Number(appData.settings.dayCardBlur ?? 16)+" px";
+  document.getElementById("appearanceMatte").value=Number(appData.settings.glassMatte ?? 65);document.getElementById("appearanceMatteValue").textContent=Number(appData.settings.glassMatte ?? 65)+"%";
   document.getElementById("appearanceWeekdaySize").value=a.weekdaySize;document.getElementById("appearanceMonthSize").value=a.monthSize;document.getElementById("appearanceDateColor").value=a.dateColor||a.text;
+  document.getElementById("appearanceHeaderColor").value=a.headerColor||"#dce7fa";document.getElementById("appearanceCalendarSize").value=a.calendarSize||16;document.getElementById("appearanceCalendarSizeValue").textContent=(a.calendarSize||16)+" px";
   document.getElementById("appearanceSystemText").value=a.systemText;document.getElementById("appearanceWeekTextColor").value=a.weekTextColor;
   document.getElementById("appearanceTimeMode").value=a.timeMode;document.getElementById("appearanceTimeColor").value=a.timeColor;
   document.getElementById("appearanceWeekTextColorRow").style.display=a.systemText==="custom"?"flex":"none";
   document.getElementById("appearanceTimeColorRow").style.display=a.timeMode==="custom"?"flex":"none";
   document.getElementById("appearanceFontValue").textContent=a.font+" px";document.getElementById("appearanceOpacityValue").textContent=a.opacity+"%";document.getElementById("appearanceRadiusValue").textContent=a.radius+" px";
-  document.getElementById("appearanceWeekdaySizeValue").textContent=a.weekdaySize+" px";document.getElementById("appearanceMonthSizeValue").textContent=a.monthSize+" px";
+  document.getElementById("appearanceWeekdaySizeValue").textContent=a.weekdaySize+" px";document.getElementById("appearanceMonthSizeValue").textContent=a.monthSize+" px";document.getElementById("appearanceCalendarSizeValue").textContent=(a.calendarSize||16)+" px";
   document.getElementById("themeSelect").value=appData.settings.theme||"standard";
   updateAppearancePreview();appearanceModal.classList.remove("hidden");
 }
 
+const dayBlurInput=document.getElementById("appearanceDayBlur");
+const dayBlurValue=document.getElementById("appearanceDayBlurValue");
+if(dayBlurInput){dayBlurInput.addEventListener("input",e=>{const v=Math.max(0,Math.min(32,Number(e.target.value)||0));appData.settings.dayCardBlur=v;if(dayBlurValue)dayBlurValue.textContent=v+" px";applySettings();saveStorage();updateAppearancePreview();});}
+const matteInput=document.getElementById("appearanceMatte");
+if(matteInput){matteInput.addEventListener("input",e=>{const v=Math.max(0,Math.min(100,Number(e.target.value)||0));appData.settings.glassMatte=v;const label=document.getElementById("appearanceMatteValue");if(label)label.textContent=v+"%";applySettings();saveStorage();updateAppearancePreview();});}
 document.getElementById("appearanceBtn").onclick=openAppearance;
 document.getElementById("appearanceClose").onclick=()=>appearanceModal.classList.add("hidden");
 document.getElementById("appearanceDone").onclick=()=>appearanceModal.classList.add("hidden");
 function changeAppearance(){
   const a={bg:document.getElementById("appearanceBg").value,weekday:document.getElementById("appearanceWeekday").value,weekend:document.getElementById("appearanceWeekend").value,card:document.getElementById("appearanceCard").value,text:document.getElementById("appearanceText").value,sidebar:document.getElementById("appearanceSidebar").value,font:Number(document.getElementById("appearanceFont").value),opacity:Number(document.getElementById("appearanceOpacity").value),radius:Number(document.getElementById("appearanceRadius").value),
-    weekdaySize:Number(document.getElementById("appearanceWeekdaySize").value),dateSize:Number(document.getElementById("appearanceWeekdaySize").value),monthSize:Number(document.getElementById("appearanceMonthSize").value),dateColor:document.getElementById("appearanceDateColor").value,
+    weekdaySize:Number(document.getElementById("appearanceWeekdaySize").value),dateSize:Number(document.getElementById("appearanceWeekdaySize").value),monthSize:Number(document.getElementById("appearanceMonthSize").value),dateColor:document.getElementById("appearanceDateColor").value,headerColor:document.getElementById("appearanceHeaderColor").value,calendarSize:Number(document.getElementById("appearanceCalendarSize").value),
     systemText:document.getElementById("appearanceSystemText").value,weekTextColor:document.getElementById("appearanceWeekTextColor").value,
     timeMode:document.getElementById("appearanceTimeMode").value,timeColor:document.getElementById("appearanceTimeColor").value};
-  appData.settings.appearance=a;appData.settings.theme="custom";document.getElementById("themeSelect").value="custom";
+  appData.settings.appearance={...(appData.settings.appearance||{}), ...a};
   document.getElementById("appearanceFontValue").textContent=a.font+" px";document.getElementById("appearanceOpacityValue").textContent=a.opacity+"%";document.getElementById("appearanceRadiusValue").textContent=a.radius+" px";
-  document.getElementById("appearanceWeekdaySizeValue").textContent=a.weekdaySize+" px";document.getElementById("appearanceMonthSizeValue").textContent=a.monthSize+" px";
+  document.getElementById("appearanceWeekdaySizeValue").textContent=a.weekdaySize+" px";document.getElementById("appearanceMonthSizeValue").textContent=a.monthSize+" px";document.getElementById("appearanceCalendarSizeValue").textContent=(a.calendarSize||16)+" px";
   applySettings();saveStorage();updateAppearancePreview();
 }
-["appearanceBg","appearanceWeekday","appearanceWeekend","appearanceCard","appearanceText","appearanceSidebar","appearanceFont","appearanceOpacity","appearanceRadius","appearanceWeekdaySize","appearanceMonthSize","appearanceDateColor","appearanceWeekTextColor","appearanceTimeColor"].forEach(id=>document.getElementById(id).addEventListener("input",changeAppearance));
-document.querySelectorAll(".appearance-swatch").forEach(btn=>btn.addEventListener("click",()=>{appData.settings.theme=btn.dataset.preset;document.getElementById("themeSelect").value=btn.dataset.preset;applySettings();saveStorage();openAppearance();}));
-document.getElementById("appearanceReset").onclick=()=>{appData.settings.appearance={...appearanceDefaults};appData.settings.theme="standard";document.getElementById("themeSelect").value="standard";applySettings();saveStorage();openAppearance();};
+["appearanceBg","appearanceWeekday","appearanceWeekend","appearanceCard","appearanceText","appearanceSidebar","appearanceFont","appearanceOpacity","appearanceRadius","appearanceWeekdaySize","appearanceMonthSize","appearanceDateColor","appearanceWeekTextColor","appearanceTimeColor","appearanceHeaderColor","appearanceCalendarSize"].forEach(id=>document.getElementById(id).addEventListener("input",changeAppearance));
+document.querySelectorAll(".appearance-swatch").forEach(btn=>btn.addEventListener("click",()=>{appData.settings.theme=btn.dataset.preset;appData.settings.scenicGlass=false;document.getElementById("themeSelect").value=btn.dataset.preset;applySettings();saveStorage();openAppearance();}));
+document.getElementById("appearanceReset").onclick=()=>{appData.settings.scenicGlass=true;appData.settings.appearance={...appearanceDefaults};appData.settings.theme="standard";document.getElementById("themeSelect").value="standard";applySettings();saveStorage();openAppearance();};
 
 // Обновление PWA по кнопке. Старый кэш не очищаем, пока новая версия не установлена.
 (function setupAppUpdate(){
   const button=document.getElementById("appUpdateBtn");
   const status=document.getElementById("appUpdateStatus");
+  const version=document.getElementById("appVersion");
+  if(version) version.textContent="9.18.0";
   if(!button||!status) return;
   let busy=false;
   const workerUrl=new URL("sw.js",document.baseURI);
@@ -621,8 +786,8 @@ function openMonthScreen(){
   closeSidePanel();
   if(!monthSelectedDate) monthSelectedDate=new Date(currentDate);
   renderMonthScreen();
-  monthScreen.classList.remove("hidden");
   planner.classList.add("month-covered");
+  monthScreen.classList.remove("hidden");
 }
 function closeMonthScreen(){
   monthScreen.classList.add("hidden");
@@ -632,8 +797,17 @@ function closeMonthScreen(){
 function renderMonthScreen(){
   const y=monthScreenCursor.getFullYear(), m=monthScreenCursor.getMonth();
   const monthName=new Date(y,m,1).toLocaleDateString("ru-RU",{month:"long"});
+  const season=SEASONAL_MONTHS[m];
   monthScreenTitle.textContent=monthName.charAt(0).toLocaleUpperCase("ru-RU")+monthName.slice(1)+" "+y;
+  monthScreenTitle.style.color=season.base;
+  monthScreenTitle.style.background=season.tint;
+  monthScreenTitle.style.borderRadius="16px";
+  monthScreenTitle.style.padding="8px 14px";
+  monthScreenTitle.style.display="inline-block";
   const grid=monthScreenGrid;
+  monthScreen.style.setProperty("--month-landscape", `url("month-backgrounds/month-${String(m+1).padStart(2,"0")}.jpg")`);
+  grid.style.setProperty("--season-color",season.base);
+  grid.style.setProperty("--season-tint",season.tint);
   grid.innerHTML=weekDays.map(d=>`<div class="month-weekday">${d}</div>`).join("");
   const first=(new Date(y,m,1).getDay()||7)-1;
   const days=new Date(y,m+1,0).getDate();
@@ -641,6 +815,7 @@ function renderMonthScreen(){
   for(let day=1;day<=days;day++){
     const d=new Date(y,m,day),btn=document.createElement("button");
     btn.className="month-day";
+    btn.style.setProperty("--season-color",season.base);btn.style.setProperty("--season-tint",season.tint);
     if(d.toDateString()===new Date().toDateString()) btn.classList.add("today");
     if(d.toDateString()===monthSelectedDate.toDateString()) btn.classList.add("selected");
     const key=localKey(d), dayTasks=getTasks(key)||[];
@@ -817,7 +992,7 @@ document.querySelectorAll('.modal').forEach(modal=>{
   const a=getAppearance();
   a.systemText=document.getElementById("appearanceSystemText").value;
   a.timeMode=document.getElementById("appearanceTimeMode").value;
-  appData.settings.appearance=a;appData.settings.theme="custom";document.getElementById("themeSelect").value="custom";
+  appData.settings.appearance={...(appData.settings.appearance||{}), ...a};
   document.getElementById("appearanceWeekTextColorRow").style.display=a.systemText==="custom"?"flex":"none";
   document.getElementById("appearanceTimeColorRow").style.display=a.timeMode==="custom"?"flex":"none";
   applySettings();saveStorage();updateAppearancePreview();

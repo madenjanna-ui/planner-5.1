@@ -14,9 +14,45 @@ function getRecurrence(id){return (appData.recurrences||[]).find(r=>r.id===id)||
 
 function updateRecurringChain(recurrenceId,type,weekdays=[],until=""){
   const r=getRecurrence(recurrenceId);if(!r)return;
-  r.type=type||r.type;r.weekdays=Array.isArray(weekdays)?weekdays:[];
-  if(until)r.until=until;
-  // Сохраняем уже отмеченные дела; новые даты для изменённого расписания не генерируем автоматически.
+  const nextType=type||r.type;
+  const nextDays=Array.isArray(weekdays)?weekdays:[];
+  const today=localDateKey(new Date());
+  const endKey=until||r.until||localDateKey(new Date(new Date().getFullYear()+1,new Date().getMonth(),new Date().getDate()));
+  const oldByDate=new Map();
+  Object.keys(tasks).forEach(date=>{
+    const matching=(tasks[date]||[]).filter(t=>t.recurrenceId===recurrenceId);
+    if(matching.length) oldByDate.set(date,matching);
+  });
+  // История до сегодняшнего дня остаётся нетронутой; будущие даты пересобираются по новому правилу.
+  Object.keys(tasks).forEach(date=>{
+    if(date<today)return;
+    tasks[date]=tasks[date].filter(t=>t.recurrenceId!==recurrenceId);
+    if(!tasks[date].length)delete tasks[date];
+  });
+  const startKey=r.startDate||today;
+  const d=new Date(startKey+"T12:00:00"), end=new Date(endKey+"T12:00:00");
+  let guard=0;
+  while(d<=end&&guard<1100){
+    const date=localDateKey(d), jsDay=d.getDay(), monFirst=(jsDay+6)%7;
+    let include=false;
+    if(nextType==="daily")include=true;
+    else if(nextType==="weekly")include=(date===startKey)||((Math.round((d-new Date(startKey+"T12:00:00"))/86400000)%7)===0);
+    else if(nextType==="weekdays")include=jsDay!==0&&jsDay!==6;
+    else if(nextType==="monthly")include=d.getDate()===new Date(startKey+"T12:00:00").getDate();
+    else if(nextType==="customDays")include=nextDays.includes(monFirst);
+    if(include&&date>=today){
+      const previous=(oldByDate.get(date)||[]).find(t=>t.recurrenceId===recurrenceId);
+      const item=previous?{...previous,text:r.text||previous.text,time:r.time||""}:{text:r.text||"",done:false,priority:"normal",time:r.time||"",created:Date.now(),recurrenceId,listColor:"green",cardColor:"soft-blue"};
+      item.recurrenceId=recurrenceId;
+      if(!tasks[date])tasks[date]=[];
+      tasks[date].push(item);sortTasks(tasks[date]);
+    }
+    if(nextType==="weekly")d.setDate(d.getDate()+7);
+    else if(nextType==="monthly")d.setMonth(d.getMonth()+1);
+    else d.setDate(d.getDate()+1);
+    guard++;
+  }
+  r.type=nextType;r.weekdays=nextDays;r.until=endKey;r.startDate=r.startDate||today;
   saveStorage();return r;
 }
 function deleteTask(date,index){if(!tasks[date])return;tasks[date].splice(index,1);if(!tasks[date].length)delete tasks[date];saveStorage()}

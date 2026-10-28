@@ -51,9 +51,9 @@ function showTaskMenu(task,date,index){
     ${listMode?`<div class="task-menu-line"></div><div class="task-menu-label">Цвет строки</div><div class="task-color-actions"><button data-action="list-green">🟢 Зелёная</button><button data-action="list-red">🔴 Красная</button><button data-action="list-black">⚫ Чёрная</button></div>`:""}
     <div class="task-menu-line"></div>
     <button data-action="edit">✏️ Редактировать</button>
-    ${recurring?`<button data-action="edit-chain">✏️ Редактировать всю цепочку</button>`:""}
+    ${recurring?`<button data-action="edit-chain" class="task-chain-edit" title="Изменить текст, время и расписание всех повторений">🔁✏️ Изменить цепочку повторений</button>`:""}
     <button data-action="delete">🗑 Удалить это дело</button>
-    ${recurring?`<button data-action="delete-chain">🗑 Удалить всю цепочку</button>`:""}
+    ${recurring?`<button data-action="delete-chain" class="task-chain-delete" title="Удалить все повторения этой задачи">🔗🗑 Удалить цепочку целиком</button>`:""}
   `;
   document.body.appendChild(menu);
   const rect=task.getBoundingClientRect();
