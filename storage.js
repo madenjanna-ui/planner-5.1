@@ -4,7 +4,7 @@ const defaultData={tasks:{},service:{},recurrences:[],settings:{darkMode:false,e
 let appData=loadStorage();
 window.tasks=appData.tasks; window.service=appData.service;
 function loadStorage(){try{const raw=localStorage.getItem(STORAGE_KEY);const data=raw?JSON.parse(raw):structuredClone(defaultData);return {...structuredClone(defaultData),...data,tasks:data.tasks||{},service:data.service||{},recurrences:data.recurrences||[],visits:data.visits||[],settings:{...defaultData.settings,...(data.settings||{})}}}catch(e){return structuredClone(defaultData)}}
-function saveStorage(){localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));if(typeof cloudSave==='function')cloudSave()}
+function saveStorage(){localStorage.setItem(STORAGE_KEY,JSON.stringify(appData));if(typeof cloudSave==='function')cloudSave();if(typeof window.renderSideMiniCalendar==='function')window.renderSideMiniCalendar()}
 function saveTasks(){saveStorage()}
 function getTasks(date){if(!tasks[date])tasks[date]=[];return sortTasks(tasks[date])}
 function sortTasks(list){list.sort((a,b)=>{const ta=a.time||"99:99",tb=b.time||"99:99";return ta.localeCompare(tb)||((a.created||0)-(b.created||0))});return list}

@@ -5714,3 +5714,27 @@ body#appBody::before {
   border-top: 1px solid rgba(255,255,255,.46) !important;
   box-shadow: 0 -2px 14px rgba(18,32,52,.06) !important;
 }
+
+
+/* MaDenFlow 9.19: passive vertically-scrollable mini calendar + legibility fixes */
+#sidePanel .side-mini-calendar{display:block!important;order:7;flex:0 0 auto;margin:14px 0 6px;padding:12px;border-radius:18px;border:1px solid rgba(255,255,255,.58);background:rgba(255,255,255,.30);color:inherit;min-height:0;}
+#sidePanel .side-mini-calendar-heading{font-size:14px;font-weight:850;margin:0 0 10px;padding:0 2px;}
+#sidePanel .side-mini-calendar-scroll{max-height:46vh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-snap-type:y proximity;display:grid;gap:12px;padding:1px 2px 6px;}
+#sidePanel .side-mini-month{scroll-snap-align:start;min-width:0;padding:10px;border-radius:13px;background:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.40);}
+#sidePanel .side-mini-month-title{text-transform:capitalize;font-size:13px;font-weight:850;margin-bottom:8px;}
+#sidePanel .side-mini-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;text-align:center;}
+#sidePanel .side-mini-weekday{font-size:10px;font-weight:800;opacity:.72;padding:3px 0;}
+#sidePanel .side-mini-empty{height:25px;}
+#sidePanel .side-mini-day{height:25px;min-width:0;position:relative;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:11px;font-weight:650;color:inherit;}
+#sidePanel .side-mini-day.today{background:#4d87f7;color:white;font-weight:900;}
+#sidePanel .side-mini-day.has-tasks:not(.today)::after{content:"";position:absolute;bottom:2px;width:4px;height:4px;border-radius:50%;background:#4d87f7;}
+#sidePanel .side-mini-day.today.has-tasks::after{background:#fff;}
+/* Sidebar colors are applied to the actual glass layer too, not just the transparent shell. */
+body[data-sidebar-color="bluegray"] #sidePanel::after{background:rgba(220,230,242,.96)!important;}
+body[data-sidebar-color="light"] #sidePanel::after{background:rgba(250,252,255,.97)!important;}
+body[data-sidebar-color="dark"] #sidePanel::after{background:rgba(36,46,62,.97)!important;}
+body[data-custom-appearance="on"] #sidePanel::after{background:var(--custom-sidebar,#e0e8f2)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;}
+body[data-sidebar-color="dark"] #sidePanel .side-mini-month{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.15);}
+body[data-sidebar-color="light"] #sidePanel .side-mini-month,body[data-sidebar-color="bluegray"] #sidePanel .side-mini-month{background:rgba(255,255,255,.55);}
+#weekTitle{color:#26364d!important;background:rgba(239,245,253,.94)!important;text-shadow:none!important;border-top:1px solid rgba(255,255,255,.95)!important;box-shadow:0 -3px 16px rgba(18,32,52,.18)!important;}
+#monthScreen .month-tasks-empty{color:#26364d!important;background:rgba(255,255,255,.78)!important;border:1px solid rgba(255,255,255,.82)!important;border-radius:12px!important;padding:12px!important;font-weight:700!important;text-shadow:none!important;}
