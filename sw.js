@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "madenflow-shell-";
-const CACHE_VERSION = "9.17.0";
+const CACHE_VERSION = "9.18.0";
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 const SHELL_FILES = ["./", "./index.html", "./style.css", "./app.js", "./storage.js", "./tasks.js", "./service.js", "./visits.js", "./cloud.js", "./manifest.json", "./sw.js", "./icons/icon.svg", "./icons/icon-192.png", "./icons/icon-512.png",
   "./month-backgrounds/month-01.jpg", "./month-backgrounds/month-02.jpg", "./month-backgrounds/month-03.jpg", "./month-backgrounds/month-04.jpg",

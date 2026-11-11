@@ -35,9 +35,6 @@
     <button id="todayBtn" class="side-nav-btn" aria-label="Текущая дата">
       <span class="side-icon">📅</span><span>Текущая дата</span>
     </button>
-    <button id="calendarBtn" class="side-nav-btn" aria-label="Календарь">
-      <span class="side-icon">🗓️</span><span>Календарь</span>
-    </button>
     <button id="serviceBtn" class="side-nav-btn" aria-label="Служение">
       <span class="side-icon">👔</span><span>Часы</span>
     </button>
@@ -50,7 +47,13 @@
     <button id="settingsBtn" class="side-nav-btn" aria-label="Настройки">
       <span class="side-icon">⚙️</span><span>Настройки</span>
     </button>
-    <section id="sideMiniCalendar" class="side-mini-calendar" aria-label="Мини-календарь по месяцам"><div class="side-mini-calendar-heading">Календарь</div><div id="sideMiniCalendarScroll" class="side-mini-calendar-scroll"></div></section>
+    <button id="calendarBtn" class="side-nav-btn side-calendar-link" aria-label="Открыть календарь">
+      <span class="side-icon">🗓️</span><span>Календарь</span><span class="side-calendar-chevron">›</span>
+    </button>
+    <section id="sideMiniCalendar" class="side-mini-calendar" aria-label="Обзор задач по месяцам">
+      <div class="side-mini-calendar-head"><button id="sideMiniPrev" type="button" aria-label="Предыдущий месяц">‹</button><div id="sideMiniMonthTitle" class="side-mini-calendar-heading"></div><button id="sideMiniNext" type="button" aria-label="Следующий месяц">›</button></div>
+      <div id="sideMiniCalendarScroll" class="side-mini-calendar-scroll" aria-live="polite"></div>
+    </section>
   </div>
 </aside>
 

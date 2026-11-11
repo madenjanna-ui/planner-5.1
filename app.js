@@ -856,39 +856,45 @@ document.getElementById("calendarBtn").onclick=()=>{
 };
 
 
-// Компактный календарь в боковой панели: только просмотр, без перехода на недельный экран.
+// Компактный календарь в боковой панели: только обзор, даты не интерактивны.
 (function initSideMiniCalendar(){
   const host=document.getElementById("sideMiniCalendarScroll");
-  if(!host) return;
+  const title=document.getElementById("sideMiniMonthTitle");
+  const prev=document.getElementById("sideMiniPrev");
+  const next=document.getElementById("sideMiniNext");
+  if(!host||!title||!prev||!next) return;
+  let cursor=new Date(); cursor.setDate(1); cursor.setHours(0,0,0,0);
   const monthLabel=(date)=>date.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
   function renderSideMiniCalendar(){
-    const now=new Date(); now.setDate(1); now.setHours(0,0,0,0);
-    const months=[];
-    for(let offset=-6;offset<=18;offset++){
-      const first=new Date(now.getFullYear(),now.getMonth()+offset,1);
-      const y=first.getFullYear(),m=first.getMonth();
-      const start=(new Date(y,m,1).getDay()||7)-1;
-      const count=new Date(y,m+1,0).getDate();
-      let html=`<section class="side-mini-month" data-month="${y}-${String(m+1).padStart(2,"0")}"><div class="side-mini-month-title">${monthLabel(first)}</div><div class="side-mini-grid">`;
-      for(const wd of ["П","В","С","Ч","П","С","В"] ) html+=`<span class="side-mini-weekday">${wd}</span>`;
-      for(let i=0;i<start;i++) html+='<span class="side-mini-empty"></span>';
-      for(let day=1;day<=count;day++){
-        const d=new Date(y,m,day),key=localKey(d),tasks=getTasks(key)||[];
-        const isToday=d.toDateString()===new Date().toDateString();
-        html+=`<span class="side-mini-day${isToday?' today':''}${tasks.length?' has-tasks':''}" aria-label="${d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})}">${day}${tasks.length?'<i></i>':''}</span>`;
-      }
-      html+='</div></section>'; months.push(html);
+    const y=cursor.getFullYear(),m=cursor.getMonth();
+    title.textContent=monthLabel(cursor);
+    const start=(new Date(y,m,1).getDay()||7)-1;
+    const count=new Date(y,m+1,0).getDate();
+    let html='<div class="side-mini-grid">';
+    for(const wd of ["П","В","С","Ч","П","С","В"]) html+=`<span class="side-mini-weekday">${wd}</span>`;
+    for(let i=0;i<start;i++) html+='<span class="side-mini-empty"></span>';
+    for(let day=1;day<=count;day++){
+      const d=new Date(y,m,day),key=localKey(d),tasks=getTasks(key)||[];
+      const isToday=d.toDateString()===new Date().toDateString();
+      // Показываем только выбранные пользователем цвета карточек. Приоритеты и
+      // другие свойства задачи не меняем и не используем для мини-календаря.
+      const cardColors=[...new Set(tasks.map(t=>t.cardColor).filter(color=>
+        ["soft-blue","soft-green","soft-orange","soft-pink","soft-purple","soft-teal"].includes(color)
+      ))];
+      const dots=cardColors.map(color=>`<i class="${color}"></i>`).join("");
+      html+=`<span class="side-mini-day${isToday?' today':''}${tasks.length?' has-tasks':''}" aria-label="${d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})}${tasks.length?`, задач: ${tasks.length}`:''}">${day}${dots?`<span class="side-mini-dots">${dots}</span>`:''}</span>`;
     }
-    host.innerHTML=months.join("");
-    const current=host.querySelector(`[data-month="${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}"]`);
-    if(current) host.scrollTop=Math.max(0,current.offsetTop-host.offsetTop-2);
+    html+='</div>'; host.innerHTML=html;
   }
+  prev.addEventListener("click",()=>{cursor.setMonth(cursor.getMonth()-1);renderSideMiniCalendar()});
+  next.addEventListener("click",()=>{cursor.setMonth(cursor.getMonth()+1);renderSideMiniCalendar()});
+  let touchStartX=0,touchStartY=0;
+  host.addEventListener("touchstart",e=>{const t=e.touches[0];touchStartX=t.clientX;touchStartY=t.clientY},{passive:true});
+  host.addEventListener("touchend",e=>{const t=e.changedTouches[0],dx=t.clientX-touchStartX,dy=t.clientY-touchStartY;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.25){cursor.setMonth(cursor.getMonth()+(dx<0?1:-1));renderSideMiniCalendar()}},{passive:true});
   window.renderSideMiniCalendar=renderSideMiniCalendar;
   renderSideMiniCalendar();
-  host.addEventListener("wheel",e=>{e.stopPropagation();},{passive:true});
   window.addEventListener("storage",renderSideMiniCalendar);
 })();
-
 
 
 // day-card-tap-handler

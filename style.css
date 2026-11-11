@@ -5738,3 +5738,35 @@ body[data-sidebar-color="dark"] #sidePanel .side-mini-month{background:rgba(255,
 body[data-sidebar-color="light"] #sidePanel .side-mini-month,body[data-sidebar-color="bluegray"] #sidePanel .side-mini-month{background:rgba(255,255,255,.55);}
 #weekTitle{color:#26364d!important;background:rgba(239,245,253,.94)!important;text-shadow:none!important;border-top:1px solid rgba(255,255,255,.95)!important;box-shadow:0 -3px 16px rgba(18,32,52,.18)!important;}
 #monthScreen .month-tasks-empty{color:#26364d!important;background:rgba(255,255,255,.78)!important;border:1px solid rgba(255,255,255,.82)!important;border-radius:12px!important;padding:12px!important;font-weight:700!important;text-shadow:none!important;}
+
+
+/* MaDenFlow 5.1 update: calendar shortcut above a compact, passive month overview. */
+#sidePanel #todayBtn{order:1!important;}
+#sidePanel #serviceBtn{order:2!important;}
+#sidePanel #visitsBtn{order:3!important;}
+#sidePanel #appearanceBtn{order:4!important;}
+#sidePanel #settingsBtn{order:5!important;}
+#sidePanel #calendarBtn{order:6!important;flex-shrink:0!important;margin-top:8px!important;position:relative;}
+#sidePanel .side-mini-calendar{order:7!important;display:block!important;flex:0 0 auto!important;margin:0 0 8px!important;padding:11px!important;border-radius:17px!important;border:1px solid rgba(255,255,255,.58)!important;background:rgba(255,255,255,.27)!important;color:inherit!important;min-height:0!important;}
+#sidePanel .side-mini-calendar-head{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;align-items:center;gap:6px;margin-bottom:9px;}
+#sidePanel .side-mini-calendar-head button{height:30px;width:32px;border:1px solid rgba(255,255,255,.42);border-radius:9px;background:rgba(255,255,255,.32);color:inherit;font-size:23px;line-height:1;cursor:pointer;padding:0;}
+#sidePanel .side-mini-calendar-heading{text-align:center;text-transform:capitalize;font-size:13px;font-weight:850;white-space:nowrap;}
+#sidePanel .side-mini-calendar-scroll{max-height:none!important;overflow:hidden!important;touch-action:pan-y; padding:0 1px 3px!important;}
+#sidePanel .side-mini-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;text-align:center;}
+#sidePanel .side-mini-weekday{font-size:10px;font-weight:850;opacity:.78;padding:3px 0;}
+#sidePanel .side-mini-empty{height:27px;}
+#sidePanel .side-mini-day{height:27px;min-width:0;position:relative;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:12px;font-weight:700;color:inherit;}
+#sidePanel .side-mini-day.today{background:#477fda;color:#fff;font-weight:900;}
+#sidePanel .side-mini-dots{position:absolute;bottom:2px;display:flex;gap:2px;justify-content:center;max-width:90%;}
+#sidePanel .side-mini-dots i{width:5px;height:5px;border-radius:50%;display:block;background:#5795ee;}
+#sidePanel .side-mini-dots i.soft-blue{background:#5795ee;}
+#sidePanel .side-mini-dots i.soft-green{background:#44ad78;}
+#sidePanel .side-mini-dots i.soft-orange{background:#e99a37;}
+#sidePanel .side-mini-dots i.soft-pink{background:#e96d91;}
+#sidePanel .side-mini-dots i.soft-purple{background:#9272e8;}
+#sidePanel .side-mini-dots i.soft-teal{background:#38a9a5;}
+#sidePanel .side-mini-day.today .side-mini-dots i{box-shadow:0 0 0 1px rgba(255,255,255,.45);}
+#sidePanel .side-calendar-chevron{margin-left:auto;font-size:25px;line-height:1;opacity:.72;}
+/* Legibility on changing seasonal photos. */
+#weekTitle{background:rgba(232,239,249,.94)!important;color:#26364d!important;text-shadow:none!important;border:1px solid rgba(255,255,255,.82)!important;box-shadow:0 -3px 16px rgba(18,32,52,.20)!important;}
+#monthScreen .month-tasks-empty{color:#26364d!important;background:rgba(248,251,255,.94)!important;border:1px solid rgba(255,255,255,.92)!important;border-radius:12px!important;padding:13px!important;font-weight:750!important;text-shadow:none!important;}
